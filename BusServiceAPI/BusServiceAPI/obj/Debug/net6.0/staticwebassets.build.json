@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "D+kljpIQgCO98iaC3QFtsXIvuC60rWjFOQ/kZuBF5/g=",
+  "Source": "BusServiceAPI",
+  "BasePath": "_content/BusServiceAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

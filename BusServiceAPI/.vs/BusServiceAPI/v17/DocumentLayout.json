@@ -1,0 +1,521 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\common\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\common\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\controllers\\routecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\controllers\\routecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\bus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\bus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\expense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\expense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\controllers\\fixedtripexpensecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\controllers\\fixedtripexpensecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\controllers\\fixedbusclosingexpensecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\controllers\\fixedbusclosingexpensecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\route.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\route.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\fixedbusclosingexpense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\fixedbusclosingexpense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\trip.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\trip.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\ticketpricing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\ticketpricing.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\fixedtripexpense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\fixedtripexpense.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\busclosingvoucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\busclosingvoucher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\controllers\\tripcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\controllers\\tripcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\tripdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\tripdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\controllers\\expensecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\controllers\\expensecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\expensedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\expensedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\controllers\\buscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\controllers\\buscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\fixedbusclosingexpensedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\fixedbusclosingexpensedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\controllers\\ticketpricingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\controllers\\ticketpricingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\employeedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\employeedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\ticketpricingdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\ticketpricingdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\routedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\routedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\busdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\busdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\busclosingvoucherdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\busclosingvoucherdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\controllers\\busclosingvouchercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\controllers\\busclosingvouchercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|c:\\users\\khiza\\source\\repos\\busserviceapi\\busserviceapi\\models\\dtos\\fixedtripexpensedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9E1FE28-BD95-44D6-954D-C4C28B9DAE7E}|BusServiceAPI\\BusServiceAPI.csproj|solutionrelative:busserviceapi\\models\\dtos\\fixedtripexpensedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "BusServiceAPI\\appsettings.json",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\appsettings.json",
+              "RelativeToolTip": "BusServiceAPI\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-11-20T14:13:24.334Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Program.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Program.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Program.cs",
+              "RelativeToolTip": "BusServiceAPI\\Program.cs",
+              "ViewState": "AQIAABEAAAAAAAAAAAAQwCAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:14:06.18Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Common\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Common\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Common\\AppDbContext.cs",
+              "RelativeToolTip": "BusServiceAPI\\Common\\AppDbContext.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAHEAAAA5AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:28:55.345Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RouteController.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\RouteController.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Controllers\\RouteController.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\RouteController.cs",
+              "RelativeToolTip": "BusServiceAPI\\Controllers\\RouteController.cs",
+              "ViewState": "AQIAAF0AAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-24T10:23:13.922Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "FixedBusClosingExpenseController.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\FixedBusClosingExpenseController.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Controllers\\FixedBusClosingExpenseController.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\FixedBusClosingExpenseController.cs",
+              "RelativeToolTip": "BusServiceAPI\\Controllers\\FixedBusClosingExpenseController.cs",
+              "ViewState": "AQIAAGwAAAAAAAAAAAAqwHUAAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:28:39.888Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "FixedTripExpenseController.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\FixedTripExpenseController.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Controllers\\FixedTripExpenseController.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\FixedTripExpenseController.cs",
+              "RelativeToolTip": "BusServiceAPI\\Controllers\\FixedTripExpenseController.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAqwBwAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:09:11.065Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Route.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Route.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\Route.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Route.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\Route.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAA7AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T11:52:15.475Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Expense.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Expense.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\Expense.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Expense.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\Expense.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T11:51:39.864Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Bus.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Bus.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\Bus.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Bus.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\Bus.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T11:51:50.487Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Employee.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Employee.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\Employee.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Employee.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\Employee.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAABEAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:42:24.89Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "FixedBusClosingExpense.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\FixedBusClosingExpense.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\FixedBusClosingExpense.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\FixedBusClosingExpense.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\FixedBusClosingExpense.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T11:52:03.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Trip.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Trip.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\Trip.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\Trip.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\Trip.cs",
+              "ViewState": "AQIAAAQAAAAAAAAAAAAkwA8AAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:11:44.704Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "TicketPricing.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\TicketPricing.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\TicketPricing.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\TicketPricing.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\TicketPricing.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAAwAoAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T11:52:20.28Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "FixedTripExpense.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\FixedTripExpense.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\FixedTripExpense.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\FixedTripExpense.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\FixedTripExpense.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAA4AAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T11:52:02.88Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "BusClosingVoucher.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\BusClosingVoucher.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\BusClosingVoucher.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\BusClosingVoucher.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\BusClosingVoucher.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAiwBcAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:42:35.666Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "TripController.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\TripController.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Controllers\\TripController.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\TripController.cs",
+              "RelativeToolTip": "BusServiceAPI\\Controllers\\TripController.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAwwCQAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:09:50.702Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "TripDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\TripDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\TripDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\TripDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\TripDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:09:53.383Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "ExpenseController.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\ExpenseController.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Controllers\\ExpenseController.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\ExpenseController.cs",
+              "RelativeToolTip": "BusServiceAPI\\Controllers\\ExpenseController.cs",
+              "ViewState": "AQIAACEAAAAAAAAAAAAAAB0AAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-23T13:17:40.868Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ExpenseDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\ExpenseDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\ExpenseDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\ExpenseDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\ExpenseDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T12:11:23.634Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "BusController.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\BusController.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Controllers\\BusController.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\BusController.cs",
+              "RelativeToolTip": "BusServiceAPI\\Controllers\\BusController.cs",
+              "ViewState": "AQIAACEAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-24T09:57:46.55Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "FixedBusClosingExpenseDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\FixedBusClosingExpenseDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\FixedBusClosingExpenseDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\FixedBusClosingExpenseDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\FixedBusClosingExpenseDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T12:11:31.825Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "TicketPricingController.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\TicketPricingController.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Controllers\\TicketPricingController.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\TicketPricingController.cs",
+              "RelativeToolTip": "BusServiceAPI\\Controllers\\TicketPricingController.cs",
+              "ViewState": "AQIAABEAAAAAAAAAAAAqwBoAAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-23T13:27:20.329Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "EmployeeDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\EmployeeDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\EmployeeDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\EmployeeDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\EmployeeDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T12:11:21.436Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "TicketPricingDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\TicketPricingDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\TicketPricingDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\TicketPricingDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\TicketPricingDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-23T13:17:20.04Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "RouteDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\RouteDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\RouteDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\RouteDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\RouteDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-23T13:17:16.908Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "BusDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\BusDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\BusDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\BusDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\BusDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T12:11:19.719Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "BusClosingVoucherDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\BusClosingVoucherDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\BusClosingVoucherDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\BusClosingVoucherDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\BusClosingVoucherDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T12:10:52.532Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "BusClosingVoucherController.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\BusClosingVoucherController.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Controllers\\BusClosingVoucherController.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Controllers\\BusClosingVoucherController.cs",
+              "RelativeToolTip": "BusServiceAPI\\Controllers\\BusClosingVoucherController.cs",
+              "ViewState": "AQIAAIgAAAAAAAAAAAAIwKAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-21T12:09:55.387Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "FixedTripExpenseDTO.cs",
+              "DocumentMoniker": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\FixedTripExpenseDTO.cs",
+              "RelativeDocumentMoniker": "BusServiceAPI\\Models\\DTOs\\FixedTripExpenseDTO.cs",
+              "ToolTip": "C:\\Users\\KHIZA\\source\\repos\\BusServiceAPI\\BusServiceAPI\\Models\\DTOs\\FixedTripExpenseDTO.cs",
+              "RelativeToolTip": "BusServiceAPI\\Models\\DTOs\\FixedTripExpenseDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-20T14:08:45.155Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

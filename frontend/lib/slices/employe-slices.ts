@@ -11,9 +11,9 @@ export type Employee = {
   employee_type: string;
   address: string;
   mobile_number: string;
-  hire_date: Date | null; // Date object
+  hire_date: Date | null; 
   employee_status: string;
-  dob: Date | null; // Date object
+  dob: Date | null;
   notes: string;
 };
 

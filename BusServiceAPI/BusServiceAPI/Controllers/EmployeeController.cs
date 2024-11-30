@@ -1,114 +1,176 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BusServiceAPI.Common;
+using Microsoft.EntityFrameworkCore;
 using BusServiceAPI.Models;
-using global::BusServiceAPI.Models.DTOs;
+using BusServiceAPI.Models.DTOs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using BusServiceAPI.Common;
 
 namespace BusServiceAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class EmployeesController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public EmployeeController(AppDbContext context)
+        public EmployeesController(AppDbContext context)
         {
             _context = context;
         }
 
+        // GET: api/Employees
         [HttpGet]
-        public IActionResult GetAllEmployees()
+        public async Task<ActionResult<IEnumerable<EmployeeDTO>>> GetEmployees()
         {
-            var employees = _context.Employees
-                .Select(e => new EmployeeDTO
-                {
-                    Id = e.Id,
-                    FirstName = e.FirstName,
-                    LastName = e.LastName,
-                    CNIC = e.CNIC,
-                    MobileNumber = e.MobileNumber,
-                    EmployeeStatus = e.EmployeeStatus
-                }).ToList();
+            var employees = await _context.Employees.ToListAsync();
+            var employeeDTOs = employees.Select(e => new EmployeeDTO
+            {
+                Id = e.Id,
+                CNIC = e.CNIC,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                Address = e.Address,
+                MobileNumber = e.MobileNumber,
+                HireDate = e.HireDate,
+                EmployeeStatus = e.EmployeeStatus,
+                DOB = e.DOB,
+                Notes = e.Notes,
+                EmployeeType = e.EmployeeType.ToString()
+            }).ToList();
 
-            return Ok(employees);
+            return Ok(employeeDTOs);
         }
 
+        // GET: api/Employees/5
         [HttpGet("{id}")]
-        public IActionResult GetEmployee(int id)
+        public async Task<ActionResult<EmployeeDTO>> GetEmployee(int id)
         {
-            var employee = _context.Employees
-                .Select(e => new EmployeeDTO
-                {
-                    Id = e.Id,
-                    FirstName = e.FirstName,
-                    LastName = e.LastName,
-                    CNIC = e.CNIC,
-                    MobileNumber = e.MobileNumber,
-                    EmployeeStatus = e.EmployeeStatus
-                })
-                .FirstOrDefault(e => e.Id == id);
+            var employee = await _context.Employees.FindAsync(id);
 
-            if (employee == null) return NotFound();
-            return Ok(employee);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            var employeeDTO = new EmployeeDTO
+            {
+                Id = employee.Id,
+                CNIC = employee.CNIC,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                Address = employee.Address,
+                MobileNumber = employee.MobileNumber,
+                HireDate = employee.HireDate,
+                EmployeeStatus = employee.EmployeeStatus,
+                DOB = employee.DOB,
+                Notes = employee.Notes,
+                EmployeeType = employee.EmployeeType.ToString()
+            };
+
+            return Ok(employeeDTO);
         }
 
+        // POST: api/Employees
         [HttpPost]
-        public IActionResult CreateEmployee([FromBody] EmployeeDTO employeeDto)
+        public async Task<ActionResult<EmployeeDTO>> PostEmployee(EmployeeDTO employeeDTO)
         {
-            if (employeeDto == null) return BadRequest();
+            if (EmployeeExists(employeeDTO.CNIC))
+            {
+                return BadRequest("Employee with this CNIC already exists.");
+            }
 
             var employee = new Employee
             {
-                FirstName = employeeDto.FirstName,
-                LastName = employeeDto.LastName,
-                CNIC = employeeDto.CNIC,
-                MobileNumber = employeeDto.MobileNumber,
-                EmployeeStatus = employeeDto.EmployeeStatus
+                CNIC = employeeDTO.CNIC,
+                FirstName = employeeDTO.FirstName,
+                LastName = employeeDTO.LastName,
+                Address = employeeDTO.Address,
+                MobileNumber = employeeDTO.MobileNumber,
+                HireDate = employeeDTO.HireDate,
+                EmployeeStatus = employeeDTO.EmployeeStatus,
+                DOB = employeeDTO.DOB,
+                Notes = employeeDTO.Notes,
+                EmployeeType = Enum.Parse<EmployeeTypeEnum>(employeeDTO.EmployeeType)
             };
 
             _context.Employees.Add(employee);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            var createdEmployee = new EmployeeDTO
-            {
-                Id = employee.Id,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                CNIC = employee.CNIC,
-                MobileNumber = employee.MobileNumber,
-                EmployeeStatus = employee.EmployeeStatus
-            };
-
-            return CreatedAtAction(nameof(GetEmployee), new { id = createdEmployee.Id }, createdEmployee);
+            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employeeDTO);
         }
 
+        // PUT: api/Employees/5
         [HttpPut("{id}")]
-        public IActionResult UpdateEmployee(int id, [FromBody] EmployeeDTO employeeDto)
+        public async Task<IActionResult> PutEmployee(int id, EmployeeDTO employeeDTO)
         {
-            var employee = _context.Employees.Find(id);
-            if (employee == null) return NotFound();
+            if (id != employeeDTO.Id)
+            {
+                return BadRequest();
+            }
 
-            employee.FirstName = employeeDto.FirstName;
-            employee.LastName = employeeDto.LastName;
-            employee.CNIC = employeeDto.CNIC;
-            employee.MobileNumber = employeeDto.MobileNumber;
-            employee.EmployeeStatus = employeeDto.EmployeeStatus;
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
 
-            _context.SaveChanges();
+            employee.CNIC = employeeDTO.CNIC;
+            employee.FirstName = employeeDTO.FirstName;
+            employee.LastName = employeeDTO.LastName;
+            employee.Address = employeeDTO.Address;
+            employee.MobileNumber = employeeDTO.MobileNumber;
+            employee.HireDate = employeeDTO.HireDate;
+            employee.EmployeeStatus = employeeDTO.EmployeeStatus;
+            employee.DOB = employeeDTO.DOB;
+            employee.Notes = employeeDTO.Notes;
+            employee.EmployeeType = Enum.Parse<EmployeeTypeEnum>(employeeDTO.EmployeeType);
+
+            _context.Entry(employee).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EmployeeExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
+        // DELETE: api/Employees/5
         [HttpDelete("{id}")]
-        public IActionResult DeleteEmployee(int id)
+        public async Task<IActionResult> DeleteEmployee(int id)
         {
-            var employee = _context.Employees.Find(id);
-            if (employee == null) return NotFound();
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
 
             _context.Employees.Remove(employee);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
             return NoContent();
+        }
+
+        private bool EmployeeExists(int id)
+        {
+            return _context.Employees.Any(e => e.Id == id);
+        }
+
+        private bool EmployeeExists(string cnic)
+        {
+            return _context.Employees.Any(e => e.CNIC == cnic);
         }
     }
 }
-
-

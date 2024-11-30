@@ -22,6 +22,7 @@
 
     public enum EmployeeTypeEnum
     {
-        Driver
+        Driver,
+        Conductor
     }
 }

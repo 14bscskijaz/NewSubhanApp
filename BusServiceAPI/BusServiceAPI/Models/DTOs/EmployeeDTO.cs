@@ -13,7 +13,7 @@
         public string EmployeeStatus { get; set; } // varchar(20)
         public DateTime DOB { get; set; } // Date
         public string Notes { get; set; } // varchar(255)
-        public EmployeeTypeEnum EmployeeType { get; set; } // varchar(32)
+        public string EmployeeType { get; set; } // varchar(32)
 
 
     }

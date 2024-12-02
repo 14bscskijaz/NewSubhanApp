@@ -4,10 +4,10 @@ import { RootState } from '../store';
 // Define the Route type with the new schema
 export type Route = {
   id: number;
-  source: string;
-  sourceStation: string;
-  destination: string;
-  destinationStation: string;
+  sourceCity: string;
+  sourceAdda: string;
+  destinationCity: string;
+  destinationAdda: string;
 };
 
 // Define the RouteState interface
@@ -20,31 +20,31 @@ const initialState: RouteState = {
   routes: [
     {
       id: 1,
-      source: 'Karachi',
-      sourceStation: 'Karachi Station A',
-      destination: 'Lahore',
-      destinationStation: 'Lahore Station B'
+      sourceCity: 'Karachi',
+      sourceAdda: 'Karachi Station A',
+      destinationCity: 'Lahore',
+      destinationAdda: 'Lahore Station B'
     },
     {
       id: 2,
-      source: 'Islamabad',
-      sourceStation: 'Islamabad Station C',
-      destination: 'Murree',
-      destinationStation: 'Murree Station D'
+      sourceCity: 'Islamabad',
+      sourceAdda: 'Islamabad Station C',
+      destinationCity: 'Murree',
+      destinationAdda: 'Murree Station D'
     },
     {
       id: 3,
-      source: 'Faisalabad',
-      sourceStation: 'Railway Station',
-      destination: 'Islamabad',
-      destinationStation: 'G-9'
+      sourceCity: 'Faisalabad',
+      sourceAdda: 'Railway Station',
+      destinationCity: 'Islamabad',
+      destinationAdda: 'G-9'
     },
     {
       id: 4,
-      source: 'Islamabad',
-      sourceStation: 'G-9',
-      destination: 'Faisalabad',
-      destinationStation: 'Railway Station'
+      sourceCity: 'Islamabad',
+      sourceAdda: 'G-9',
+      destinationCity: 'Faisalabad',
+      destinationAdda: 'Railway Station'
     }
   ]
 };
@@ -54,7 +54,6 @@ const routeSlice = createSlice({
   name: 'route',
   initialState,
   reducers: {
-    // Action to add a route with auto-incremented ID
     addRoute: (state, action: PayloadAction<Omit<Route, 'id'>>) => {
       const newId =
         state.routes.length > 0
@@ -79,12 +78,15 @@ const routeSlice = createSlice({
       if (index !== -1) {
         state.routes[index] = action.payload;
       }
+    },
+    setRoute: (state, action: PayloadAction<Route[]>) => {
+      state.routes = action.payload;
     }
   }
 });
 
 // Export actions and reducer
-export const { addRoute, removeRoute, updateRoute } = routeSlice.actions;
+export const { addRoute, removeRoute, updateRoute,setRoute } = routeSlice.actions;
 export default routeSlice.reducer;
 
 // Selector to get all routes

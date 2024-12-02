@@ -6,17 +6,17 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   let bgColor = '';
   let textColor = 'text-white';
 
-  switch (status) {
-    case 'Active':
+  switch (status.toLowerCase()) {
+    case 'active':
       bgColor = 'bg-green-500';
       break;
-    case 'Retired':
+    case 'retired':
       bgColor = 'bg-yellow-500 text-black';
       break;
-    case 'Out of Service':
+    case 'out of service':
       bgColor = 'bg-red-500';
       break;
-    case 'Under Maintenance':
+    case 'under maintenance':
       bgColor = 'bg-blue-500 ';
       break;
     default:

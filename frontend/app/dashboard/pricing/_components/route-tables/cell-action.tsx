@@ -1,3 +1,4 @@
+import { deleteTicketPrice, updateTicketPrice } from '@/app/actions/pricing.action';
 import { AlertModal } from '@/components/modal/alert-modal';
 import {
   TicketPriceRaw,
@@ -25,7 +26,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true);
-    try { 
+    try {
+      await deleteTicketPrice(data.id);
       dispatch(removeTicketRaw(data.id));
       setOpen(false);
     } catch (error) {
@@ -35,7 +37,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const handleUpdate = (updatedPrice: TicketPriceRaw) => {
+  const handleUpdate = async (updatedPrice: TicketPriceRaw) => {
+    await updateTicketPrice(data.id, updatedPrice)
     dispatch(updateTicketRaw(updatedPrice));
   };
 

@@ -6,13 +6,13 @@ import { v4 as uuidv4 } from 'uuid';
 export type Employee = {
   id: string;
   cnic: string;
-  first_name: string;
-  last_name: string;
-  employee_type: string;
+  firstName: string;
+  lastName: string;
+  employeeType: string;
   address: string;
-  mobile_number: string;
-  hire_date: Date | null; 
-  employee_status: string;
+  mobileNumber: string;
+  hireDate: Date | null;
+  employeeStatus: string;
   dob: Date | null;
   notes: string;
 };
@@ -28,26 +28,26 @@ const initialState: EmployeeState = {
     {
       id: uuidv4(),
       cnic: '12345-6789012-3',
-      first_name: 'Muhammad',
-      last_name: 'Rashid',
-      employee_type: 'Driver',
+      firstName: 'Muhammad',
+      lastName: 'Rashid',
+      employeeType: 'Driver',
       address: '123 Main St, Cityville',
-      mobile_number: '555-1234',
-      hire_date: new Date('2023-01-15T00:00:00.000Z'),
-      employee_status: 'Active',
+      mobileNumber: '555-1234',
+      hireDate: new Date('2023-01-15T00:00:00.000Z'),
+      employeeStatus: 'Active',
       dob: new Date('1990-05-20T00:00:00.000Z'),
       notes: 'Experienced in project management.',
     },
     {
       id: uuidv4(),
       cnic: '98765-4321098-7',
-      first_name: 'Fawad',
-      last_name: 'Kaleem',
-      employee_type: 'Conductor',
+      firstName: 'Fawad',
+      lastName: 'Kaleem',
+      employeeType: 'Conductor',
       address: '456 Oak Ave, Townsville',
-      mobile_number: '555-5678',
-      hire_date: new Date('2022-06-10T00:00:00.000Z'),
-      employee_status: 'On Leave',
+      mobileNumber: '555-5678',
+      hireDate: new Date('2022-06-10T00:00:00.000Z'),
+      employeeStatus: 'On Leave',
       dob: new Date('1985-10-11T00:00:00.000Z'),
       notes: 'Specializes in customer support.',
     },
@@ -63,7 +63,7 @@ const employeeSlice = createSlice({
       const newEmployee: Employee = {
         ...action.payload,
         id: uuidv4(),
-        hire_date: action.payload.hire_date ? new Date(action.payload.hire_date) : null,
+        hireDate: action.payload.hireDate ? new Date(action.payload.hireDate) : null,
         dob: action.payload.dob ? new Date(action.payload.dob) : null,
       };
       state.employees.push(newEmployee);
@@ -76,16 +76,19 @@ const employeeSlice = createSlice({
       if (index !== -1) {
         state.employees[index] = {
           ...action.payload,
-          hire_date: action.payload.hire_date ? new Date(action.payload.hire_date) : null,
+          hireDate: action.payload.hireDate ? new Date(action.payload.hireDate) : null,
           dob: action.payload.dob ? new Date(action.payload.dob) : null,
         };
       }
+    },
+    setEmployee: (state, action: PayloadAction<Employee[]>) => {
+      state.employees = action.payload;
     },
   },
 });
 
 // Export actions and reducer
-export const { addEmployee, removeEmployee, updateEmployee } = employeeSlice.actions;
+export const { addEmployee, removeEmployee, updateEmployee,setEmployee } = employeeSlice.actions;
 export default employeeSlice.reducer;
 
 // Selector to get all employees

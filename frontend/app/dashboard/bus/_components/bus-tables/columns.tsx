@@ -10,21 +10,21 @@ export const columns: ColumnDef<Buses>[] = [
   {
     id: 'serial_no',
     header: 'S.No',
-    cell: ({ row }) => <div className="w-12">{row.index + 1}</div>, // Apply a width class here
+    cell: ({ row }) => <div className="w-12">{row.index + 1}</div>, 
     meta: {
-      className: 'w-12', // Apply width class for header as well
+      className: 'w-12', 
     },
   },
   {
-    accessorKey: 'bus_number',
+    accessorKey: 'busNumber',
     header: 'Bus Number',
   },
   {
-    accessorKey: 'bus_type',
+    accessorKey: 'busType',
     header: 'Bus Type',
   },
   {
-    accessorKey: 'bus_owner',
+    accessorKey: 'busOwner',
     header: 'Bus Owner',
   },
   {
@@ -33,9 +33,9 @@ export const columns: ColumnDef<Buses>[] = [
     cell: ({ row }) => <ExpandableText text={row.original.description} />,
   },
   {
-    accessorKey: 'bus_status',
+    accessorKey: 'busStatus',
     header: 'Bus Status',
-    cell: ({ row }) => <StatusBadge status={row.original.bus_status} />,
+    cell: ({ row }) => <StatusBadge status={row.original.busStatus} />,
   },
   {
     id: 'actions',

@@ -16,17 +16,16 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { useSidebar } from '@/components/ui/sidebar';
 import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon
 } from '@radix-ui/react-icons';
 import {
   ColumnDef,
+  PaginationState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
-  PaginationState,
   useReactTable
 } from '@tanstack/react-table';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
@@ -45,7 +44,6 @@ export function DataTable<TData, TValue>({
   totalItems,
   pageSizeOptions = [10, 20, 30, 40, 50]
 }: DataTableProps<TData, TValue>) {
-  const { open } = useSidebar();
   const [currentPage, setCurrentPage] = useQueryState(
     'page',
     parseAsInteger.withOptions({ shallow: false }).withDefault(1)

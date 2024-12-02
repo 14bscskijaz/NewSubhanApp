@@ -1,20 +1,14 @@
 import { AlertModal } from '@/components/modal/alert-modal';
 import {
-  BusClosing,
-  removeBusClosing,
-  updateBusClosing
-} from '@/lib/slices/bus-closing';
+  TripInformation,
+  removeTripInformation,
+  updateTripInformation
+} from '@/lib/slices/trip-information';
 import { AppDispatch } from '@/lib/store';
 import { Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditRouteDialog from '../edit-trip-info-dialogue';
-import {
-  removeTripInformation,
-  TripInformation,
-  updateTripInformation
-} from '@/lib/slices/trip-information';
 
 interface CellActionProps {
   data: TripInformation;
@@ -23,12 +17,12 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
   const onConfirm = async () => {
     setLoading(true);
     try {
+      // await deleteTrip(data.id);
       dispatch(removeTripInformation(data.id));
       setOpen(false);
     } catch (error) {
@@ -38,8 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const handleUpdate = (updatedTripInformation: TripInformation) => {
-    console.log(updatedTripInformation);
+  const handleUpdate = async(updatedTripInformation: TripInformation) => {
     dispatch(updateTripInformation(updatedTripInformation));
   };
 

@@ -53,10 +53,10 @@ export default function PricingListingPage({}: TPricingListingPage) {
     if (route) {
       return {
         id: ticket.id,
-        source: route.source,
-        sourceStation: route.sourceStation,
-        destination: route.destination,
-        destinationStation: route.destinationStation,
+        source: route.sourceCity,
+        sourceStation: route.sourceAdda,
+        destination: route.destinationCity,
+        destinationStation: route.destinationAdda,
         ticketPrice: ticket.ticketPrice,
         busType: ticket.busType
       };

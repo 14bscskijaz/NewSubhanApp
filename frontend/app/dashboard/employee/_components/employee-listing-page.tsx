@@ -1,15 +1,15 @@
 "use client";
+import { getAllEmployees } from '@/app/actions/employee.action';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
+import { Employee, allEmployees, setEmployee } from '@/lib/slices/employe-slices';
+import { RootState } from '@/lib/store';
+import { useSearchParams } from 'next/navigation'; // Import useSearchParams
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import EmployeeTable from './employee-tables';
 import NewEmployeeDialog from './new-employee-dialogue';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';
-import { useEffect, useState } from 'react';
-import { Employee, allEmployees } from '@/lib/slices/employe-slices';
-import { useSearchParams } from 'next/navigation'; // Import useSearchParams
-import { getAllEmployee } from '@/app/actions/employee.action';
 
 type TEmployeeListingPage = {};
 
@@ -21,16 +21,17 @@ export default function EmployeeListingPage({}: TEmployeeListingPage) {
   const [status, setStatus] = useState(''); // Change gender to status
   const [pageLimit, setPageLimit] = useState(10);
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // const fetchEmoployee = async() =>{
-  //   const allEmployeeData = await getAllEmployee()
-  //   console.log(allEmployeeData,"allEmployeeData");
+  const fetchEmoployee = async() =>{
+    const allEmployeeData = await getAllEmployees()
+    console.log(allEmployeeData,"allEmployeeData");
+    dispatch(setEmployee(allEmployeeData))
     
-  // }
+  }
 
   useEffect(() => {
-    // fetchEmoployee()
+    fetchEmoployee()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const statusParam = searchParams.get('status') || ''; // Change from gender to status
@@ -45,13 +46,13 @@ export default function EmployeeListingPage({}: TEmployeeListingPage) {
   const filteredEmployees = employees.filter(employee => {
     const matchesSearch =
       search ?
-        employee.first_name.toLowerCase().includes(search.toLowerCase()) ||
-        employee.last_name.toLowerCase().includes(search.toLowerCase()) :
+        employee.firstName.toLowerCase().includes(search.toLowerCase()) ||
+        employee.lastName.toLowerCase().includes(search.toLowerCase()) :
         true;
 
     const matchesStatus =
       status ?
-        employee.employee_status.toLowerCase() === status.toLowerCase() : // Filter by employee status
+        employee.employeeStatus.toLowerCase() === status.toLowerCase() : // Filter by employee status
         true;
 
     return matchesSearch && matchesStatus; // Combine both filters

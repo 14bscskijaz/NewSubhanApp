@@ -1,8 +1,7 @@
 'use client';
-import { TicketPriceRaw } from '@/lib/slices/pricing-slices';
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
 import { TicketPriceDisplay } from '../pricing-listing-page';
+import { CellAction } from './cell-action';
 
 export const columns: ColumnDef<TicketPriceDisplay>[] = [
   {

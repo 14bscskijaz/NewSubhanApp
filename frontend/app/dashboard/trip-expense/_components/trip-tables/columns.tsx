@@ -1,12 +1,12 @@
 // columns.tsx
 'use client';
-import { Trip } from '@/lib/slices/fixed-trip-expense';
+import { FixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import SourceDestination from './SourceDestination';
 import SourceStationDestinationStation from './SourceStationDestinationStation';
 
-export const columns: ColumnDef<Trip>[] = [
+export const columns: ColumnDef<FixedTripExpense>[] = [
   {
     id: 'serial_no',
     header: 'S.No',

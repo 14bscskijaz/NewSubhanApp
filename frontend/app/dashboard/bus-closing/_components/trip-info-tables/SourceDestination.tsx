@@ -1,30 +1,24 @@
-// components/SourceDestination.tsx
+'use client';
+import { allRoutes, Route } from '@/lib/slices/route-slices';
+import { RootState } from '@/lib/store';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store'; // Assuming RootState is defined here
-import { allRoutes } from '@/lib/slices/route-slices';
 
 interface SourceDestinationProps {
-  routeId: number | null;
-  sourceStation: string;
-  destinationStation: string;
+  routeId: string | undefined ;
 }
 
-const SourceDestination = ({
-  routeId,
-  sourceStation,
-  destinationStation
-}: SourceDestinationProps) => {
-  // Get routes from Redux state
-  const routes = useSelector(allRoutes);
+const SourceDestination: React.FC<SourceDestinationProps> = ({ routeId }) => {
+  const routes = useSelector<RootState, Route[]>(allRoutes);
+  const route = routes.find((route) => route.id === parseInt(routeId as string));
+  
+  const sourceStation = route?.sourceAdda ?? 'Unknown';
+  const destinationStation = route?.destinationAdda ?? 'Unknown';
 
-  // Ensure routeId is not null before finding the route
-  const route = routes.find(
-    (route) =>
-      `${route.sourceStation} - ${route.destinationStation}` ===
-      `${sourceStation} - ${destinationStation}`
+  return (
+    <span>
+      {sourceStation} - {destinationStation}
+    </span>
   );
-
-  return route ? `${route.source} - ${route.destination}` : 'N/A';
 };
 
 export default SourceDestination;

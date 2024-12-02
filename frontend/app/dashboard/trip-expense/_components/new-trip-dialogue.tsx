@@ -21,11 +21,12 @@ import {
 } from '@/components/ui/select';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
-import { addTrip } from '@/lib/slices/fixed-trip-expense';
+import { FixedTripExpense, addFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { RootState } from '@/lib/store';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { createFixedTripExpense } from '@/app/actions/FixedTripExpense.action';
 
 export default function NewTripDialog() {
   const [open, setOpen] = useState(false);
@@ -52,11 +53,11 @@ export default function NewTripDialog() {
     setRouteId(Number(selectedRouteId));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newTrip = {
-      routeId: routeId,
+    const newTrip:Omit<FixedTripExpense,"id"> = {
+      routeId: Number(routeId) ?? 0,
       routeCommission: Number(routeCommission),
       rewardCommission: Number(rewardCommission),
       steward: Number(steward),
@@ -64,8 +65,8 @@ export default function NewTripDialog() {
       dcParchi: Number(dcParchi),
       refreshment: Number(refreshment)
     };
-
-    dispatch(addTrip(newTrip));
+    await createFixedTripExpense(newTrip);
+    dispatch(addFixedTripExpense(newTrip));
     setOpen(false);
     resetForm();
   };
@@ -111,8 +112,8 @@ export default function NewTripDialog() {
                 <SelectContent>
                   {filteredRoutes.map((route) => (
                     <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.source} (${route.sourceStation})`} -{' '}
-                      {`${route.destination} (${route.destinationStation})`}
+                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
+                      {`${route.destinationCity} (${route.destinationAdda})`}
                     </SelectItem>
                   ))}
                 </SelectContent>

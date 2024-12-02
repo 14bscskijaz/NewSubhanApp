@@ -119,7 +119,7 @@ export default function EditPricingDialog({
                 <SelectContent>
                   {filteredRoutes.map((route) => (
                     <SelectItem key={route.id} value={String(route.id)}>
-                      {route.source} - {route.destination}
+                      {route.sourceCity} - {route.destinationCity}
                     </SelectItem>
                   ))}
                 </SelectContent>

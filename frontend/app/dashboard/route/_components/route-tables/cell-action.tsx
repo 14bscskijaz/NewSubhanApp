@@ -1,13 +1,12 @@
+import { deleteRoute, updatedRoutes } from '@/app/actions/route.action';
 import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
-import { Employee, removeEmployee, updateEmployee } from '@/lib/slices/employe-slices'; // Import your delete and update actions
+import { Route, removeRoute, updateRoute } from '@/lib/slices/route-slices';
 import { AppDispatch } from '@/lib/store';
 import { Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditRouteDialog from '../edit-route-dialogue';
-import { Route, removeRoute, updateRoute } from '@/lib/slices/route-slices';
 
 interface CellActionProps {
   data: Route;
@@ -16,12 +15,12 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
   const onConfirm = async () => {
     setLoading(true);
     try {
+      await deleteRoute(data.id)
       dispatch(removeRoute(data.id));
       setOpen(false);
     } catch (error) {
@@ -31,7 +30,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const handleUpdate = (updatedRoute: Route) => {
+  const handleUpdate = async(updatedRoute: Route) => {
+    await updatedRoutes(data.id,updatedRoute)
     dispatch(updateRoute(updatedRoute));
   };
 

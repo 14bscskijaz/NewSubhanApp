@@ -1,7 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Pen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,24 +14,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
+  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectContent
+  SelectTrigger
 } from '@/components/ui/select'; // ShadCN Select
-import { BusClosing } from '@/lib/slices/bus-closing';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';
-import { Route, allRoutes } from '@/lib/slices/route-slices';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  FixedTripExpense,
+  allFixedTripExpenses
+} from '@/lib/slices/fixed-trip-expense';
+import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
+import { Route, allRoutes } from '@/lib/slices/route-slices';
 import {
   TripInformation,
   TripInformationInput
 } from '@/lib/slices/trip-information';
-import { allTicketsRaw, TicketPriceRaw } from '@/lib/slices/pricing-slices';
-import {
-  allFixedTripExpenses,
-  FixedTripExpense
-} from '@/lib/slices/fixed-trip-expense';
+import { RootState } from '@/lib/store';
+import { Pen } from 'lucide-react';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 type EditRouteDialogProps = {
   // route: BusClosing;
@@ -56,11 +55,11 @@ export default function EditRouteDialog({
     sourceStation:
       routes.find(
         (route) => route.id === parseInt(tripInformation.routeId as string)
-      )?.sourceStation ?? '',
+      )?.sourceAdda ?? '',
     destinationStation:
       routes.find(
         (route) => route.id === parseInt(tripInformation.routeId as string)
-      )?.destinationStation ?? ''
+      )?.destinationAdda ?? ''
   });
 
   const performRevenueCalculationMaths = (
@@ -137,9 +136,9 @@ export default function EditRouteDialog({
         // Recalculate the routeId if source or destination station changes
         const newRouteId = routes.find(
           (route) =>
-            route.sourceStation ===
+            route.sourceAdda ===
               (id === 'sourceStation' ? value : prev.sourceStation) &&
-            route.destinationStation ===
+            route.destinationAdda ===
               (id === 'destinationStation' ? value : prev.destinationStation)
         )?.id;
         updatedData.routeId = newRouteId ? String(newRouteId) : '';
@@ -221,11 +220,11 @@ export default function EditRouteDialog({
   };
 
   const getSourceStations = () => {
-    return [...new Set(routes.map((route) => route.sourceStation))];
+    return [...new Set(routes.map((route) => route.sourceAdda))];
   };
 
   const getDestinationStations = () => {
-    return [...new Set(routes.map((route) => route.destinationStation))];
+    return [...new Set(routes.map((route) => route.destinationAdda))];
   };
 
   return (

@@ -6,8 +6,8 @@ type TripRevenueT = {
 }
 const NetExpenses = ({ tripRevenue, TotalExpense }: TripRevenueT) => {
     return (
-        <div className='text-lg font-bold flex  mt-8 '>
-            <div className='flex flex-col'>
+        <div className='text-lg font-bold flex mt-8 '>
+            <div className='flex flex-col text-xl text-gradient'>
                 <div>Trips Revenue </div>
                 <div>Route Expense </div>
                 <div>Gross Revenue </div>

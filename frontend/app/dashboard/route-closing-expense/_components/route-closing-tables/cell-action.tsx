@@ -1,3 +1,4 @@
+import { deleteFixedBusClosingExpense, updateFixedBusClosingExpense } from '@/app/actions/FixedClosingExpense.action';
 import { AlertModal } from '@/components/modal/alert-modal';
 import {
   ClosingExpense,
@@ -24,6 +25,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
+      await deleteFixedBusClosingExpense(data.id);
       dispatch(removeClosingExpense(data.id));
       setOpen(false);
     } catch (error) {
@@ -33,7 +35,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const handleUpdate = (updatedClosingExpense: ClosingExpense) => {
+  const handleUpdate = async (updatedClosingExpense: ClosingExpense) => {
+    await updateFixedBusClosingExpense(data.id, updatedClosingExpense)
     dispatch(updateClosingExpense(updatedClosingExpense));
   };
 

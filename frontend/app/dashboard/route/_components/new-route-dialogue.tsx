@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addRoute } from "@/lib/slices/route-slices";
+import { Route, addRoute } from "@/lib/slices/route-slices";
+import { createRoute } from "@/app/actions/route.action";
 
 export default function NewRouteDialog() {
   const [open, setOpen] = useState(false);
@@ -26,16 +27,16 @@ export default function NewRouteDialog() {
 
   const dispatch = useDispatch();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newRoute = {
-      source,
-      sourceStation,
-      destination,
-      destinationStation,
+    const newRoute:Omit<Route,"id"> = {
+      sourceCity:source,
+      sourceAdda:sourceStation,
+      destinationCity:destination,
+      destinationAdda:destinationStation,
     };
-
+    await createRoute(newRoute)
     dispatch(addRoute(newRoute));
     setOpen(false);
     resetForm();

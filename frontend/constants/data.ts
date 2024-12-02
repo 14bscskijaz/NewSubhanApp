@@ -155,6 +155,13 @@ export const navItems: NavItem[] = [
     items: [] 
   },
   {
+    title: 'General Expenses',
+    url: '/dashboard/Expenses',
+    icon: 'bus',
+    isActive: false,
+    items: [] 
+  },
+  {
     title: 'Expense Rates',
     url: '#',
     icon: 'billing',

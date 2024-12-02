@@ -4,13 +4,12 @@ import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
-import { TicketPriceRaw } from '@/lib/slices/pricing-slices';
+import { TicketPriceDisplay } from '../pricing-listing-page';
 import { columns } from './columns';
 import {
   SOURCE_OPTIONS,
   useRouteTableFilters
 } from './use-route-table-filters';
-import { TicketPriceDisplay } from '../pricing-listing-page';
 
 export default function RouteTable({
   data,

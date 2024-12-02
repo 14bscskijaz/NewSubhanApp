@@ -30,7 +30,7 @@ export default async function RootLayout({
       className={`${lato.className}`}
       suppressHydrationWarning={true}
     >
-      <body className={'overflow-hidden '}>
+      <body className='overflow-x-hidden md:overflow-hidden '>
         <NextTopLoader showSpinner={false} />
         <Providers session={session}>
           <StoreProviders>

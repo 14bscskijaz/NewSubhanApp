@@ -1,9 +1,7 @@
 'use client';
+import { Route } from '@/lib/slices/route-slices';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { ExpandableText } from './expand-text';
-import { StatusBadge } from './status-badge';
-import { Route } from '@/lib/slices/route-slices';
 
 export const columns: ColumnDef<Route>[] = [
   {
@@ -12,19 +10,19 @@ export const columns: ColumnDef<Route>[] = [
     cell: ({ row }) => row.index + 1,
   },
   {
-    accessorKey: 'source',
+    accessorKey: 'sourceCity',
     header: 'Source',
   },
   {
-    accessorKey: 'sourceStation',
+    accessorKey: 'sourceAdda',
     header: 'Source Station',
   },
   {
-    accessorKey: 'destination',
+    accessorKey: 'destinationCity',
     header: 'Destination',
   },
   {
-    accessorKey: 'destinationStation',
+    accessorKey: 'destinationAdda',
     header: 'Destination Station',
   },
   {

@@ -26,13 +26,86 @@ interface BusClosingVoucherState {
   busClosingVouchers: BusClosingVoucher[];
 }
 
-const initialState: BusClosingVoucherState = {
-  busClosingVouchers: []
-};
-
 // Helper function to generate current ISO DateTime for Date field
 const getCurrentISODateTime = (): string => {
-  return new Date().toISOString().split('T')[0]; // returning date in YYYY-MM-DD format
+  return new Date().toISOString().split('T')[0]; 
+};
+
+const initialState: BusClosingVoucherState = {
+  busClosingVouchers: [
+    {
+      id: 1,
+      date: getCurrentISODateTime(),
+      driverId: '1',
+      conductorId: '2',
+      busId: '1',
+      voucherNumber: 'V001',
+      commission: 5000,
+      diesel: 3000,
+      dieselLitres: 100,
+      coilTechnician: 1000,
+      toll: 500,
+      cleaning: 200,
+      alliedmor: 400,
+      cityParchi: 300,
+      refreshment: 700,
+      revenue: 15000
+    },
+    {
+      id: 2,
+      date: getCurrentISODateTime(),
+      driverId: '1',
+      conductorId: '2',
+      busId: '1',
+      voucherNumber: 'V002',
+      commission: 4000,
+      diesel: 2500,
+      dieselLitres: 80,
+      coilTechnician: 800,
+      toll: 300,
+      cleaning: 150,
+      alliedmor: 350,
+      cityParchi: 200,
+      refreshment: 600,
+      revenue: 12000
+    },
+    {
+      id: 3,
+      date: getCurrentISODateTime(),
+      driverId: '1',
+      conductorId: '2',
+      busId: '1',
+      voucherNumber: 'V003',
+      commission: 5500,
+      diesel: 3500,
+      dieselLitres: 120,
+      coilTechnician: 1200,
+      toll: 700,
+      cleaning: 250,
+      alliedmor: 450,
+      cityParchi: 400,
+      refreshment: 750,
+      revenue: 16000
+    },
+    {
+      id: 4,
+      date: getCurrentISODateTime(),
+      driverId: '1',
+      conductorId: '2',
+      busId: '1',
+      voucherNumber: 'V004',
+      commission: 6000,
+      diesel: 4000,
+      dieselLitres: 130,
+      coilTechnician: 1500,
+      toll: 800,
+      cleaning: 300,
+      alliedmor: 500,
+      cityParchi: 450,
+      refreshment: 800,
+      revenue: 17000
+    }
+  ]
 };
 
 // Create the slice

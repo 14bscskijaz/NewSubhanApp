@@ -13,8 +13,7 @@ export type BusClosing = {
   revenue: string;
   revenueDiffExplanation: string;
   departureTime: string;
-  sourceStation: string;
-  destinationStation: string;
+  
 };
 
 // Define the initial state

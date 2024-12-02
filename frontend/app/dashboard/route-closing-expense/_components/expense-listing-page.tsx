@@ -1,18 +1,18 @@
 'use client';
+import { getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import {
   ClosingExpense,
   allClosingExpenses
-} from '@/lib/slices/fixed-closing-expense-slice'; // Import ClosingExpense
+} from '@/lib/slices/fixed-closing-expense-slice';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import NewTripDialog from './new-expense-dialogue'; // Consider renaming if it's specific to Trip, e.g. "NewClosingExpenseDialog"
-import ClosingExpenseTable from './route-closing-tables'; // You may need to rename the table component
 import NewExpenseDialog from './new-expense-dialogue';
+import ClosingExpenseTable from './route-closing-tables';
 
 type TExpenseListingPage = {};
 
@@ -26,7 +26,14 @@ export default function ClosingExpenseListingPage({}: TExpenseListingPage) {
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(10);
 
+  const fetchFixedBusClosing = async()=>{
+    const fixedBusClosing = await getAllFixedBusClosingExpenses()
+    console.log(fixedBusClosing,"fixedBusClosing");
+    
+  }
+
   useEffect(() => {
+    fetchFixedBusClosing()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';

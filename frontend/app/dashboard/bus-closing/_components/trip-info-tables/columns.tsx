@@ -1,26 +1,16 @@
 'use client';
-import { BusClosing } from '@/lib/slices/bus-closing';
-import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
-import SourceDestination from './SourceDestination';
 import { TripInformation } from '@/lib/slices/trip-information';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';
-import { allRoutes, Route } from '@/lib/slices/route-slices';
+import { ColumnDef } from '@tanstack/react-table';
+import SourceDestination from './SourceDestination';
+import { CellAction } from './cell-action';
 
 export const columns: ColumnDef<TripInformation>[] = [
   {
     id: 'source-station-destination-station',
     header: 'Station',
-    cell: ({ row }) => {
-      const routes = useSelector<RootState, Route[]>(allRoutes);
-      const route = routes.find(
-        (route) => route.id === parseInt(row.original.routeId as string)
-      );
-      const sourceStation = route?.sourceStation ?? 'Unknown';
-      const destinationStation = route?.destinationStation ?? 'Unknown';
-      return `${sourceStation} - ${destinationStation}`;
-    }
+    cell: ({ row }) => (
+      <SourceDestination routeId={row.original.routeId?.toString()} />
+    )
   },
   {
     accessorKey: 'passengerCount',

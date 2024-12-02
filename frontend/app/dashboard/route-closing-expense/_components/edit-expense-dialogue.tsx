@@ -94,7 +94,7 @@ export default function EditClosingExpenseDialog({
               </Label>
               <Select
                 onValueChange={handleRouteChange}
-                value={formData.RouteId?.toString() || ''}
+                value={formData.routeId?.toString() || ''}
               >
                 <SelectTrigger id="route">
                   <SelectValue placeholder="Select route" />
@@ -102,8 +102,8 @@ export default function EditClosingExpenseDialog({
                 <SelectContent>
                   {filteredRoutes.map((route) => (
                     <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.source} (${route.sourceStation})`} -{' '}
-                      {`${route.destination} (${route.destinationStation})`}
+                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
+                      {`${route.destinationCity} (${route.destinationAdda})`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -117,7 +117,7 @@ export default function EditClosingExpenseDialog({
               <Input
                 id="DriverCommission"
                 type="number"
-                value={formData.DriverCommission || ''}
+                value={formData.driverCommission || ''}
                 onChange={handleInputChange}
                 placeholder="Enter driver commission"
               />
@@ -130,7 +130,7 @@ export default function EditClosingExpenseDialog({
               <Input
                 id="COilExpense"
                 type="number"
-                value={formData.COilExpense || ''}
+                value={formData.coilExpense || ''}
                 onChange={handleInputChange}
                 placeholder="Enter COil Expense"
               />
@@ -143,7 +143,7 @@ export default function EditClosingExpenseDialog({
               <Input
                 id="TollTax"
                 type="number"
-                value={formData.TollTax || ''}
+                value={formData.tollTax || ''}
                 onChange={handleInputChange}
                 placeholder="Enter toll tax"
               />
@@ -156,7 +156,7 @@ export default function EditClosingExpenseDialog({
               <Input
                 id="HalfSafai"
                 type="number"
-                value={formData.HalfSafai || ''}
+                value={formData.halfSafai || ''}
                 onChange={handleInputChange}
                 placeholder="Enter half safai"
               />
@@ -169,7 +169,7 @@ export default function EditClosingExpenseDialog({
               <Input
                 id="FullSafai"
                 type="number"
-                value={formData.FullSafai || ''}
+                value={formData.fullSafai || ''}
                 onChange={handleInputChange}
                 placeholder="Enter full safai"
               />
@@ -195,7 +195,7 @@ export default function EditClosingExpenseDialog({
               <Input
                 id="DcParchi"
                 type="number"
-                value={formData.DcParchi || ''}
+                value={formData.dcParchi || ''}
                 onChange={handleInputChange}
                 placeholder="Enter DC parchis"
               />

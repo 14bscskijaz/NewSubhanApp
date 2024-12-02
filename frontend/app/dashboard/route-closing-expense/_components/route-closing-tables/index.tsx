@@ -3,10 +3,9 @@
 import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
-import { Trip } from '@/lib/slices/fixed-trip-expense';
+import { ClosingExpense } from '@/lib/slices/fixed-closing-expense-slice';
 import { columns } from './columns';
 import { useRouteTableFilters } from './use-route-table-filters';
-import { ClosingExpense } from '@/lib/slices/fixed-closing-expense-slice';
 
 export default function RouteTable({
   data,
@@ -16,8 +15,6 @@ export default function RouteTable({
   totalData: number;
 }) {
   const {
-    sourceFilter,
-    setSourceFilter,
     isAnyFilterActive,
     resetFilters,
     searchQuery,

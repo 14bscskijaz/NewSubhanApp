@@ -24,7 +24,7 @@ import { Buses } from "@/lib/slices/bus-slices";
 
 type EditBusDialogProps = {
   bus: Buses;
-  onUpdate: (updatedBus: Buses) => void;
+  onUpdate: (updatedBus: Buses,id:number) => void;
 };
 
 export default function EditBusDialog({
@@ -32,34 +32,34 @@ export default function EditBusDialog({
   onUpdate,
 }: EditBusDialogProps) {
   const [open, setOpen] = useState(false);
-  const [busNumber, setBusNumber] = useState(bus.bus_number);
-  const [busType, setBusType] = useState(bus.bus_type);
-  const [busOwner, setBusOwner] = useState(bus.bus_owner);
+  const [busNumber, setBusNumber] = useState(bus.busNumber);
+  const [busType, setBusType] = useState(bus.busType);
+  const [busOwner, setBusOwner] = useState(bus.busOwner);
   const [description, setDescription] = useState(bus.description);
-  const [busStatus, setBusStatus] = useState(bus.bus_status);
+  const [busStatus, setBusStatus] = useState(bus.busStatus);
 
   useEffect(() => {
     // Reset form when the bus prop changes
-    setBusNumber(bus.bus_number);
-    setBusType(bus.bus_type);
-    setBusOwner(bus.bus_owner);
+    setBusNumber(bus.busNumber);
+    setBusType(bus.busType);
+    setBusOwner(bus.busOwner);
     setDescription(bus.description);
-    setBusStatus(bus.bus_status);
+    setBusStatus(bus.busStatus);
   }, [bus]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const updatedBus: Buses = {
-      id: bus.id, // Ensure the bus ID remains the same
-      bus_number: busNumber,
-      bus_type: busType,
-      bus_owner: busOwner,
+      id: bus.id,
+      busNumber: busNumber,
+      busType: busType,
+      busOwner: busOwner,
       description,
-      bus_status: busStatus,
+      busStatus: busStatus,
     };
 
-    onUpdate(updatedBus);
+    onUpdate(updatedBus,bus.id);
     setOpen(false);
   };
 
@@ -96,7 +96,7 @@ export default function EditBusDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Standard">Standard</SelectItem>
-                  <SelectItem value="Luxury">Luxury</SelectItem>
+                  <SelectItem value="Business">Business</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -1,9 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useDispatch } from "react-redux"
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { createBus } from "@/app/actions/bus.action";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,53 +10,60 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Buses, addBus } from "@/lib/slices/bus-slices"
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Buses, addBus } from "@/lib/slices/bus-slices";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 export default function NewBusDialog() {
-  const [open, setOpen] = useState(false)
-  const [busNumber, setBusNumber] = useState("")
-  const [busType, setBusType] = useState("")
-  const [busOwner, setBusOwner] = useState("")
-  const [description, setDescription] = useState("")
-  const [busStatus, setBusStatus] = useState("")
+  const [open, setOpen] = useState(false);
+  const [busNumber, setBusNumber] = useState("");
+  const [busType, setBusType] = useState("");
+  const [busOwner, setBusOwner] = useState("");
+  const [description, setDescription] = useState("");
+  const [busStatus, setBusStatus] = useState("");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    const newBus: Buses = {
-      id: 0,
-      bus_number: busNumber,
-      bus_type: busType,
-      bus_owner: busOwner,
+    const newBus: Omit<Buses, "id"> = {
+      busNumber,
+      busType,
+      busOwner,
       description,
-      bus_status: busStatus,
-    }
+      busStatus,
+    };
 
-    dispatch(addBus(newBus))
-    setOpen(false)
-    resetForm()
-  }
+    try {
+      const createdBus = await createBus(newBus);
+      dispatch(addBus(createdBus));
+      setOpen(false);
+      resetForm();
+    } catch (error: any) {
+      console.error("Failed to create the bus:", error.message);
+    }
+  };
 
   const resetForm = () => {
-    setBusNumber("")
-    setBusType("")
-    setBusOwner("")
-    setDescription("")
-    setBusStatus("")
-  }
+    setBusNumber("");
+    setBusType("");
+    setBusOwner("");
+    setDescription("");
+    setBusStatus("");
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -83,7 +88,7 @@ export default function NewBusDialog() {
                 placeholder="Enter Bus Number"
                 value={busNumber}
                 onChange={(e) => setBusNumber(e.target.value)}
-                maxLength={9} // Limits input length to 9 characters
+                maxLength={9}
               />
             </div>
             <div className="grid gap-2">
@@ -93,8 +98,8 @@ export default function NewBusDialog() {
                   <SelectValue placeholder="Select Bus Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Active">Standard</SelectItem>
-                  <SelectItem value="Under Maintenance">Luxury</SelectItem>
+                  <SelectItem value="Standard">Standard</SelectItem>
+                  <SelectItem value="Business">Business</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -105,7 +110,7 @@ export default function NewBusDialog() {
                 placeholder="Enter Bus Owner"
                 value={busOwner}
                 onChange={(e) => setBusOwner(e.target.value)}
-                maxLength={55} // Limits input length to 55 characters
+                maxLength={55}
               />
             </div>
             <div className="grid gap-2 md:col-span-2">
@@ -116,7 +121,7 @@ export default function NewBusDialog() {
                 placeholder="Enter description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                maxLength={255} // Limits input length to 255 characters
+                maxLength={255}
               />
             </div>
             <div className="grid gap-2">
@@ -140,5 +145,5 @@ export default function NewBusDialog() {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

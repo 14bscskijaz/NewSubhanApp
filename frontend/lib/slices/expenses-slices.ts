@@ -7,7 +7,8 @@ export type Expense = {
   date: string; // Date
   type: 'bus' | 'general'; // Enum-like string (varchar)
   voucherId?: number | string; // Foreign key
-  busId?: number; // Foreign key
+  busId?: number;
+  routeId?:number; // Foreign key
   amount: number; // Integer
   description: string; // Varchar(255)
 };

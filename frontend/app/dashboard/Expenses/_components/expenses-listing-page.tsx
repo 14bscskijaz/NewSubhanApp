@@ -11,12 +11,18 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import RouteTable from './expenses-tables';
+import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
+import { getAllBuses } from '@/app/actions/bus.action';
+import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
+import { getAllRoutes } from '@/app/actions/route.action';
+import { setRoute } from '@/lib/slices/route-slices';
 
 type TExpensesListingPage = {};
 
 export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const busClosingVouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const expenses = useSelector<RootState, Expense[]>(allExpenses);
+  const savedTrips = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -24,23 +30,52 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
   const dispatch = useDispatch();
 
-  // Effect to filter data and set the expenses
+  const fetchEmoployee = async () => {
+    const allBusesData = await getAllBuses();
+    const allRoutes = await getAllRoutes();
+    dispatch(setBus(allBusesData))
+    dispatch(setRoute(allRoutes))
+  }
+
   useEffect(() => {
+    fetchEmoployee();
+
     const filteredData: Omit<Expense, 'id'>[] = busClosingVouchers
       .filter((voucher) =>
         selectedDate ? voucher.date === selectedDate.toISOString().split('T')[0] : true
       )
-      .map((voucher) => ({
-        busId: Number(voucher.busId),
-        voucherId: voucher.id,
-        date: voucher.date,
-        description: '',
-        amount: 0,
-        type: 'bus',
-      }));
-    console.log(filteredData, "filteredData");
+      .map((voucher) => {
+        let idx = 0
+        // Ensure both routeClosingVoucherId and voucher.id are numbers for comparison
+        const relatedSavedTrips = savedTrips.filter((trip) => {
+          const tripVoucherId = Number(trip.routeClosingVoucherId); // Ensure number
+          const voucherId = Number(voucher.id); // Ensure number
+          return tripVoucherId === voucherId;
+        });
+
+        // Get the first saved trip and extract its routeId, converting it to a number
+        const routeId = relatedSavedTrips[idx]?.routeId
+          ? Number(relatedSavedTrips[idx]?.routeId)
+          : undefined;
+
+        idx = idx + 1;
+        return {
+          busId: Number(voucher.busId),
+          voucherId: voucher.id,
+          date: voucher.date,
+          description: '',
+          amount: 0,
+          type: 'bus',
+          routeId,
+        };
+      });
+
+    console.log(filteredData, "filteredData with routeId");
     dispatch(setExpenses(filteredData));
-  }, [busClosingVouchers, selectedDate, dispatch]);
+  }, [busClosingVouchers, selectedDate, savedTrips, dispatch]);
+
+
+
 
   // Effect to handle pagination parameters from the URL
   useEffect(() => {
@@ -70,7 +105,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
         </div>
         <div className="flex items-start justify-between">
           <Heading title={`Expenses (${totalData})`} description="" />
-          
+
         </div>
         <Separator />
         <div className="space-y-2">

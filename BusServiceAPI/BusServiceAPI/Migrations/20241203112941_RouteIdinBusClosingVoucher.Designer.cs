@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BusServiceAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241124104252_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241203112941_RouteIdinBusClosingVoucher")]
+    partial class RouteIdinBusClosingVoucher
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,7 +86,7 @@ namespace BusServiceAPI.Migrations
                     b.Property<int>("Commission")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ConductorId")
+                    b.Property<int?>("ConductorId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Date")
@@ -107,6 +107,9 @@ namespace BusServiceAPI.Migrations
                     b.Property<int>("Revenue")
                         .HasColumnType("integer");
 
+                    b.Property<int>("RouteId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Toll")
                         .HasColumnType("integer");
 
@@ -120,6 +123,8 @@ namespace BusServiceAPI.Migrations
                     b.HasIndex("ConductorId");
 
                     b.HasIndex("DriverId");
+
+                    b.HasIndex("RouteId");
 
                     b.ToTable("BusClosingVouchers");
                 });
@@ -395,12 +400,17 @@ namespace BusServiceAPI.Migrations
                     b.HasOne("BusServiceAPI.Models.Employee", "Conductor")
                         .WithMany("BusClosingVouchersAsConductor")
                         .HasForeignKey("ConductorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BusServiceAPI.Models.Employee", "Driver")
                         .WithMany("BusClosingVouchersAsDriver")
                         .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BusServiceAPI.Models.Route", "Route")
+                        .WithMany("BusClosingVouchers")
+                        .HasForeignKey("RouteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -409,6 +419,8 @@ namespace BusServiceAPI.Migrations
                     b.Navigation("Conductor");
 
                     b.Navigation("Driver");
+
+                    b.Navigation("Route");
                 });
 
             modelBuilder.Entity("BusServiceAPI.Models.Expense", b =>
@@ -481,6 +493,8 @@ namespace BusServiceAPI.Migrations
 
             modelBuilder.Entity("BusServiceAPI.Models.Route", b =>
                 {
+                    b.Navigation("BusClosingVouchers");
+
                     b.Navigation("FixedBusClosingExpenses");
 
                     b.Navigation("FixedTripExpenses");

@@ -27,7 +27,7 @@ namespace BusServiceAPI.Controllers
               {
                   Id = t.Id,
                   RouteClosingVoucherId = t.RouteClosingVoucherId,
-                  RouteId = t.Route.Id,
+                  RouteId = t.RouteId,
                   PassengerCount = t.PassengerCount,
                   FullTicketCount = t.FullTicketCount,
                   HalfTicketCount = t.HalfTicketCount,
@@ -50,7 +50,7 @@ namespace BusServiceAPI.Controllers
                {
                    Id = t.Id,
                    RouteClosingVoucherId = t.RouteClosingVoucherId,
-                   RouteId = t.Route.Id,
+                   RouteId = t.RouteId,
                    PassengerCount = t.PassengerCount,
                    FullTicketCount = t.FullTicketCount,
                    HalfTicketCount = t.HalfTicketCount,
@@ -77,7 +77,7 @@ namespace BusServiceAPI.Controllers
             var trip = new Trip
             {
                 RouteClosingVoucherId = tripDto.RouteClosingVoucherId,
-                Id = tripDto.RouteId,
+                RouteId = tripDto.RouteId,
                 PassengerCount = tripDto.PassengerCount,
                 FullTicketCount = tripDto.FullTicketCount,
                 HalfTicketCount = tripDto.HalfTicketCount,
@@ -94,7 +94,7 @@ namespace BusServiceAPI.Controllers
             {
                 Id = trip.Id,
                 RouteClosingVoucherId = trip.RouteClosingVoucherId,
-                RouteId = trip.Route.Id,
+                RouteId = trip.RouteId,
                 PassengerCount = trip.PassengerCount,
                 FullTicketCount = trip.FullTicketCount,
                 HalfTicketCount = trip.HalfTicketCount,
@@ -116,7 +116,7 @@ namespace BusServiceAPI.Controllers
                 return NotFound();
 
             trip.RouteClosingVoucherId = tripDto.RouteClosingVoucherId;
-            trip.Route.Id = tripDto.RouteId;
+            trip.RouteId = tripDto.RouteId;
             trip.PassengerCount = tripDto.PassengerCount;
             trip.FullTicketCount = tripDto.FullTicketCount;
             trip.HalfTicketCount = tripDto.HalfTicketCount;

@@ -68,7 +68,7 @@ namespace BusServiceAPI.Controllers
             {
                 Date = expenseDto.Date,
                 Type = expenseDto.Type,
-                Id = expenseDto.BusId,
+                BusId = expenseDto.BusId,
                 Amount = expenseDto.Amount,
                 Description = expenseDto.Description
             };
@@ -81,7 +81,7 @@ namespace BusServiceAPI.Controllers
                 Id = expense.Id,
                 Date = expense.Date,
                 Type = expense.Type,
-                BusId = expense.Bus.Id,
+                BusId = expense.BusId,
                 Amount = expense.Amount,
                 Description = expense.Description
             };
@@ -98,7 +98,7 @@ namespace BusServiceAPI.Controllers
 
             expense.Date = expenseDto.Date;
             expense.Type = expenseDto.Type;
-            expense.Bus.Id = expenseDto.BusId;
+            expense.BusId = expenseDto.BusId;
             expense.Amount = expenseDto.Amount;
             expense.Description = expenseDto.Description;
 

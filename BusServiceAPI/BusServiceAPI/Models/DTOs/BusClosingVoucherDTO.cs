@@ -7,6 +7,7 @@
         public int DriverId { get; set; } // FK to Employee
         public int ConductorId { get; set; } // FK to Employee
         public int BusId { get; set; } // FK to Bus
+        public int RouteId { get; set; } //
         public int VoucherNumber { get; set; } // Int
         public int Commission { get; set; } // Int
         public int Diesel { get; set; } // Int

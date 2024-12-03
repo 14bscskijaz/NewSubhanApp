@@ -26,7 +26,7 @@ namespace BusServiceAPI.Controllers
                 .Select(e => new FixedBusClosingExpenseDTO
                 {
                     Id = e.Id,
-                    RouteId = e.Route.Id,
+                    RouteId = e.RouteId,
                     DriverCommission = e.DriverCommission,
                     COilExpense = e.COilExpense,
                     TollTax = e.TollTax,
@@ -49,7 +49,7 @@ namespace BusServiceAPI.Controllers
                 .Select(e => new FixedBusClosingExpenseDTO
                 {
                     Id = e.Id,
-                    RouteId = e.Route.Id,
+                    RouteId = e.RouteId,
                     DriverCommission = e.DriverCommission,
                     COilExpense = e.COilExpense,
                     TollTax = e.TollTax,
@@ -69,14 +69,21 @@ namespace BusServiceAPI.Controllers
 
         // POST: api/FixedBusClosingExpense
         [HttpPost]
-        public IActionResult CreateFixedBusClosingExpense([FromBody] FixedBusClosingExpenseDTO expenseDto)
+        public async Task<IActionResult> CreateFixedBusClosingExpense([FromBody] FixedBusClosingExpenseDTO expenseDto)
         {
             if (expenseDto == null)
-                return BadRequest();
+                return BadRequest("Expense data is required");
+
+            // Check if route exists
+            var routeExists = await _context.Routes.AnyAsync(r => r.Id == expenseDto.RouteId);
+            if (!routeExists)
+            {
+                return BadRequest($"Route with ID {expenseDto.RouteId} does not exist");
+            }
 
             var expense = new FixedBusClosingExpense
             {
-                Id = expenseDto.RouteId,
+                RouteId = expenseDto.RouteId,
                 DriverCommission = expenseDto.DriverCommission,
                 COilExpense = expenseDto.COilExpense,
                 TollTax = expenseDto.TollTax,
@@ -87,26 +94,34 @@ namespace BusServiceAPI.Controllers
                 AlliedMorde = expenseDto.AlliedMorde
             };
 
-            _context.FixedBusClosingExpenses.Add(expense);
-            _context.SaveChanges();
-
-            var createdExpense = new FixedBusClosingExpenseDTO
+            try
             {
-                Id = expense.Id,
-                RouteId = expense.Route.Id,
-                DriverCommission = expense.DriverCommission,
-                COilExpense = expense.COilExpense,
-                TollTax = expense.TollTax,
-                HalfSafai = expense.HalfSafai,
-                FullSafai = expense.FullSafai,
-                DcPerchi = expense.DcPerchi,
-                RefreshmentRate = expense.RefreshmentRate,
-                AlliedMorde = expense.AlliedMorde
-            };
+                _context.FixedBusClosingExpenses.Add(expense);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetFixedBusClosingExpense), new { id = createdExpense.Id }, createdExpense);
+                var createdExpense = new FixedBusClosingExpenseDTO
+                {
+                    Id = expense.Id,
+                    RouteId = expense.RouteId,
+                    DriverCommission = expense.DriverCommission,
+                    COilExpense = expense.COilExpense,
+                    TollTax = expense.TollTax,
+                    HalfSafai = expense.HalfSafai,
+                    FullSafai = expense.FullSafai,
+                    DcPerchi = expense.DcPerchi,
+                    RefreshmentRate = expense.RefreshmentRate,
+                    AlliedMorde = expense.AlliedMorde
+                };
+
+                return CreatedAtAction(nameof(GetFixedBusClosingExpense),
+                    new { id = createdExpense.Id },
+                    createdExpense);
+            }
+            catch (DbUpdateException ex)
+            {
+                return BadRequest($"Failed to create expense: {ex.InnerException?.Message ?? ex.Message}");
+            }
         }
-
         // PUT: api/FixedBusClosingExpense/5
         [HttpPut("{id}")]
         public IActionResult UpdateFixedBusClosingExpense(int id, [FromBody] FixedBusClosingExpenseDTO expenseDto)
@@ -115,7 +130,7 @@ namespace BusServiceAPI.Controllers
             if (expense == null)
                 return NotFound();
 
-            expense.Route.Id = expenseDto.RouteId;
+            expense.RouteId = expenseDto.RouteId;
             expense.DriverCommission = expenseDto.DriverCommission;
             expense.COilExpense = expenseDto.COilExpense;
             expense.TollTax = expenseDto.TollTax;

@@ -13,6 +13,8 @@
         public ICollection<FixedTripExpense> FixedTripExpenses { get; set; }
         public ICollection<FixedBusClosingExpense> FixedBusClosingExpenses { get; set; }
         public ICollection<TicketPricing> TicketPricings { get; set; }
+        public ICollection<BusClosingVoucher> BusClosingVouchers { get; set; }
+
     }
 
 }

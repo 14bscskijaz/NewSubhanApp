@@ -118,6 +118,12 @@ namespace BusServiceAPI.Common
                       .WithMany(e => e.BusClosingVouchers)
                       .HasForeignKey(e => e.BusId)  // Explicit foreign key
                       .OnDelete(DeleteBehavior.Restrict);
+
+                // Configure Bus relationship
+                entity.HasOne(b => b.Route)
+                      .WithMany(e => e.BusClosingVouchers)
+                      .HasForeignKey(e => e.RouteId)  // Explicit foreign key
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Expense Configuration

@@ -26,7 +26,7 @@ namespace BusServiceAPI.Controllers
                 .Select(e => new FixedTripExpenseDTO
                 {
                     Id = e.Id,
-                    RouteId = e.Route.Id,
+                    RouteId = e.RouteId,
                     RouteCommission = e.RouteCommission,
                     RewardCommission = e.RewardCommission,
                     Steward = e.Steward,
@@ -47,7 +47,7 @@ namespace BusServiceAPI.Controllers
                 .Select(e => new FixedTripExpenseDTO
                 {
                     Id = e.Id,
-                    RouteId = e.Route.Id,
+                    RouteId = e.RouteId,
                     RouteCommission = e.RouteCommission,
                     RewardCommission = e.RewardCommission,
                     Steward = e.Steward,
@@ -72,7 +72,7 @@ namespace BusServiceAPI.Controllers
 
             var expense = new FixedTripExpense
             {
-                Id = expenseDto.RouteId,
+                RouteId = expenseDto.RouteId,
                 RouteCommission = expenseDto.RouteCommission,
                 RewardCommission = expenseDto.RewardCommission,
                 Steward = expenseDto.Steward,
@@ -87,7 +87,7 @@ namespace BusServiceAPI.Controllers
             var createdExpense = new FixedTripExpenseDTO
             {
                 Id = expense.Id,
-                RouteId = expense.Route.Id,
+                RouteId = expense.RouteId,
                 RouteCommission = expense.RouteCommission,
                 RewardCommission = expense.RewardCommission,
                 Steward = expense.Steward,
@@ -107,7 +107,7 @@ namespace BusServiceAPI.Controllers
             if (expense == null)
                 return NotFound();
 
-            expense.Route.Id = expenseDto.RouteId;
+            expense.RouteId = expenseDto.RouteId;
             expense.RouteCommission = expenseDto.RouteCommission;
             expense.RewardCommission = expenseDto.RewardCommission;
             expense.Steward = expenseDto.Steward;

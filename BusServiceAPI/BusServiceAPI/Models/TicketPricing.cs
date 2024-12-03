@@ -11,5 +11,4 @@
         public int RouteId { get; set; }
     }
 
-
 }

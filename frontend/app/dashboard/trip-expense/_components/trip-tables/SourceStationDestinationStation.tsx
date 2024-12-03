@@ -1,7 +1,6 @@
 // components/SourceDestination.tsx
-import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';  // Assuming RootState is defined here
 import { allRoutes } from '@/lib/slices/route-slices';
+import { useSelector } from 'react-redux';
 
 interface SourceDestinationProps {
   routeId: string | number;
@@ -17,7 +16,7 @@ const SourceDestination = ({ routeId }: SourceDestinationProps) => {
   // Ensure routeId is valid before finding the route
   const route = routes.find(route => route.id === routeIdNumber);
 
-  return route ? `${route.sourceStation} - ${route.destinationStation}` : 'N/A';
+  return route ? `${route.sourceAdda} - ${route.destinationAdda}` : 'N/A';
 };
 
 export default SourceDestination;

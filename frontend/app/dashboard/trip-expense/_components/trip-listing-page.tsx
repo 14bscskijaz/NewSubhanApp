@@ -1,27 +1,34 @@
 'use client';
+import { getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { Route, allRoutes } from '@/lib/slices/route-slices';
+import { FixedTripExpense, allFixedTripExpenses } from '@/lib/slices/fixed-trip-expense';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation'; // Import useSearchParams
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import NewTripDialog from './new-trip-dialogue';
 import TripTable from './trip-tables';
-import { Trip, allTrips } from '@/lib/slices/fixed-trip-expense';
 
 type TTripListingPage = {};
 
 export default function TripListingPage({}: TTripListingPage) {
-  const trips = useSelector<RootState, Trip[]>(allTrips);
+  const trips = useSelector<RootState, FixedTripExpense[]>(allFixedTripExpenses);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(10);
 
+  const fetchFixedTripExpense = async() =>{
+    const fetchFixedExpense = await getAllFixedTripExpenses();
+    console.log(fetchFixedExpense,"fetchFixedExpense");
+    
+  }
+
   useEffect(() => {
+    fetchFixedTripExpense();
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';

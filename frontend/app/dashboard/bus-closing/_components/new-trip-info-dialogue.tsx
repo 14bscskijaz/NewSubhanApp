@@ -12,27 +12,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
+  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectContent
+  SelectTrigger
 } from '@/components/ui/select';
-import { BusClosing, addBusClosing } from '@/lib/slices/bus-closing';
+import { BusClosing } from '@/lib/slices/bus-closing';
+import {
+  FixedTripExpense,
+  allFixedTripExpenses
+} from '@/lib/slices/fixed-trip-expense';
+import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices'; // Make sure this path is correct
 import { Route, allRoutes } from '@/lib/slices/route-slices';
+import {
+  TripInformation,
+  TripInformationInput,
+  addTripInformation
+} from '@/lib/slices/trip-information';
 import { RootState } from '@/lib/store';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices'; // Make sure this path is correct
-import {
-  addTripInformation,
-  allTripsInformation,
-  TripInformation,
-  TripInformationInput
-} from '@/lib/slices/trip-information';
-import {
-  allFixedTripExpenses,
-  FixedTripExpense
-} from '@/lib/slices/fixed-trip-expense';
 
 export default function NewRouteDialog({
   busId,
@@ -52,8 +51,6 @@ export default function NewRouteDialog({
   const [routeData, setRouteData] = useState<
     Omit<BusClosing, 'id' | 'departureTime'>
   >({
-    sourceStation: '',
-    destinationStation: '',
     routeClosingVoucherId: '',
     routeId: '',
     passengerCount: '',
@@ -65,7 +62,7 @@ export default function NewRouteDialog({
   });
   const [tripData, setTripData] = useState<Omit<TripInformationInput, 'id'>>({
     routeClosingVoucherId: '',
-    routeId: '', // Calculated from source and destination station
+    routeId: '',
     passengerCount: '',
     fullTicketBusinessCount: '',
     fullTicketCount: '',
@@ -108,7 +105,7 @@ export default function NewRouteDialog({
     const luxuryTicketPrice = tickets.find(
       (ticket) =>
         ticket.routeId.toString() === updatedData.routeId &&
-        ticket.busType === 'Luxury'
+        ticket.busType === 'Business'
     )?.ticketPrice;
 
     let ticketEarnings = 0;
@@ -157,9 +154,9 @@ export default function NewRouteDialog({
         // Recalculate the routeId if source or destination station changes
         const newRouteId = routes.find(
           (route) =>
-            route.sourceStation ===
+            route.sourceAdda ===
               (id === 'sourceStation' ? value : prev.sourceStation) &&
-            route.destinationStation ===
+            route.destinationAdda ===
               (id === 'destinationStation' ? value : prev.destinationStation)
         )?.id;
         updatedData.routeId = newRouteId ? String(newRouteId) : '';
@@ -210,7 +207,7 @@ export default function NewRouteDialog({
     });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const newTripData: Omit<TripInformation, 'id'> = {
@@ -225,7 +222,7 @@ export default function NewRouteDialog({
       actualRevenue: tripData.actualRevenue,
       revenueDiffExplanation: tripData.revenueDiffExplanation
     };
-
+    // await createTrip(newTripData)
     // dispatch(addBusClosing(newRoute));
     dispatch(addTripInformation(newTripData));
     setOpen(false);
@@ -250,11 +247,11 @@ export default function NewRouteDialog({
   };
 
   const getSourceStations = () => {
-    return [...new Set(routes.map((route) => route.sourceStation))];
+    return [...new Set(routes.map((route) => route.sourceAdda))];
   };
 
   const getDestinationStations = () => {
-    return [...new Set(routes.map((route) => route.destinationStation))];
+    return [...new Set(routes.map((route) => route.destinationAdda))];
   };
 
   // Check if all required values are set (routeId, busId, voucherNumber, driverId)

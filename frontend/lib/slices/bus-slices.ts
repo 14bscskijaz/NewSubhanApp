@@ -1,41 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-import { v4 as uuidv4 } from 'uuid';
-
 // Define the Bus type to reflect the new data structure
 export type Buses = {
     id: number;
-    bus_number: string; 
-    bus_type: string; 
-    bus_owner: string; 
-    description: string; 
-    bus_status: string; 
-}
+    busNumber: string;
+    busType: string;
+    busOwner: string;
+    description: string;
+    busStatus: string;
+};
 
 interface BusState {
     buses: Buses[];
 }
 
-// Initialize state with example data for buses
-// Initialize state with example data for buses in Pakistani context
+// Initialize state with example data for buses in the Pakistani context
 const initialState: BusState = {
     buses: [
         {
             id: 1,
-            bus_number: 'PAK-786',
-            bus_type: 'AC Coach',
-            bus_owner: 'Ali Khan',
+            busNumber: 'PAK-786',
+            busType: 'AC Coach',
+            busOwner: 'Ali Khan',
             description: 'An air-conditioned coach for long-distance travel, equipped with comfortable seating and refreshments.',
-            bus_status: 'Active',
+            busStatus: 'Active',
         },
         {
             id: 2,
-            bus_number: 'ISB-321',
-            bus_type: 'Hiace Van',
-            bus_owner: 'Sara Ahmed',
+            busNumber: 'ISB-321',
+            busType: 'Hiace Van',
+            busOwner: 'Sara Ahmed',
             description: 'A well-maintained van ideal for intercity routes within Punjab, offering a comfortable journey.',
-            bus_status: 'Under Maintenance',
+            busStatus: 'Under Maintenance',
         },
     ],
 };
@@ -45,8 +42,12 @@ const busSlice = createSlice({
     name: 'bus',
     initialState,
     reducers: {
+        setBus: (state, action: PayloadAction<Buses[]>) => {
+            // Replace the entire state with the new array of buses
+            state.buses = action.payload;
+        },
         addBus: (state, action: PayloadAction<Omit<Buses, 'id'>>) => {
-            const newBus = { ...action.payload, id: state.buses.length + 1 }; 
+            const newBus = { ...action.payload, id: state.buses.length + 1 };
             state.buses.push(newBus);
         },
         removeBus: (state, action: PayloadAction<number>) => {
@@ -61,7 +62,7 @@ const busSlice = createSlice({
     },
 });
 
-export const { addBus, removeBus, updateBus } = busSlice.actions;
+export const { setBus, addBus, removeBus, updateBus } = busSlice.actions;
 export default busSlice.reducer;
 
 // Selector to retrieve all buses from the state

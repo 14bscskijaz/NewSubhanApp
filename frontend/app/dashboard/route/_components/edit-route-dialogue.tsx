@@ -63,55 +63,55 @@ export default function EditRouteDialog({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4 md:grid-cols-2">
-            {/* Source */}
+            {/* Source City */}
             <div className="grid gap-2">
-              <Label htmlFor="source" className="text-gradient">
-                Source
+              <Label htmlFor="sourceCity" className="text-gradient">
+                Source City
               </Label>
               <Input
-                id="source"
-                value={formData.source || ""}
+                id="sourceCity"
+                value={formData.sourceCity || ""}
                 onChange={handleInputChange}
-                placeholder="Enter source"
+                placeholder="Enter source city"
               />
             </div>
 
-            {/* Source Station */}
+            {/* Source Adda */}
             <div className="grid gap-2">
-              <Label htmlFor="sourceStation" className="text-gradient">
-                Source Station
+              <Label htmlFor="sourceAdda" className="text-gradient">
+                Source Adda
               </Label>
               <Input
-                id="sourceStation"
-                value={formData.sourceStation || ""}
+                id="sourceAdda"
+                value={formData.sourceAdda || ""}
                 onChange={handleInputChange}
-                placeholder="Enter source station"
+                placeholder="Enter source adda"
               />
             </div>
 
-            {/* Destination */}
+            {/* Destination City */}
             <div className="grid gap-2">
-              <Label htmlFor="destination" className="text-gradient">
-                Destination
+              <Label htmlFor="destinationCity" className="text-gradient">
+                Destination City
               </Label>
               <Input
-                id="destination"
-                value={formData.destination || ""}
+                id="destinationCity"
+                value={formData.destinationCity || ""}
                 onChange={handleInputChange}
-                placeholder="Enter destination"
+                placeholder="Enter destination city"
               />
             </div>
 
-            {/* Destination Station */}
+            {/* Destination Adda */}
             <div className="grid gap-2">
-              <Label htmlFor="destinationStation" className="text-gradient">
-                Destination Station
+              <Label htmlFor="destinationAdda" className="text-gradient">
+                Destination Adda
               </Label>
               <Input
-                id="destinationStation"
-                value={formData.destinationStation || ""}
+                id="destinationAdda"
+                value={formData.destinationAdda || ""}
                 onChange={handleInputChange}
-                placeholder="Enter destination station"
+                placeholder="Enter destination adda"
               />
             </div>
           </div>

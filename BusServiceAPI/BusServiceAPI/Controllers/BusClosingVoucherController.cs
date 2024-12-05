@@ -142,13 +142,39 @@ namespace BusServiceAPI.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                // Create response DTO with the saved data
+                var createdVoucherDto = new BusClosingVoucherDTO
+                {
+                    Id = voucher.Id,
+                    Date = voucher.Date,
+                    VoucherNumber = voucher.VoucherNumber,
+                    DriverId = voucher.DriverId,
+                    ConductorId = voucher.ConductorId ?? 0,
+                    BusId = voucher.BusId,
+                    RouteId = voucher.RouteId,
+                    Commission = voucher.Commission,
+                    Diesel = voucher.Diesel,
+                    DieselLitres = voucher.DieselLitres,
+                    COilTechnician = voucher.COilTechnician,
+                    Toll = voucher.Toll,
+                    Cleaning = voucher.Cleaning,
+                    Alliedmor = voucher.Alliedmor,
+                    CityParchi = voucher.CityParchi,
+                    Refreshment = voucher.Refreshment,
+                    Revenue = voucher.Revenue
+                };
+
+                return CreatedAtAction(
+                    nameof(GetBusClosingVoucher),
+                    new { id = createdVoucherDto.Id },
+                    createdVoucherDto
+                );
             }
             catch (DbUpdateException)
             {
                 return BadRequest("Unable to save the voucher. Please verify all required fields.");
             }
 
-            return CreatedAtAction(nameof(GetBusClosingVoucher), new { id = voucher.Id }, voucher);
         }
 
         // PUT: api/BusClosingVoucher/5

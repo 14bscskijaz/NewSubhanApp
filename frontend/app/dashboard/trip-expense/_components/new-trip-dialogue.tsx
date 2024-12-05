@@ -1,5 +1,6 @@
 'use client';
 
+import { createFixedTripExpense, getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,14 +20,13 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { FixedTripExpense, setFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
-import { FixedTripExpense, addFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { RootState } from '@/lib/store';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createFixedTripExpense } from '@/app/actions/FixedTripExpense.action';
 
 export default function NewTripDialog() {
   const [open, setOpen] = useState(false);
@@ -66,7 +66,8 @@ export default function NewTripDialog() {
       refreshment: Number(refreshment)
     };
     await createFixedTripExpense(newTrip);
-    dispatch(addFixedTripExpense(newTrip));
+    const fixedExpenses = await getAllFixedTripExpenses()
+    dispatch(setFixedTripExpense(fixedExpenses));
     setOpen(false);
     resetForm();
   };

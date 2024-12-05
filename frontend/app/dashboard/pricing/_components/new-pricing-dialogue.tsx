@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { TicketPrice, TicketPriceRaw, addTicketRaw } from "@/lib/slices/pricing-slices"
+import { TicketPrice, TicketPriceRaw, addTicketRaw, setTicketRaw } from "@/lib/slices/pricing-slices"
 import { Route, allRoutes } from "@/lib/slices/route-slices"
 import { RootState } from "@/lib/store"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createTicketPrice } from "@/app/actions/pricing.action"
+import { createTicketPrice, getAllTicketPrices } from "@/app/actions/pricing.action"
 
 export default function NewPricingDialog() {
   const routes = useSelector<RootState, Route[]>(allRoutes)
@@ -31,14 +31,14 @@ export default function NewPricingDialog() {
   const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const newTicket: TicketPriceRaw = {
-      id: Date.now(),
+    const newTicket: Omit<TicketPriceRaw,"id"> = {
       routeId: Number(routeId),
       ticketPrice: Number(ticketPrice),
       busType,
     }
     await createTicketPrice(newTicket)
-    dispatch(addTicketRaw(newTicket))
+    const allTicketData = await getAllTicketPrices()
+    dispatch(setTicketRaw(allTicketData))
     setOpen(false)
     resetForm()
   }
@@ -108,7 +108,7 @@ export default function NewPricingDialog() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Standard">Standard</SelectItem>
-                  <SelectItem value="Luxury">Luxury</SelectItem>
+                  <SelectItem value="Business">Business</SelectItem>
                 </SelectContent>
               </Select>
             </div>

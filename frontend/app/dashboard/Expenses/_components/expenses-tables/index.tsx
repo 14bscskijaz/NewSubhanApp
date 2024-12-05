@@ -7,6 +7,7 @@ import { DataTableExpense } from './data-table-expense';
 import {
   useExpensesTableFilters
 } from './use-expenses-table-filters';
+import { Button } from '@/components/ui/button';
 
 export default function RouteTable({
   data,
@@ -42,6 +43,9 @@ export default function RouteTable({
         />
       </div>
       <DataTableExpense columns={columns} data={data} totalItems={totalData} />
+      <div className='flex justify-end'>
+        <Button className=''>Submit Expense</Button>
+      </div>
     </div>
   );
 }

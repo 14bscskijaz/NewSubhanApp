@@ -145,7 +145,7 @@ export default function EditPricingDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Standard">Standard</SelectItem>
-                  <SelectItem value="Luxury">Luxury</SelectItem>
+                  <SelectItem value="Business">Luxury</SelectItem>
                 </SelectContent>
               </Select>
             </div>

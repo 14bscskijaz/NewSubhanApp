@@ -28,7 +28,7 @@ export const columns: ColumnDef<ClosingExpense>[] = [
     header: 'Driver Commission'
   },
   {
-    accessorKey: 'coilExpense',
+    accessorKey: 'cOilExpense',
     header: 'C. Oil Expense'
   },
   {
@@ -48,7 +48,7 @@ export const columns: ColumnDef<ClosingExpense>[] = [
     header: 'Refreshment Rate'
   },
   {
-    accessorKey: 'dcParchi',
+    accessorKey: 'dcPerchi',
     header: 'DC Parchi (Fsd Only)'
   },
   {

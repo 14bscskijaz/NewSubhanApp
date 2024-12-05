@@ -4,19 +4,26 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Heading } from '@/components/ui/heading';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
+import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { Expense, allExpenses, setExpenses } from '@/lib/slices/expenses-slices';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import RouteTable from './expenses-tables';
+import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
+import { getAllBuses } from '@/app/actions/bus.action';
+import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
+import { getAllRoutes } from '@/app/actions/route.action';
+import { setRoute } from '@/lib/slices/route-slices';
+import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
 
 type TExpensesListingPage = {};
 
 export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const busClosingVouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const expenses = useSelector<RootState, Expense[]>(allExpenses);
+  const savedTrips = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -24,23 +31,41 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
   const dispatch = useDispatch();
 
-  // Effect to filter data and set the expenses
+  const fetchEmoployee = async () => {
+    const allBusesData = await getAllBuses();
+    const allRoutes = await getAllRoutes();
+    const allVouchers = await getAllBusClosingVouchers()
+    console.log(allVouchers,"allVouchers");
+    
+    dispatch(setBus(allBusesData))
+    dispatch(setRoute(allRoutes))
+    dispatch(setBusClosingVoucher(allVouchers))
+  }
+
   useEffect(() => {
+    fetchEmoployee();
+
     const filteredData: Omit<Expense, 'id'>[] = busClosingVouchers
       .filter((voucher) =>
-        selectedDate ? voucher.date === selectedDate.toISOString().split('T')[0] : true
+        selectedDate ? voucher.date.split('T')[0] === selectedDate.toISOString().split('T')[0] : true
       )
-      .map((voucher) => ({
-        busId: Number(voucher.busId),
-        voucherId: voucher.id,
-        date: voucher.date,
-        description: '',
-        amount: 0,
-        type: 'bus',
-      }));
-    console.log(filteredData, "filteredData");
+      .map((voucher) => {
+        return {
+          busId: Number(voucher.busId),
+          voucherId: voucher.id,
+          date: voucher.date,
+          description: '',
+          amount: 0,
+          type: 'bus',
+          routeId:voucher.routeId,
+        };
+      });
+
     dispatch(setExpenses(filteredData));
-  }, [busClosingVouchers, selectedDate, dispatch]);
+  }, [selectedDate]);
+
+
+
 
   // Effect to handle pagination parameters from the URL
   useEffect(() => {
@@ -70,7 +95,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
         </div>
         <div className="flex items-start justify-between">
           <Heading title={`Expenses (${totalData})`} description="" />
-          
+
         </div>
         <Separator />
         <div className="space-y-2">

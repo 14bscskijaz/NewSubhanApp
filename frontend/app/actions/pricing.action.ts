@@ -15,7 +15,7 @@ export async function getAllTicketPrices(): Promise<TicketPriceRaw[]> {
 }
 
 // Create a new ticket price
-export async function createTicketPrice(ticketPrice: TicketPriceRaw): Promise<TicketPriceRaw> {
+export async function createTicketPrice(ticketPrice: Omit<TicketPriceRaw,"id">): Promise<Omit<TicketPriceRaw,"id">> {
     try {
         const response = await axios.post(API_BASE_URL, ticketPrice);
         return response.data;

@@ -19,6 +19,7 @@ export type BusClosingVoucher = {
   cityParchi: number | null;
   refreshment: number | null;
   revenue: number | null;
+  routeId?:number
 };
 
 // Define the initial state with BusClosingVoucher type
@@ -36,10 +37,10 @@ const initialState: BusClosingVoucherState = {
     {
       id: 1,
       date: getCurrentISODateTime(),
-      driverId: '1',
-      conductorId: '2',
-      busId: '1',
-      voucherNumber: 'V001',
+      driverId: '16',
+      conductorId: '17',
+      busId: '5',
+      voucherNumber: '1',
       commission: 5000,
       diesel: 3000,
       dieselLitres: 100,
@@ -54,10 +55,10 @@ const initialState: BusClosingVoucherState = {
     {
       id: 2,
       date: getCurrentISODateTime(),
-      driverId: '1',
-      conductorId: '2',
-      busId: '1',
-      voucherNumber: 'V002',
+      driverId: '16',
+      conductorId: '18',
+      busId: '6',
+      voucherNumber: '2',
       commission: 4000,
       diesel: 2500,
       dieselLitres: 80,
@@ -72,10 +73,10 @@ const initialState: BusClosingVoucherState = {
     {
       id: 3,
       date: getCurrentISODateTime(),
-      driverId: '1',
-      conductorId: '2',
-      busId: '1',
-      voucherNumber: 'V003',
+      driverId: '16',
+      conductorId: '18',
+      busId: '13',
+      voucherNumber: '3',
       commission: 5500,
       diesel: 3500,
       dieselLitres: 120,
@@ -90,10 +91,10 @@ const initialState: BusClosingVoucherState = {
     {
       id: 4,
       date: getCurrentISODateTime(),
-      driverId: '1',
-      conductorId: '2',
-      busId: '1',
-      voucherNumber: 'V004',
+      driverId: '16',
+      conductorId: '17',
+      busId: '14',
+      voucherNumber: '4',
       commission: 6000,
       diesel: 4000,
       dieselLitres: 130,
@@ -113,6 +114,12 @@ const busClosingVoucherSlice = createSlice({
   name: 'busClosingVouchers',
   initialState,
   reducers: {
+    setBusClosingVoucher: (
+      state,
+      action: PayloadAction<Omit<BusClosingVoucher[], 'id'>>
+    ) => {
+      state.busClosingVouchers = action.payload;
+    },
     // Action to add a new BusClosingVoucher
     addBusClosingVoucher: (
       state,
@@ -158,7 +165,8 @@ const busClosingVoucherSlice = createSlice({
 export const {
   addBusClosingVoucher,
   removeBusClosingVoucher,
-  updateBusClosingVoucher
+  updateBusClosingVoucher,
+  setBusClosingVoucher
 } = busClosingVoucherSlice.actions;
 export default busClosingVoucherSlice.reducer;
 

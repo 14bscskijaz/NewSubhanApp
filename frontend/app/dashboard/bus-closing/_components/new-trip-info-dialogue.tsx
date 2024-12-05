@@ -36,11 +36,13 @@ import { useDispatch, useSelector } from 'react-redux';
 export default function NewRouteDialog({
   busId,
   voucherNumber,
-  driverId
+  driverId,
+  date
 }: {
   busId: string;
   voucherNumber: string;
   driverId: string;
+  date?: string
 }) {
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
@@ -48,18 +50,6 @@ export default function NewRouteDialog({
     allFixedTripExpenses
   );
   const [open, setOpen] = useState(false);
-  const [routeData, setRouteData] = useState<
-    Omit<BusClosing, 'id' | 'departureTime'>
-  >({
-    routeClosingVoucherId: '',
-    routeId: '',
-    passengerCount: '',
-    fullTicketCount: '',
-    halfTicketCount: '',
-    freeTicketCount: '',
-    revenue: '',
-    revenueDiffExplanation: ''
-  });
   const [tripData, setTripData] = useState<Omit<TripInformationInput, 'id'>>({
     routeClosingVoucherId: '',
     routeId: '',
@@ -72,11 +62,11 @@ export default function NewRouteDialog({
     actualRevenue: '',
     revenueDiffExplanation: '',
     sourceStation: '',
-    destinationStation: ''
+    destinationStation: '',
+    date: date
   });
 
   const dispatch = useDispatch();
-
   // const ticketPrice = useSelector<RootState, number | undefined>((state) =>
   //   tickets.find(ticket => ticket.routeId === Number(routeId))?.ticketPrice
   // );
@@ -155,9 +145,9 @@ export default function NewRouteDialog({
         const newRouteId = routes.find(
           (route) =>
             route.sourceAdda ===
-              (id === 'sourceStation' ? value : prev.sourceStation) &&
+            (id === 'sourceStation' ? value : prev.sourceStation) &&
             route.destinationAdda ===
-              (id === 'destinationStation' ? value : prev.destinationStation)
+            (id === 'destinationStation' ? value : prev.destinationStation)
         )?.id;
         updatedData.routeId = newRouteId ? String(newRouteId) : '';
 
@@ -207,7 +197,7 @@ export default function NewRouteDialog({
     });
   };
 
-  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const newTripData: Omit<TripInformation, 'id'> = {
@@ -220,14 +210,18 @@ export default function NewRouteDialog({
       freeTicketCount: tripData.freeTicketCount,
       miscellaneousAmount: tripData.miscellaneousAmount,
       actualRevenue: tripData.actualRevenue,
-      revenueDiffExplanation: tripData.revenueDiffExplanation
+      revenueDiffExplanation: tripData.revenueDiffExplanation,
+      date: date
     };
+
+    
     // await createTrip(newTripData)
     // dispatch(addBusClosing(newRoute));
     dispatch(addTripInformation(newTripData));
     setOpen(false);
     resetForm();
   };
+
 
   const resetForm = () => {
     setTripData({
@@ -327,7 +321,7 @@ export default function NewRouteDialog({
               </Select>
             </div>
 
-            
+
 
             {/* Full Ticket Luxury Count */}
             <div className="grid gap-2">

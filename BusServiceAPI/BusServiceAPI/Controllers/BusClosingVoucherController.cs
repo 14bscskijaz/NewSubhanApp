@@ -148,7 +148,7 @@ namespace BusServiceAPI.Controllers
                 return BadRequest("Unable to save the voucher. Please verify all required fields.");
             }
 
-            return CreatedAtAction(nameof(GetBusClosingVoucher), new { id = voucher.Id }, voucherDto);
+            return CreatedAtAction(nameof(GetBusClosingVoucher), new { id = voucher.Id }, voucher);
         }
 
         // PUT: api/BusClosingVoucher/5

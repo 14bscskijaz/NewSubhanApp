@@ -321,8 +321,6 @@ export default function NewRouteDialog({
               </Select>
             </div>
 
-
-
             {/* Full Ticket Luxury Count */}
             <div className="grid gap-2">
               <Label htmlFor="fullTicketBusinessCount">
@@ -399,7 +397,6 @@ export default function NewRouteDialog({
                 placeholder="Calculated revenue"
                 value={tripData.miscellaneousAmount}
                 onChange={handleInputChange}
-                min={0}
               />
             </div>
 

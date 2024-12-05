@@ -82,7 +82,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       busId: Number(busId),
       driverId: Number(driverId),
       conductorId: '',
-      routeId: 3,
+      routeId: getExpenseValue('routeId'),
       voucherNumber,
       commission: getExpenseValue('driverCommission'),
       diesel: null,
@@ -117,6 +117,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
     setExpenses(totalExpense);
     setTotalExpense(totalExpense.toString());
+    console.log('Set total expense:', totalExpense);
 
     const calculatedRevenue = Number(tripRevenue) - Number(totalExpense);
 
@@ -126,6 +127,14 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   };
 
   useEffect(() => {
+    handleRevenueCalculation(methods.getValues());
+  }, []);
+
+  useEffect(() => {
+
+    // console.log("Form data", methods.getValues());
+    // console.log("Fixed trip expense: ", routeFixedClosingExpense);
+
     const subscription = methods.watch((data) => {
       handleRevenueCalculation(data);
     });

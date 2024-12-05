@@ -11,6 +11,10 @@
         // Navigation properties
         public Bus? Bus { get; set; }
         public int? BusId { get; set; }
+        public int? BusClosingVoucherId { get; set; }
+        public BusClosingVoucher? BusClosingVoucher { get; set; }
+
+
     }
 
     public enum ExpenseType

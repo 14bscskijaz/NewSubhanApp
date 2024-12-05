@@ -30,6 +30,7 @@ namespace BusServiceAPI.Controllers
                     Date = e.Date,
                     Type = e.Type,
                     BusId = e.Bus.Id,
+                    BusClosingVoucherId = e.BusClosingVoucher.Id,
                     Amount = e.Amount,
                     Description = e.Description
                 }).ToList();
@@ -49,6 +50,7 @@ namespace BusServiceAPI.Controllers
                     Date = e.Date,
                     Type = e.Type,
                     BusId = e.Bus.Id,
+                    BusClosingVoucherId = e.BusClosingVoucher.Id,
                     Amount = e.Amount,
                     Description = e.Description
                 })
@@ -69,6 +71,7 @@ namespace BusServiceAPI.Controllers
                 Date = expenseDto.Date,
                 Type = expenseDto.Type,
                 BusId = expenseDto.BusId,
+                BusClosingVoucherId = expenseDto.BusClosingVoucherId,
                 Amount = expenseDto.Amount,
                 Description = expenseDto.Description
             };
@@ -82,6 +85,7 @@ namespace BusServiceAPI.Controllers
                 Date = expense.Date,
                 Type = expense.Type,
                 BusId = expense.BusId,
+                BusClosingVoucherId = expense.BusClosingVoucherId,
                 Amount = expense.Amount,
                 Description = expense.Description
             };
@@ -99,6 +103,7 @@ namespace BusServiceAPI.Controllers
             expense.Date = expenseDto.Date;
             expense.Type = expenseDto.Type;
             expense.BusId = expenseDto.BusId;
+            expense.BusClosingVoucherId = expenseDto.BusClosingVoucherId;
             expense.Amount = expenseDto.Amount;
             expense.Description = expenseDto.Description;
 

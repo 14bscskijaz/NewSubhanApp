@@ -3,7 +3,7 @@
     public class TicketPricing
     {
         public int Id { get; set; } // Primary key, auto-incremented
-        public string BusType { get; set; } // ENUM or VARCHAR(15)
+        public BusTypeEnum BusType { get; set; } // ENUM or VARCHAR(15)
         public int TicketPrice { get; set; }
 
         // Navigation properties

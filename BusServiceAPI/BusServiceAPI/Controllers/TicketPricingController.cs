@@ -25,7 +25,8 @@ namespace BusServiceAPI.Controllers
                 {
                     Id = tp.Id,
                     RouteId = tp.RouteId,
-                    TicketPrice = tp.TicketPrice
+                    TicketPrice = tp.TicketPrice,
+                    BusType = tp.BusType.ToString(),
                 }).ToList();
 
             return Ok(ticketPricings);
@@ -39,7 +40,8 @@ namespace BusServiceAPI.Controllers
                 {
                     Id = tp.Id,
                     RouteId = tp.RouteId,
-                    TicketPrice = tp.TicketPrice
+                    TicketPrice = tp.TicketPrice,
+                    BusType = tp.BusType.ToString()
                 })
                 .FirstOrDefault(tp => tp.Id == id);
 
@@ -56,8 +58,8 @@ namespace BusServiceAPI.Controllers
             {
                 RouteId = ticketPricingDto.RouteId,
                 TicketPrice = ticketPricingDto.TicketPrice,
-                BusType = ticketPricingDto.BusType,
-                
+                BusType = (BusTypeEnum)Enum.Parse(typeof(BusTypeEnum), ticketPricingDto.BusType)
+
             };
 
             _context.TicketPricings.Add(ticketPricing);
@@ -68,7 +70,7 @@ namespace BusServiceAPI.Controllers
                 Id = ticketPricing.Id,
                 RouteId = ticketPricing.RouteId,
                 TicketPrice = ticketPricing.TicketPrice,
-                BusType = ticketPricing.BusType,
+                BusType = ticketPricing.BusType.ToString(),
             };
 
             return CreatedAtAction(nameof(GetTicketPricing), new { id = createdTicketPricing.Id }, createdTicketPricing);
@@ -82,7 +84,7 @@ namespace BusServiceAPI.Controllers
 
             ticketPricing.RouteId = ticketPricingDto.RouteId;
             ticketPricing.TicketPrice = ticketPricingDto.TicketPrice;
-            ticketPricing.BusType =  ticketPricingDto.BusType;
+            ticketPricing.BusType = (BusTypeEnum)Enum.Parse(typeof(BusTypeEnum), ticketPricingDto.BusType);
 
             _context.SaveChanges();
             return NoContent();

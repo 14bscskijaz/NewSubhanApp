@@ -2,14 +2,16 @@
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
-import { Route, allRoutes } from '@/lib/slices/route-slices';
+import { TicketPriceRaw, allTicketsRaw, setTicketRaw } from '@/lib/slices/pricing-slices';
+import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NewPricingDialog from './new-pricing-dialogue';
 import RouteTable from './route-tables';
+import { getAllTicketPrices } from '@/app/actions/pricing.action';
+import { getAllRoutes } from '@/app/actions/route.action';
 
 type TPricingListingPage = {};
 
@@ -20,11 +22,11 @@ export type TicketPriceDisplay = {
   destination: string;
   destinationStation: string;
   ticketPrice: number;
-  routeId?:number;
+  routeId?: number;
   busType: string;
 };
 
-export default function PricingListingPage({}: TPricingListingPage) {
+export default function PricingListingPage({ }: TPricingListingPage) {
   const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const searchParams = useSearchParams();
@@ -33,9 +35,18 @@ export default function PricingListingPage({}: TPricingListingPage) {
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(10);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const fetchTicket = async () => {
+    const routes = await getAllRoutes()
+    const allTicketData = await getAllTicketPrices()
+    console.log(allTicketData, "allTicketData");
+    dispatch(setTicketRaw(allTicketData))
+    dispatch(setRoute(routes))
+
+  }
 
   useEffect(() => {
+    fetchTicket();
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const sourceParam = searchParams.get('source') || '';
@@ -77,7 +88,7 @@ export default function PricingListingPage({}: TPricingListingPage) {
   const filteredTickets = displayTickets.filter((ticket) => {
     const matchesSearch = search
       ? ticket.destination.toLowerCase().includes(search.toLowerCase()) ||
-        ticket.source.toLowerCase().includes(search.toLowerCase())
+      ticket.source.toLowerCase().includes(search.toLowerCase())
       : true;
 
     const matchesStatus = source

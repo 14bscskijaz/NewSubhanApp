@@ -4,7 +4,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Heading } from '@/components/ui/heading';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
+import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { Expense, allExpenses, setExpenses } from '@/lib/slices/expenses-slices';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
@@ -16,6 +16,7 @@ import { getAllBuses } from '@/app/actions/bus.action';
 import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
 import { getAllRoutes } from '@/app/actions/route.action';
 import { setRoute } from '@/lib/slices/route-slices';
+import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
 
 type TExpensesListingPage = {};
 
@@ -33,8 +34,12 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const fetchEmoployee = async () => {
     const allBusesData = await getAllBuses();
     const allRoutes = await getAllRoutes();
+    const allVouchers = await getAllBusClosingVouchers()
+    console.log(allVouchers,"allVouchers");
+    
     dispatch(setBus(allBusesData))
     dispatch(setRoute(allRoutes))
+    dispatch(setBusClosingVoucher(allVouchers))
   }
 
   useEffect(() => {
@@ -42,23 +47,9 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
     const filteredData: Omit<Expense, 'id'>[] = busClosingVouchers
       .filter((voucher) =>
-        selectedDate ? voucher.date === selectedDate.toISOString().split('T')[0] : true
+        selectedDate ? voucher.date.split('T')[0] === selectedDate.toISOString().split('T')[0] : true
       )
       .map((voucher) => {
-        let idx = 0
-        // Ensure both routeClosingVoucherId and voucher.id are numbers for comparison
-        const relatedSavedTrips = savedTrips.filter((trip) => {
-          const tripVoucherId = Number(trip.routeClosingVoucherId); // Ensure number
-          const voucherId = Number(voucher.id); // Ensure number
-          return tripVoucherId === voucherId;
-        });
-
-        // Get the first saved trip and extract its routeId, converting it to a number
-        const routeId = relatedSavedTrips[idx]?.routeId
-          ? Number(relatedSavedTrips[idx]?.routeId)
-          : undefined;
-
-        idx = idx + 1;
         return {
           busId: Number(voucher.busId),
           voucherId: voucher.id,
@@ -66,13 +57,12 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
           description: '',
           amount: 0,
           type: 'bus',
-          routeId,
+          routeId:voucher.routeId,
         };
       });
 
-    console.log(filteredData, "filteredData with routeId");
     dispatch(setExpenses(filteredData));
-  }, [busClosingVouchers, selectedDate, savedTrips, dispatch]);
+  }, [selectedDate]);
 
 
 

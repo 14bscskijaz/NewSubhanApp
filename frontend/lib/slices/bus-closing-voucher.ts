@@ -19,6 +19,7 @@ export type BusClosingVoucher = {
   cityParchi: number | null;
   refreshment: number | null;
   revenue: number | null;
+  routeId?:number
 };
 
 // Define the initial state with BusClosingVoucher type
@@ -113,6 +114,12 @@ const busClosingVoucherSlice = createSlice({
   name: 'busClosingVouchers',
   initialState,
   reducers: {
+    setBusClosingVoucher: (
+      state,
+      action: PayloadAction<Omit<BusClosingVoucher[], 'id'>>
+    ) => {
+      state.busClosingVouchers = action.payload;
+    },
     // Action to add a new BusClosingVoucher
     addBusClosingVoucher: (
       state,
@@ -158,7 +165,8 @@ const busClosingVoucherSlice = createSlice({
 export const {
   addBusClosingVoucher,
   removeBusClosingVoucher,
-  updateBusClosingVoucher
+  updateBusClosingVoucher,
+  setBusClosingVoucher
 } = busClosingVoucherSlice.actions;
 export default busClosingVoucherSlice.reducer;
 

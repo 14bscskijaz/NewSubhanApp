@@ -20,13 +20,13 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
-import { ClosingExpense, addClosingExpense } from '@/lib/slices/fixed-closing-expense-slice';
+import { ClosingExpense, addClosingExpense, setClosingExpense } from '@/lib/slices/fixed-closing-expense-slice';
 import { RootState } from '@/lib/store';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
-import { createFixedBusClosingExpense } from '@/app/actions/FixedClosingExpense.action';
+import { createFixedBusClosingExpense, getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action';
 
 export default function NewExpenseDialog() {
   const [open, setOpen] = useState(false);
@@ -66,17 +66,18 @@ export default function NewExpenseDialog() {
     const newExpense:Omit<ClosingExpense,"id"> = {
       routeId: Number(routeId)??0,
       driverCommission: Number(driverCommission),
-      coilExpense: Number(cOilExpense),
+      cOilExpense: Number(cOilExpense),
       tollTax: Number(tollTax),
       halfSafai: Number(halfSafai),
       fullSafai: Number(fullSafai),
       refreshmentRate: Number(refreshmentRate),
-      dcParchi: Number(dcParchi),
+      dcPerchi: Number(dcParchi),
       alliedMorde: Number(alliedMorde)
     };
 
     await createFixedBusClosingExpense(newExpense)
-    dispatch(addClosingExpense(newExpense));
+    const closingExpenses = await getAllFixedBusClosingExpenses();
+    dispatch(setClosingExpense(closingExpenses))
     setOpen(false);
     resetForm();
   };

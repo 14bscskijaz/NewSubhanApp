@@ -3,32 +3,43 @@ import { getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
-import { FixedTripExpense, allFixedTripExpenses } from '@/lib/slices/fixed-trip-expense';
+import { FixedTripExpense, allFixedTripExpenses, setFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { RootState } from '@/lib/store';
-import { useSearchParams } from 'next/navigation'; // Import useSearchParams
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import NewTripDialog from './new-trip-dialogue';
 import TripTable from './trip-tables';
+import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
+import { TicketPriceRaw, allTicketsRaw, setTicketRaw } from '@/lib/slices/pricing-slices';
+import { getAllTicketPrices } from '@/app/actions/pricing.action';
+import { getAllRoutes } from '@/app/actions/route.action';
 
 type TTripListingPage = {};
 
-export default function TripListingPage({}: TTripListingPage) {
+export default function TripListingPage({ }: TTripListingPage) {
   const trips = useSelector<RootState, FixedTripExpense[]>(allFixedTripExpenses);
+  // const routes = useSelector<RootState, Route[]>(allRoutes);
+  // const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(10);
+  const dispatch = useDispatch();
 
-  const fetchFixedTripExpense = async() =>{
+  const fetchFixedTripExpense = async () => {
     const fetchFixedExpense = await getAllFixedTripExpenses();
-    console.log(fetchFixedExpense,"fetchFixedExpense");
-    
-  }
+    const routes = await getAllRoutes()
+    console.log(fetchFixedExpense, "fetchFixedExpense");
+    dispatch(setFixedTripExpense(fetchFixedExpense));
+    dispatch(setRoute(routes));
+    const tickets = await getAllTicketPrices()
+    dispatch(setTicketRaw(tickets));
+  };
 
   useEffect(() => {
-    fetchFixedTripExpense();
+    fetchFixedTripExpense()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';
@@ -38,25 +49,25 @@ export default function TripListingPage({}: TTripListingPage) {
     setSearch(searchParam);
     setSource(countParam);
     setPageLimit(Number(limitParam));
-  }, [searchParams]);
+  }, [searchParams,dispatch]);
 
   const filteredTrip = trips.filter((trip) => {
     const matchesSearch = search
       ? trip.routeCommission.toString().includes(search.toLowerCase()) ||
-        trip.rewardCommission.toString().includes(search.toLowerCase()) ||
-        trip.steward.toString().includes(search.toLowerCase()) ||
-        trip.counter.toString().includes(search.toLowerCase()) ||
-        trip.dcParchi.toString().includes(search.toLowerCase()) ||
-        trip.refreshment.toString().includes(search.toLowerCase())
+      trip.rewardCommission.toString().includes(search.toLowerCase()) ||
+      trip.steward.toString().includes(search.toLowerCase()) ||
+      trip.counter.toString().includes(search.toLowerCase()) ||
+      trip.dcParchi.toString().includes(search.toLowerCase()) ||
+      trip.refreshment.toString().includes(search.toLowerCase())
       : true;
 
     const matchesCount = source
       ? trip.routeCommission.toString() === source.toLowerCase() ||
-        trip.rewardCommission.toString() === source.toLowerCase() ||
-        trip.steward.toString() === source.toLowerCase() ||
-        trip.counter.toString() === source.toLowerCase() ||
-        trip.dcParchi.toString() === source.toLowerCase() ||
-        trip.refreshment.toString() === source.toLowerCase()
+      trip.rewardCommission.toString() === source.toLowerCase() ||
+      trip.steward.toString() === source.toLowerCase() ||
+      trip.counter.toString() === source.toLowerCase() ||
+      trip.dcParchi.toString() === source.toLowerCase() ||
+      trip.refreshment.toString() === source.toLowerCase()
       : true;
 
     return matchesSearch && matchesCount;

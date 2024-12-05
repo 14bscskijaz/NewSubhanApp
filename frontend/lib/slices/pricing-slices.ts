@@ -113,12 +113,18 @@ const TicketSlice = createSlice({
       if (index !== -1) {
         state.ticketsRaw[index] = action.payload;
       }
-    }
+    },
+    setTicketRaw: (
+      state,
+      action: PayloadAction<Omit<TicketPriceRaw[], 'id'>>
+    ) => {
+      state.ticketsRaw = action.payload
+    },
   }
 });
 
 // Export actions and reducer
-export const { addTicketRaw, removeTicketRaw, updateTicketRaw } =
+export const { addTicketRaw, removeTicketRaw, updateTicketRaw,setTicketRaw } =
   TicketSlice.actions;
 export default TicketSlice.reducer;
 

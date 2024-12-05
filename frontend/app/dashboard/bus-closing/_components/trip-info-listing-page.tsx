@@ -28,8 +28,6 @@ export default function RouteListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
   const buses = useSelector<RootState, Buses[]>(allBuses)
   const employees = useSelector<RootState, Employee[]>(allEmployees)
-  const routes = useSelector<RootState, Route[]>(allRoutes)
-  const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw)
 
   const [voucherNumber, setVoucherNumber] = useState<string>('')
   const [driverId, setDriverId] = useState<string>('')
@@ -149,6 +147,7 @@ export default function RouteListingPage() {
               busId={busId}
               voucherNumber={voucherNumber}
               driverId={driverId}
+              date={selectedDate?.toISOString()}
             />
           </div>
           <div className='relative left-[37%] hidden md:block'>
@@ -176,7 +175,7 @@ export default function RouteListingPage() {
           </div>
           <div className="md:w-[1px] w-[100%] h-[1px] relative mt-4 md:bottom-20 md:h-[28rem] bg-neutral-200"></div>
           <div className="md:w-[50%] w-[100%] ">
-            {!isVoucherShow ? (
+            {!isVoucherShow && tripsInformation.length >= 0 ? (
               <Button
                 disabled={tripsInformation.length <= 0}
                 onClick={() => setIsVoucherShow(true)}
@@ -192,15 +191,15 @@ export default function RouteListingPage() {
                 setTotalExpense={setTotalExpense}
                 tripRevenue={tripRevenue}
                 TotalExpense={totalExpense}
+                setBusId={setBusId}
+                setDriverId={setDriverId}
+                setIsVoucherShow={setIsVoucherShow}
+                setVoucherNumber={setVoucherNumber}
+                date={selectedDate?.toISOString()}
               />
             )}
-            {/* {isVoucherShow && (
-              <NetExpenses
-                tripRevenue={tripRevenue}
-                TotalExpense={totalExpense}
-              />
-            )} */}
           </div>
+
         </div>
       </div>
     </PageContainer>

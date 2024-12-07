@@ -6,31 +6,41 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { Employee, allEmployees } from '@/lib/slices/employe-slices';
 import {
   ClosingExpense,
-  allClosingExpenses
+  allClosingExpenses,
 } from '@/lib/slices/fixed-closing-expense-slice';
 import {
   TripInformation,
-  allTripsInformation
+  allTripsInformation,
+  setTripInformation,
 } from '@/lib/slices/trip-information';
 import { RootState } from '@/lib/store';
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import NetExpenses from './net-expense';
+import { createBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
+import { createTrip } from '@/app/actions/trip.action';
+import { useToast } from '@/hooks/use-toast';
 
-// Define prop types
 interface BusClosingVoucherFormProps {
   driverId: string;
   busId: string;
   voucherNumber: string;
   setTotalExpense: Dispatch<SetStateAction<string>>;
-  tripRevenue: string
-  TotalExpense: string
+  setVoucherNumber: Dispatch<SetStateAction<string>>;
+  setBusId: Dispatch<SetStateAction<string>>;
+  setDriverId: Dispatch<SetStateAction<string>>;
+  setIsVoucherShow: Dispatch<SetStateAction<boolean>>;
+  tripRevenue: string;
+  TotalExpense: string;
+  date: string | undefined;
+  routeId: string;
+  conductorId:string;
 }
 
 const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
@@ -39,15 +49,25 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   voucherNumber,
   setTotalExpense,
   tripRevenue,
-  TotalExpense
+  TotalExpense,
+  date,
+  setIsVoucherShow,
+  setBusId,
+  setDriverId,
+  setVoucherNumber,
+  routeId,
+  conductorId
 }) => {
-  const employees = useSelector<RootState, Employee[]>(allEmployees);
-  const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(allClosingExpenses);
+  const { toast } = useToast();
+  const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(
+    allClosingExpenses
+  );
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation);
- 
+  const dispatch = useDispatch();
 
+  const [loading, setLoading] = useState(false); // Loading state
+  const [expenses, setExpenses] = useState<number>(0);
 
-  // Commented out the following function and related content
   const routeFixedClosingExpense = useMemo(() => {
     return fixedClosingExpenses.find(
       (expense) => expense.routeId === Number(tripsInformation.at(-1)?.routeId)
@@ -58,33 +78,32 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
     return routeFixedClosingExpense ? routeFixedClosingExpense[expenseName] : null;
   };
 
-  const conductors = employees.filter(
-    (employee) => employee.employeeType.toLowerCase() === 'conductor'
-  );
+  
 
   const methods = useForm({
     defaultValues: {
-      busId,
-      driverId,
-      conductorId: '',
+      busId: Number(busId),
+      driverId: Number(driverId),
+      conductorId: Number(conductorId),
+      routeId: Number(routeId),
       voucherNumber,
       commission: getExpenseValue('driverCommission'),
       diesel: null,
       dieselLitres: null,
-      coilTechnician: getExpenseValue('coilExpense'),
+      coilTechnician: getExpenseValue('cOilExpense'),
       toll: getExpenseValue('tollTax'),
       cleaning: null,
       alliedmor: getExpenseValue('alliedMorde'),
-      cityParchi: getExpenseValue('dcParchi'),
+      cityParchi: getExpenseValue('dcPerchi'),
       refreshment: getExpenseValue('refreshmentRate'),
+      repair: null,
+      generator: null,
+      miscellaneous: null,
       revenue: 0,
-      date: new Date().toISOString()
-    }
+      date: date,
+    },
   });
 
-  const [expenses, setExpenses] = useState<number>(0);
-
-  // Function to calculate total expenses and update the revenue
   const handleRevenueCalculation = (data: any) => {
     const totalExpense =
       (Number(data.commission) || 0) +
@@ -94,181 +113,143 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       (Number(data.cleaning) || 0) +
       (Number(data.alliedmor) || 0) +
       (Number(data.cityParchi) || 0) +
-      (Number(data.refreshment) || 0);
+      (Number(data.refreshment) || 0) +
+      (Number(data.repair) || 0) +
+      (Number(data.generator) || 0) +
+      (Number(data.miscellaneous) || 0);
 
     setExpenses(totalExpense);
     setTotalExpense(totalExpense.toString());
+    console.log('Set total expense:', totalExpense);
 
-    // Calculate revenue
     const calculatedRevenue = Number(tripRevenue) - Number(totalExpense);
 
-    // Only update revenue if it has changed
     if (methods.getValues('revenue') !== calculatedRevenue) {
       methods.setValue('revenue', calculatedRevenue);
     }
   };
 
-
-  // Watch form data and calculate expenses on change
   useEffect(() => {
+    handleRevenueCalculation(methods.getValues());
+  }, []);
+
+  useEffect(() => {
+
+    // console.log("Form data", methods.getValues());
+    // console.log("Fixed trip expense: ", routeFixedClosingExpense);
+
     const subscription = methods.watch((data) => {
       handleRevenueCalculation(data);
     });
 
-    return () => subscription.unsubscribe(); // Cleanup the subscription
+    return () => subscription.unsubscribe();
   }, [methods, tripRevenue]);
 
-  const onSubmit = (data: any) => {
-    console.log("Form submitted with data:", data);
-    methods.reset();
+  const onSubmit = async (data: any) => {
+    setLoading(true);
+    try {
+      const sanitizedData = {
+        ...data,
+        voucherNumber: Number(voucherNumber),
+        busId: Number(data.busId),
+        driverId: Number(data.driverId),
+        conductorId: Number(data.conductorId),
+        routeId: Number(data.routeId),
+        commission: Number(data.commission) || 0,
+        diesel: Number(data.diesel) || 0,
+        dieselLitres: Number(data.dieselLitres) || 0,
+        coilTechnician: Number(data.coilTechnician) || 0,
+        toll: Number(data.toll) || 0,
+        cleaning: Number(data.cleaning) || 0,
+        alliedmor: Number(data.alliedmor) || 0,
+        cityParchi: Number(data.cityParchi) || 0,
+        refreshment: Number(data.refreshment) || 0,
+        repair: Number(data.repair) || 0,
+        generator: Number(data.generator) || 0,
+        miscellaneous: Number(data.miscellaneous) || 0,
+        revenue: Number(data.revenue) || 0,
+      };
+
+      const newVoucher = await createBusClosingVoucher(sanitizedData);
+
+      const updatedTripInfo = tripsInformation.map((info: TripInformation) => ({
+        ...info,
+        routeClosingVoucherId: newVoucher?.id?.toString(),
+      }));
+
+      await Promise.all(
+        updatedTripInfo.map(async (trip) => {
+          await createTrip(trip);
+        })
+      );
+
+      dispatch(setTripInformation([]));
+      methods.reset();
+      setIsVoucherShow(false);
+
+      // Show success toast
+      toast({
+        title: 'Success',
+        description: 'Bus closing voucher created successfully!',
+        variant: 'default',
+      });
+    } catch (error) {
+      console.error('Error during submission:', error);
+
+      // Show error toast
+      toast({
+        title: 'Error',
+        description: 'An error occurred while creating the voucher.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false); // Reset loading state
+    }
   };
+
+
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className='mt-4'>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="">
+        <div className="grid grid-cols-1 mt-2 sm:grid-cols-2 md:grid-cols-4 gap-5">
           {/* Dropdown for Conductor */}
-          <div className="grid gap-2">
-            <Label htmlFor="conductorId">Conductor</Label>
-            <Select
-              onValueChange={(value) => methods.setValue('conductorId', value)}
-              value={methods.watch('conductorId') || ""}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Conductor" />
-              </SelectTrigger>
-              <SelectContent>
-                {conductors.map((conductor) => (
-                  <SelectItem key={conductor.id} value={conductor.id}>
-                    {conductor.firstName + ' ' + conductor.lastName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          
 
-          {/* Commission */}
-          <div>
-            <Label htmlFor="commission">Commission</Label>
-            <Input
-              id="commission"
-              type="number"
-              {...methods.register('commission', {
-                required: 'Commission is required'
-              })}
-            />
-          </div>
+          {/* Input Fields */}
+          {[
+            'commission',
+            'diesel',
+            'dieselLitres',
+            'coilTechnician',
+            'toll',
+            'cleaning',
+            'alliedmor',
+            'cityParchi',
+            'refreshment',
+            'repair',
+            'generator',
+            'miscellaneous',
+          ].map((field) => (
+            <div key={field}>
+              <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
+              <Input id={field} type="number" {...methods.register(field as any)} min={0} />
+            </div>
+          ))}
 
-          {/* Diesel */}
+          {/* Revenue */}
           <div>
-            <Label htmlFor="diesel">Diesel</Label>
-            <Input
-              id="diesel"
-              type="number"
-              {...methods.register('diesel', {
-                required: 'Diesel is required'
-              })}
-            />
-          </div>
-
-          {/* Diesel Litres */}
-          <div>
-            <Label htmlFor="dieselLitres">Diesel Litres</Label>
-            <Input
-              id="dieselLitres"
-              type="number"
-              {...methods.register('dieselLitres', {
-                required: 'Diesel Litres is required'
-              })}
-            />
-          </div>
-
-          {/* Coil Technician */}
-          <div>
-            <Label htmlFor="coilTechnician">Coil Technician</Label>
-            <Input
-              id="coilTechnician"
-              type="number"
-              {...methods.register('coilTechnician', {
-                required: 'Coil Technician is required'
-              })}
-            />
-          </div>
-
-          {/* Toll */}
-          <div>
-            <Label htmlFor="toll">Toll</Label>
-            <Input
-              id="toll"
-              type="number"
-              {...methods.register('toll', {
-                required: 'Toll is required'
-              })}
-            />
-          </div>
-
-          {/* Cleaning */}
-          <div>
-            <Label htmlFor="cleaning">Cleaning</Label>
-            <Input
-              id="cleaning"
-              type="number"
-              {...methods.register('cleaning', {
-                required: 'Cleaning is required'
-              })}
-            />
-          </div>
-
-          {/* Alliedmor */}
-          <div>
-            <Label htmlFor="alliedmor">Alliedmor</Label>
-            <Input
-              id="alliedmor"
-              type="number"
-              {...methods.register('alliedmor', {
-                required: 'Alliedmor is required'
-              })}
-            />
-          </div>
-
-          {/* City Parchi */}
-          <div>
-            <Label htmlFor="cityParchi">City Parchi</Label>
-            <Input
-              id="cityParchi"
-              type="number"
-              {...methods.register('cityParchi', {
-                required: 'City Parchi is required'
-              })}
-            />
-          </div>
-
-          {/* Refreshment */}
-          <div>
-            <Label htmlFor="refreshment">Refreshment</Label>
-            <Input
-              id="refreshment"
-              type="number"
-              {...methods.register('refreshment', {
-                required: 'Refreshment is required'
-              })}
-            />
-          </div>
-
-          {/* Expenses */}
-          <div>
-            <Label htmlFor="expenses">Expenses</Label>
-            <Input id="expenses" type="number" value={expenses} disabled />
+            <Label htmlFor="revenue">Revenue</Label>
+            <Input id="revenue" type="number" value={methods.watch('revenue')} disabled />
           </div>
         </div>
 
-        <NetExpenses
-          tripRevenue={tripRevenue}
-          TotalExpense={TotalExpense}
-        />
+        <NetExpenses tripRevenue={tripRevenue} TotalExpense={TotalExpense} />
 
         {/* Submit Button */}
         <div className="col-span-3 flex justify-start md:justify-end mt-4">
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit'}
+          </Button>
         </div>
       </form>
     </FormProvider>

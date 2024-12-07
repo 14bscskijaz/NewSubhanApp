@@ -20,7 +20,7 @@ type DatePickerProps = {
 
 export function DatePicker({ selected, onChange, className }: DatePickerProps) {
   const handleDateSelect = (newDate: Date | undefined) => {
-    console.log(newDate,"newDate");
+    // console.log(newDate,"newDate");
     
     onChange(newDate);  // Call parent's onChange to sync the date
   };

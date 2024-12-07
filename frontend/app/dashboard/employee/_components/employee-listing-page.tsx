@@ -5,7 +5,7 @@ import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { Employee, allEmployees, setEmployee } from '@/lib/slices/employe-slices';
 import { RootState } from '@/lib/store';
-import { useSearchParams } from 'next/navigation'; // Import useSearchParams
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EmployeeTable from './employee-tables';
@@ -15,17 +15,16 @@ type TEmployeeListingPage = {};
 
 export default function EmployeeListingPage({}: TEmployeeListingPage) {
   const employees = useSelector<RootState, Employee[]>(allEmployees);
-  const searchParams = useSearchParams(); // Use the hook to access search params
+  const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [status, setStatus] = useState(''); // Change gender to status
-  const [pageLimit, setPageLimit] = useState(10);
+  const [status, setStatus] = useState('');
+  const [pageLimit, setPageLimit] = useState(5);
 
   const dispatch = useDispatch();
 
   const fetchEmoployee = async() =>{
     const allEmployeeData = await getAllEmployees()
-    console.log(allEmployeeData,"allEmployeeData");
     dispatch(setEmployee(allEmployeeData))
     
   }
@@ -34,12 +33,12 @@ export default function EmployeeListingPage({}: TEmployeeListingPage) {
     fetchEmoployee()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
-    const statusParam = searchParams.get('status') || ''; // Change from gender to status
+    const statusParam = searchParams.get('status') || '';
     const limitParam = searchParams.get('limit') || '10';
 
     setPage(Number(pageParam));
     setSearch(searchParam);
-    setStatus(statusParam); // Set status instead of gender
+    setStatus(statusParam);
     setPageLimit(Number(limitParam));
   }, [searchParams]);
 
@@ -52,10 +51,10 @@ export default function EmployeeListingPage({}: TEmployeeListingPage) {
 
     const matchesStatus =
       status ?
-        employee.employeeStatus.toLowerCase() === status.toLowerCase() : // Filter by employee status
+        employee.employeeStatus.toLowerCase() === status.toLowerCase() : 
         true;
 
-    return matchesSearch && matchesStatus; // Combine both filters
+    return matchesSearch && matchesStatus;
   });
 
   const totalUsers = filteredEmployees.length;

@@ -38,7 +38,7 @@ export default function EditPricingDialog({
   const ticketRoutes = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
 
   const [busType, setBusType] = useState(ticket.busType);
-  const [routeId, setRouteId] = useState<number | "">(ticket?.routeId || "");
+  const [routeId, setRouteId] = useState<number | undefined>(ticket?.routeId);
   const [formData, setFormData] = useState({
     ...ticket
   });
@@ -56,10 +56,7 @@ export default function EditPricingDialog({
   // Filter routes based on ticketRaw data (routes that exist in the ticketRaw slice)
   const filteredRoutes = routes.filter(route =>
     ticketRoutes.some(ticket => ticket.routeId === route.id)
-  );
-
-  // Default route (selected route from the filtered list)
-  const currentRoute = filteredRoutes.find(route => route.id === routeId);
+  );  
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -145,7 +142,7 @@ export default function EditPricingDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Standard">Standard</SelectItem>
-                  <SelectItem value="Luxury">Luxury</SelectItem>
+                  <SelectItem value="Business">Business</SelectItem>
                 </SelectContent>
               </Select>
             </div>

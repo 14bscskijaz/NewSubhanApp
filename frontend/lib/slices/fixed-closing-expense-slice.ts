@@ -5,11 +5,11 @@ export type ClosingExpense = {
   id: number;
   routeId: number;
   driverCommission: number;
-  coilExpense: number;
+  cOilExpense: number;
   tollTax: number;
   halfSafai: number;
   fullSafai: number;
-  dcParchi: number;
+  dcPerchi: number;
   alliedMorde: number;
   refreshmentRate: number;
 };
@@ -22,38 +22,38 @@ const initialState: ClosingExpenseState = {
   closingExpenses: [
     {
       id: 1,
-      routeId: 1,
+      routeId: 3,
       driverCommission: 500,
-      coilExpense: 300,
+      cOilExpense: 300,
       tollTax: 100,
       halfSafai: 50,
       fullSafai: 0,
       refreshmentRate: 75,
-      dcParchi: 200,
+      dcPerchi: 200,
       alliedMorde: 120
     },
     {
       id: 2,
-      routeId: 2,
+      routeId: 3,
       driverCommission: 600,
-      coilExpense: 350,
+      cOilExpense: 350,
       tollTax: 120,
       halfSafai: 60,
       fullSafai: 0,
       refreshmentRate: 80,
-      dcParchi: 250,
+      dcPerchi: 250,
       alliedMorde: 150
     },
     {
       id: 3,
       routeId: 3,
       driverCommission: 700,
-      coilExpense: 400,
+      cOilExpense: 400,
       tollTax: 150,
       halfSafai: 70,
       fullSafai: 1,
       refreshmentRate: 90,
-      dcParchi: 300,
+      dcPerchi: 300,
       alliedMorde: 200
     }
   ]
@@ -63,6 +63,12 @@ const closingExpenseSlice = createSlice({
   name: 'closingExpenses',
   initialState,
   reducers: {
+    setClosingExpense: (
+      state,
+      action: PayloadAction<Omit<ClosingExpense[], 'id'>>
+    ) => {
+     state.closingExpenses = action.payload;
+    },
     addClosingExpense: (
       state,
       action: PayloadAction<Omit<ClosingExpense, 'id'>>
@@ -93,7 +99,7 @@ const closingExpenseSlice = createSlice({
   }
 });
 
-export const { addClosingExpense, removeClosingExpense, updateClosingExpense } =
+export const { addClosingExpense, removeClosingExpense, updateClosingExpense,setClosingExpense } =
   closingExpenseSlice.actions;
 export default closingExpenseSlice.reducer;
 

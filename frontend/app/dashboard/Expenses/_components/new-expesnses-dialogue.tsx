@@ -1,3 +1,4 @@
+import SelectField from "@/components/ui/SelectField"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -10,19 +11,19 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Expense, addExpense } from "@/lib/slices/expenses-slices"
+import { Expense, addExpense, allExpenses } from "@/lib/slices/expenses-slices"
 import { RootState } from "@/lib/store"; // Adjust the path as needed
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 export default function NewExpensesDialog() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const expenses = useSelector<RootState, Expense[]>(allExpenses);
   const [tab, setTab] = useState<"bus" | "general">("general")
   const [description, setDescription] = useState("")
   const [amount, setAmount] = useState<number | "">("")
-  const [busId, setBusId] = useState<number | "">("")  
+  const [busId, setBusId] = useState<string|number>("")  
   
   const dispatch = useDispatch()
 
@@ -42,9 +43,10 @@ export default function NewExpensesDialog() {
     };
   
     dispatch(addExpense(newExpense));
-  
     setOpen(false);
+    
     resetForm();
+    console.log(expenses,"expenses");
   }
   
   // Reset form values
@@ -96,24 +98,22 @@ export default function NewExpensesDialog() {
             {tab === "bus" && (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="busId">Select Bus</Label>
-                  <Select onValueChange={(value) => setBusId(Number(value))}>
-                    <SelectTrigger id="busId">
-                      <SelectValue placeholder="Select Bus" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {/* Map buses from Redux */}
-                      {buses.map((bus) => (
-                        <SelectItem key={bus.id} value={bus.id.toString()}>
-                          {bus.busNumber}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <SelectField
+                  id="busNumber"
+                  value={busId}
+                  onChange={(value) => setBusId(Number(value))}
+                  placeholder="Select Bus"
+                  options={buses.map((bus) => ({
+                    value: bus.id,
+                    label: bus.busNumber,
+                  }))}
+                  label="Bus Number"
+                  className="flex-col !space-x-0 gap-y-2 !items-start"
+                />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-gradient">Description</Label>
                   <Input
                     id="description"
                     placeholder="Enter description"
@@ -123,7 +123,7 @@ export default function NewExpensesDialog() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="amount">Amount</Label>
+                  <Label htmlFor="amount" className="text-gradient">Amount</Label>
                   <Input
                     id="amount"
                     placeholder="Enter amount"
@@ -139,7 +139,7 @@ export default function NewExpensesDialog() {
             {tab === "general" && (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-gradient">Description</Label>
                   <Input
                     id="description"
                     placeholder="Enter description"
@@ -149,7 +149,7 @@ export default function NewExpensesDialog() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="amount">Amount</Label>
+                  <Label htmlFor="amount" className="text-gradient">Amount</Label>
                   <Input
                     id="amount"
                     placeholder="Enter amount"

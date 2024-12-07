@@ -1,5 +1,9 @@
 'use client';
+import NewExpensesDialog from '@/app/dashboard/Expenses/_components/new-expesnses-dialogue';
+import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useSidebar } from '@/components/ui/sidebar';
 import {
   Table,
   TableBody,
@@ -8,6 +12,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
 import {
   ColumnDef,
   PaginationState,
@@ -17,10 +22,6 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';
-import { useSidebar } from '../sidebar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
-import { Button } from '../button';
-import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -29,7 +30,7 @@ interface DataTableProps<TData, TValue> {
   pageSizeOptions?: number[];
 }
 
-export function DataTable<TData, TValue>({
+export function DataTableBusExpense<TData, TValue>({
   columns,
   data,
   totalItems,
@@ -44,12 +45,12 @@ export function DataTable<TData, TValue>({
     'limit',
     parseAsInteger
       .withOptions({ shallow: false, history: 'push' })
-      .withDefault(5)
+      .withDefault(5) // Default to 5 rows per page
   );
 
   const paginationState = {
     pageIndex: currentPage - 1,
-    pageSize: pageSize
+    pageSize: pageSize // Ensure this matches the default value above
   };
 
   const pageCount = Math.ceil(totalItems / pageSize);
@@ -136,16 +137,6 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
-
-          {/* Add NewExpenseDialog after the last row with a separator */}
-          {/* <TableRow>
-          </TableRow> */}
-          {/* <TableRow>
-            <TableCell colSpan={columns.length} className="text-left">
-              <NewExpensesDialog />
-            </TableCell>
-          </TableRow> */}
-          
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

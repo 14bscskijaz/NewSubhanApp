@@ -30,8 +30,9 @@ export const columns: ColumnDef<TicketPriceDisplay>[] = [
     header: 'Price'
   },
   {
-    accessorKey: 'busType',
-    header: 'Bus Type'
+    id: 'busType',
+    header: 'Bus Type',
+    cell: ({ row }) => <div>{row?.original?.busType}</div>
   },
   {
     id: 'actions',

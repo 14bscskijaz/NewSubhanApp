@@ -23,24 +23,27 @@ import { useDispatch, useSelector } from 'react-redux'
 import NewRouteDialog from './new-trip-info-dialogue'
 import RouteTable from './trip-info-tables'
 import VoucherForm from './voucher-form'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function RouteListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
-  const buses = useSelector<RootState, Buses[]>(allBuses)
-  const employees = useSelector<RootState, Employee[]>(allEmployees)
-  const routes = useSelector<RootState, Route[]>(allRoutes)
-  const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw)
+  const buses = useSelector<RootState, Buses[]>(allBuses);
+  const employees = useSelector<RootState, Employee[]>(allEmployees);
+  const routes = useSelector<RootState, Route[]>(allRoutes);
+  const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
 
-  const [voucherNumber, setVoucherNumber] = useState<string>('')
+  const [voucherNumber, setVoucherNumber] = useState<string>('');
+  const [conductorId, setConductorId] = useState<string>('');
   const [driverId, setDriverId] = useState<string>('')
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
-  const [pageLimit, setPageLimit] = useState(10)
+  const [pageLimit, setPageLimit] = useState(5)
   const [busId, setBusId] = useState<string>('')
   const [isVoucherShow, setIsVoucherShow] = useState(false)
   const [tripRevenue, setTripRevenue] = useState<string>('')
   const [totalExpense, setTotalExpense] = useState<string>('')
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedRoute, setSelectedRoute] = useState<string>('');
 
   const searchParams = useSearchParams()
 
@@ -61,7 +64,7 @@ export default function RouteListingPage() {
   useEffect(() => {
     const pageParam = searchParams.get('page') || '1'
     const searchParam = searchParams.get('q') || ''
-    const limitParam = searchParams.get('limit') || '10'
+    const limitParam = searchParams.get('limit') || '5'
 
     setPage(Number(pageParam))
     setSearch(searchParam)
@@ -75,6 +78,17 @@ export default function RouteListingPage() {
 
     setTripRevenue(totalRevenue.toFixed(2))
   }, [tripsInformation])
+
+
+
+  // Filter routes that exist in ticketsRaw
+  const filterTicketRoutes = routes.filter((route) =>
+    ticketsRaw.some((ticket) => ticket.routeId === route.id)
+  );
+
+  const conductors = employees.filter(
+    (employee) => employee.employeeType.toLowerCase() === 'conductor'
+  );
 
   // const Routes = routes.filter((route) =>
   //   ticketsRaw.some((ticket) => ticket.routeId === route.id)
@@ -104,7 +118,7 @@ export default function RouteListingPage() {
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
-              className="w-[300px]"
+              className=""
             />
           </div>
 
@@ -141,46 +155,66 @@ export default function RouteListingPage() {
                 label: `${employee.firstName} ${employee.lastName}`
               }))}
           />
+          <SelectField
+            id="conductor"
+            label="Conductor"
+            value={conductorId}
+            onChange={setConductorId}
+            placeholder="Select Conductor"
+            options={conductors.map((conductor) => ({
+              value: conductor.id.toString(),
+              label: `${conductor.firstName} ${conductor.lastName}`,
+            }))}
+          />
+          <SelectField
+            id="route"
+            label="Select Route"
+            value={selectedRoute}
+            onChange={setSelectedRoute}
+            placeholder="Select Route"
+            options={filterTicketRoutes.map((route) => ({
+              value: route.id.toString(),
+              label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+            }))}
+            className=""
+          />
         </div>
-        <div className="flex">
-          <div className='flex items-start gap-4'>
-            <Heading title={`Trips (${totalUsers})`} description="" />
-            <NewRouteDialog
-              busId={busId}
-              voucherNumber={voucherNumber}
-              driverId={driverId}
-            />
-          </div>
-          <div className='relative left-[37%] hidden md:block'>
-            <Heading title={`Closing Voucher`} description="" />
-          </div>
 
-        </div>
-        <div className="flex gap-10">
-          <Separator className="w-[49%]" />
-          <Separator className="w-[49%]" />
-        </div>
-
-
-        <div className="flex items-start md:flex-row flex-col gap-x-5">
-          <div className="md:w-[50%] w-[100%]">
+        <div className="grid md:grid-cols-2 grid-cols-1 gap-4 relative"
+          style={{ gridTemplateColumns: '45% 55%' }}>
+          <div className="space-y-2">
+            <div className="space-y-1">
+              <div className="flex items-start gap-x-4">
+                <Heading title={`Trips (${totalUsers})`} description="" />
+                <NewRouteDialog
+                  busId={busId}
+                  voucherNumber={voucherNumber}
+                  driverId={driverId}
+                  date={selectedDate?.toISOString()}
+                  routeId={selectedRoute}
+                />
+              </div>
+              <Separator />
+            </div>
             <RouteTable data={paginatedRoutes} totalData={totalUsers} />
             {parseInt(tripRevenue) > 0 && (
-              <div className="mt-4 flex md:justify-end justify-start  text-lg">
+              <div className="mt-4 flex md:justify-end justify-start text-lg">
                 <span className="text-gradient font-bold">Total Revenue</span>: {tripRevenue}
               </div>
             )}
           </div>
-          <div className='relative mb-2 mt-4 md:hidden '>
-            <Heading title={`Closing Voucher`} description="" />
-          </div>
-          <div className="md:w-[1px] w-[100%] h-[1px] relative mt-4 md:bottom-20 md:h-[28rem] bg-neutral-200"></div>
-          <div className="md:w-[50%] w-[100%] ">
-            {!isVoucherShow ? (
+          <div className='w-[1px] h-full left-[45.6%] bg-neutral-200 absolute hidden md:block'></div>
+          <Separator className='md:hidden'/>
+          <div className="relative">
+            <div className="space-y-2">
+              <Heading title={`Closing Voucher`} description="" />
+              <Separator />
+            </div>
+            {!isVoucherShow && tripsInformation.length >= 0 ? (
               <Button
                 disabled={tripsInformation.length <= 0}
                 onClick={() => setIsVoucherShow(true)}
-                className='relative md:mt-0 mt-4'
+                className="relative top-[44%] md:mt-0 mt-4"
               >
                 Generate Voucher
               </Button>
@@ -189,19 +223,21 @@ export default function RouteListingPage() {
                 busId={busId}
                 driverId={driverId}
                 voucherNumber={voucherNumber}
+                routeId={selectedRoute}
                 setTotalExpense={setTotalExpense}
                 tripRevenue={tripRevenue}
                 TotalExpense={totalExpense}
+                setBusId={setBusId}
+                setDriverId={setDriverId}
+                setIsVoucherShow={setIsVoucherShow}
+                setVoucherNumber={setVoucherNumber}
+                date={selectedDate?.toISOString()}
+                conductorId={conductorId}
               />
             )}
-            {/* {isVoucherShow && (
-              <NetExpenses
-                tripRevenue={tripRevenue}
-                TotalExpense={totalExpense}
-              />
-            )} */}
           </div>
         </div>
+
       </div>
     </PageContainer>
   )

@@ -5,9 +5,10 @@ import { RootState } from '../store';
 export type Expense = {
   id: number; // Serial
   date: string; // Date
-  type: 'bus' | 'general'; // Enum-like string (varchar)
+  type: 'bus' | 'general';
   voucherId?: number | string; // Foreign key
-  busId?: number; // Foreign key
+  busId?: number;
+  routeId?:number; // Foreign key
   amount: number; // Integer
   description: string; // Varchar(255)
 };
@@ -28,7 +29,7 @@ const expenseSlice = createSlice({
   initialState,
   reducers: {
     // Action to add a new expense with auto-incremented ID
-    addExpense: (state, action: PayloadAction<Omit<Expense, 'id' | 'type'>>) => {
+    addExpense: (state, action: PayloadAction<Omit<Expense, 'id'>>) => {
       const newId =
         state.expenses.length > 0
           ? state.expenses[state.expenses.length - 1].id + 1
@@ -36,7 +37,6 @@ const expenseSlice = createSlice({
       const newExpense: Expense = {
         ...action.payload,
         id: newId,
-        type: 'bus',
         voucherId: action.payload.voucherId,
       };
       state.expenses.push(newExpense);

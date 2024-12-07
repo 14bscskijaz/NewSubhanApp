@@ -30,7 +30,7 @@ interface DataTableProps<TData, TValue> {
   pageSizeOptions?: number[];
 }
 
-export function DataTableExpense<TData, TValue>({
+export function DataTableBusExpense<TData, TValue>({
   columns,
   data,
   totalItems,
@@ -141,11 +141,11 @@ export function DataTableExpense<TData, TValue>({
           {/* Add NewExpenseDialog after the last row with a separator */}
           {/* <TableRow>
           </TableRow> */}
-          <TableRow>
+          {/* <TableRow>
             <TableCell colSpan={columns.length} className="text-left">
               <NewExpensesDialog />
             </TableCell>
-          </TableRow>
+          </TableRow> */}
           
         </Table>
         <ScrollBar orientation="horizontal" />

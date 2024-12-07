@@ -1,3 +1,4 @@
+import SelectField from '@/components/ui/SelectField';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,17 +12,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger
-} from '@/components/ui/select';
-import { BusClosing } from '@/lib/slices/bus-closing';
-import {
   FixedTripExpense,
   allFixedTripExpenses
 } from '@/lib/slices/fixed-trip-expense';
-import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices'; // Make sure this path is correct
+import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
 import {
   TripInformation,
@@ -37,12 +31,14 @@ export default function NewRouteDialog({
   busId,
   voucherNumber,
   driverId,
-  date
+  date,
+  routeId
 }: {
   busId: string;
   voucherNumber: string;
   driverId: string;
-  date?: string
+  date?: string;
+  routeId:string;
 }) {
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
@@ -88,12 +84,12 @@ export default function NewRouteDialog({
   const calculateRevenue = (updatedData: Omit<TripInformationInput, 'id'>) => {
     // Get the ticket price for standard and luxury buses tickets
     const standardTicketPrice = tickets.find(
-      (ticket) =>
+      (ticket: { routeId: { toString: () => string | undefined; }; busType: string; }) =>
         ticket.routeId.toString() === updatedData.routeId &&
         ticket.busType === 'Standard'
     )?.ticketPrice;
     const luxuryTicketPrice = tickets.find(
-      (ticket) =>
+      (ticket: { routeId: { toString: () => string | undefined; }; busType: string; }) =>
         ticket.routeId.toString() === updatedData.routeId &&
         ticket.busType === 'Business'
     )?.ticketPrice;
@@ -115,7 +111,7 @@ export default function NewRouteDialog({
 
     // Subtract the fixed trip expenses from the ticket earnings(
     const expenseForThisRouteId = fixedTripExpenses.find(
-      (expense) => expense.routeId === Number(updatedData.routeId)
+      (expense: { routeId: number; }) => expense.routeId === Number(updatedData.routeId)
     );
 
     let remaining = ticketEarnings;
@@ -137,27 +133,26 @@ export default function NewRouteDialog({
     id: keyof TripInformationInput,
     value: string
   ) => {
+    const stationName = value.split(' (')[0]; // Extract station name only
     setTripData((prev) => {
-      const updatedData = { ...prev, [id]: value };
+      const updatedData = { ...prev, [id]: stationName };
 
       if (id === 'sourceStation' || id === 'destinationStation') {
-        // Recalculate the routeId if source or destination station changes
         const newRouteId = routes.find(
-          (route) =>
+          (route: { sourceAdda: string; destinationAdda: string; }) =>
             route.sourceAdda ===
-            (id === 'sourceStation' ? value : prev.sourceStation) &&
+            (id === 'sourceStation' ? stationName : prev.sourceStation) &&
             route.destinationAdda ===
-            (id === 'destinationStation' ? value : prev.destinationStation)
+            (id === 'destinationStation' ? stationName : prev.destinationStation)
         )?.id;
         updatedData.routeId = newRouteId ? String(newRouteId) : '';
-
-        // Recalculate revenue with the new ticket price
         updatedData.actualRevenue = calculateRevenue(updatedData);
       }
 
       return updatedData;
     });
   };
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -171,31 +166,38 @@ export default function NewRouteDialog({
       'freeTicketCount',
       'revenue'
     ];
-
+  
     setTripData((prev) => {
+      let newValue = value;
+      if (numericFields.includes(id)) {
+        const numericValue = Number(value);
+        if (id === "fullTicketBusinessCount" && numericValue > 9) {
+          newValue = "9"; // Restrict the maximum value for this specific field
+        }
+      }
+  
       const newData = {
         ...prev,
-        // If id is in numericFields, set value to empty string if it's not a number
-        [id]: numericFields.includes(id)
-          ? value === '' || (isNaN(Number(value)) ? '' : value)
-          : value
+        [id]: newValue
       };
-
+  
       const fullCount = Number(newData.fullTicketCount) || 0;
       const halfCount = Number(newData.halfTicketCount) || 0;
       const freeCount = Number(newData.freeTicketCount) || 0;
       const luxuryCount = Number(newData.fullTicketBusinessCount) || 0;
-
+  
       // Calculate the passenger count
       newData.passengerCount = String(
         fullCount + halfCount + freeCount + luxuryCount
       );
+  
       // Calculate the revenue if we have a ticket price
       newData.actualRevenue = calculateRevenue(newData);
-
+  
       return newData;
     });
   };
+  
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -214,7 +216,7 @@ export default function NewRouteDialog({
       date: date
     };
 
-    
+
     // await createTrip(newTripData)
     // dispatch(addBusClosing(newRoute));
     dispatch(addTripInformation(newTripData));
@@ -241,16 +243,37 @@ export default function NewRouteDialog({
   };
 
   const getSourceStations = () => {
-    return [...new Set(routes.map((route) => route.sourceAdda))];
+    const uniqueSourceStations = new Map();
+    routes.forEach((route: { sourceAdda: any; sourceCity: any; }) => {
+      if (!uniqueSourceStations.has(route.sourceAdda)) {
+        uniqueSourceStations.set(route.sourceAdda, {
+          value: route.sourceAdda,
+          label: `${route.sourceAdda} (${route.sourceCity})`
+        });
+      }
+    });
+    return Array.from(uniqueSourceStations.values());
   };
 
   const getDestinationStations = () => {
-    return [...new Set(routes.map((route) => route.destinationAdda))];
+    const uniqueDestinationStations = new Map();
+    routes.forEach((route: { destinationAdda: any; destinationCity: any; }) => {
+      if (!uniqueDestinationStations.has(route.destinationAdda)) {
+        uniqueDestinationStations.set(route.destinationAdda, {
+          value: route.destinationAdda,
+          label: `${route.destinationAdda} (${route.destinationCity})`
+        });
+      }
+    });
+    return Array.from(uniqueDestinationStations.values());
   };
+
+
+
 
   // Check if all required values are set (routeId, busId, voucherNumber, driverId)
   const isFormComplete =
-    busId && voucherNumber && driverId;
+    busId && voucherNumber && driverId && routeId;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -272,60 +295,32 @@ export default function NewRouteDialog({
           </DialogHeader>
 
           <div className="grid grid-cols-1 gap-12 py-4 md:grid-cols-2">
-            {/* Source Station Dropdown */}
-            <div className="grid gap-2">
-              <Label htmlFor="sourceStation">Source Station</Label>
-              <Select
-                value={tripData.sourceStation}
-                onValueChange={(value) =>
-                  handleSelectChange('sourceStation', value)
-                }
-              >
-                <SelectTrigger>
-                  <span>
-                    {tripData.sourceStation || 'Select Source Station'}
-                  </span>
-                </SelectTrigger>
-                <SelectContent>
-                  {getSourceStations().map((station, index) => (
-                    <SelectItem key={index} value={station}>
-                      {station}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <SelectField
+              id="sourceStation"
+              value={tripData.sourceStation}
+              onChange={(value) => handleSelectChange("sourceStation", value)}
+              placeholder="Select Source Station"
+              options={getSourceStations()}
+              label="Source Station"
+              className="flex-col !space-x-0 gap-y-2 !items-start"
+            />
 
-            {/* Destination Station Dropdown */}
-            <div className="grid gap-2">
-              <Label htmlFor="destinationStation">Destination Station</Label>
-              <Select
-                value={tripData.destinationStation}
-                onValueChange={(value) =>
-                  handleSelectChange('destinationStation', value)
-                }
-              >
-                <SelectTrigger>
-                  <span>
-                    {tripData.destinationStation ||
-                      'Select Destination Station'}
-                  </span>
-                </SelectTrigger>
-                <SelectContent>
-                  {getDestinationStations().map((station, index) => (
-                    <SelectItem key={index} value={station}>
-                      {station}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <SelectField
+              id="destinationStation"
+              value={tripData.destinationStation}
+              onChange={(value) => handleSelectChange("destinationStation", value)}
+              placeholder="Select Destination Station"
+              options={getDestinationStations()}
+              label="Destination Station"
+              className="flex-col !space-x-0 gap-y-2 !items-start"
+            />
+
 
 
 
             {/* Full Ticket Luxury Count */}
             <div className="grid gap-2">
-              <Label htmlFor="fullTicketBusinessCount">
+              <Label htmlFor="fullTicketBusinessCount" className='text-gradient'>
                 Full Ticket Luxury Count
               </Label>
               <Input
@@ -335,12 +330,17 @@ export default function NewRouteDialog({
                 value={tripData.fullTicketBusinessCount}
                 onChange={handleInputChange}
                 min={0}
+                max={9}
+                onInput={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  if (Number(target.value) > 9) target.value = "9";
+                }}
               />
             </div>
 
             {/* Full Ticket Count */}
             <div className="grid gap-2">
-              <Label htmlFor="fullTicketCount">Full Ticket Count</Label>
+              <Label htmlFor="fullTicketCount" className='text-gradient'>Full Ticket Count</Label>
               <Input
                 id="fullTicketCount"
                 type="number"
@@ -353,7 +353,7 @@ export default function NewRouteDialog({
 
             {/* Half Ticket Count */}
             <div className="grid gap-2">
-              <Label htmlFor="halfTicketCount">Half Ticket Count</Label>
+              <Label htmlFor="halfTicketCount" className='text-gradient'>Half Ticket Count</Label>
               <Input
                 id="halfTicketCount"
                 type="number"
@@ -366,7 +366,7 @@ export default function NewRouteDialog({
 
             {/* Free Ticket Count */}
             <div className="grid gap-2">
-              <Label htmlFor="freeTicketCount">Free Ticket Count</Label>
+              <Label htmlFor="freeTicketCount" className='text-gradient'>Free Ticket Count</Label>
               <Input
                 id="freeTicketCount"
                 type="number"
@@ -379,7 +379,7 @@ export default function NewRouteDialog({
 
             {/* Passenger Count */}
             <div className="grid gap-2">
-              <Label htmlFor="passengerCount">Passenger Count</Label>
+              <Label htmlFor="passengerCount" className='text-gradient'>Passenger Count</Label>
               <Input
                 disabled={true}
                 id="passengerCount"
@@ -392,7 +392,7 @@ export default function NewRouteDialog({
 
             {/* Miscellaneous Revenue */}
             <div className="grid gap-2">
-              <Label htmlFor="miscellaneousAmount">Miscellaneous Amount</Label>
+              <Label htmlFor="miscellaneousAmount" className='text-gradient'>Miscellaneous Amount</Label>
               <Input
                 id="miscellaneousAmount"
                 type="number"
@@ -405,7 +405,7 @@ export default function NewRouteDialog({
 
             {/* Actual Revenue */}
             <div className="grid gap-2">
-              <Label htmlFor="actualRevenue">Actual Revenue</Label>
+              <Label htmlFor="actualRevenue" className='text-gradient'>Actual Revenue</Label>
               <Input
                 id="actualRevenue"
                 type="number"
@@ -417,7 +417,7 @@ export default function NewRouteDialog({
 
             {/* Explanation for Revenue Difference */}
             <div className="grid gap-2">
-              <Label htmlFor="revenueDiffExplanation">
+              <Label htmlFor="revenueDiffExplanation" className='text-gradient'>
                 Revenue Explanation
               </Label>
               <Input

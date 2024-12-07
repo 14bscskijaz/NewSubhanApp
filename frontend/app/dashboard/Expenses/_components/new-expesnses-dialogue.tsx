@@ -1,3 +1,4 @@
+import SelectField from "@/components/ui/SelectField"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -96,24 +97,22 @@ export default function NewExpensesDialog() {
             {tab === "bus" && (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="busId">Select Bus</Label>
-                  <Select onValueChange={(value) => setBusId(Number(value))}>
-                    <SelectTrigger id="busId">
-                      <SelectValue placeholder="Select Bus" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {/* Map buses from Redux */}
-                      {buses.map((bus) => (
-                        <SelectItem key={bus.id} value={bus.id.toString()}>
-                          {bus.busNumber}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <SelectField
+                  id="busId"
+                  value={busId?.toString()}
+                  onChange={(value) => setBusId(Number(value))}
+                  placeholder="Select Bus"
+                  options={buses.map((bus) => ({
+                    value: bus.id,
+                    label: bus.busNumber,
+                  }))}
+                  label="Select Bus"
+                  className="flex-col !space-x-0 gap-y-2 !items-start"
+                />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-gradient">Description</Label>
                   <Input
                     id="description"
                     placeholder="Enter description"
@@ -123,7 +122,7 @@ export default function NewExpensesDialog() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="amount">Amount</Label>
+                  <Label htmlFor="amount" className="text-gradient">Amount</Label>
                   <Input
                     id="amount"
                     placeholder="Enter amount"
@@ -139,7 +138,7 @@ export default function NewExpensesDialog() {
             {tab === "general" && (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-gradient">Description</Label>
                   <Input
                     id="description"
                     placeholder="Enter description"
@@ -149,7 +148,7 @@ export default function NewExpensesDialog() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="amount">Amount</Label>
+                  <Label htmlFor="amount" className="text-gradient">Amount</Label>
                   <Input
                     id="amount"
                     placeholder="Enter amount"

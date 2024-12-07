@@ -26,8 +26,10 @@ import VoucherForm from './voucher-form'
 
 export default function RouteListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
-  const buses = useSelector<RootState, Buses[]>(allBuses)
-  const employees = useSelector<RootState, Employee[]>(allEmployees)
+  const buses = useSelector<RootState, Buses[]>(allBuses);
+  const employees = useSelector<RootState, Employee[]>(allEmployees);
+  const routes = useSelector<RootState, Route[]>(allRoutes);
+  const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
 
   const [voucherNumber, setVoucherNumber] = useState<string>('')
   const [driverId, setDriverId] = useState<string>('')
@@ -38,7 +40,8 @@ export default function RouteListingPage() {
   const [isVoucherShow, setIsVoucherShow] = useState(false)
   const [tripRevenue, setTripRevenue] = useState<string>('')
   const [totalExpense, setTotalExpense] = useState<string>('')
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedRoute, setSelectedRoute] = useState<string>('');
 
   const searchParams = useSearchParams()
 
@@ -74,6 +77,13 @@ export default function RouteListingPage() {
     setTripRevenue(totalRevenue.toFixed(2))
   }, [tripsInformation])
 
+
+
+  // Filter routes that exist in ticketsRaw
+  const filterTicketRoutes = routes.filter((route) =>
+    ticketsRaw.some((ticket) => ticket.routeId === route.id)
+  );
+
   // const Routes = routes.filter((route) =>
   //   ticketsRaw.some((ticket) => ticket.routeId === route.id)
   // )
@@ -102,7 +112,7 @@ export default function RouteListingPage() {
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
-              className="w-[300px]"
+              className=""
             />
           </div>
 
@@ -139,6 +149,18 @@ export default function RouteListingPage() {
                 label: `${employee.firstName} ${employee.lastName}`
               }))}
           />
+          <SelectField
+            id="route"
+            label="Select Route"
+            value={selectedRoute}
+            onChange={setSelectedRoute}
+            placeholder="Select Route"
+            options={filterTicketRoutes.map((route) => ({
+              value: route.id.toString(),
+              label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+            }))}
+            className=""
+          />
         </div>
         <div className="flex">
           <div className='flex items-start gap-4'>
@@ -148,6 +170,7 @@ export default function RouteListingPage() {
               voucherNumber={voucherNumber}
               driverId={driverId}
               date={selectedDate?.toISOString()}
+              routeId={selectedRoute}
             />
           </div>
           <div className='relative left-[37%] hidden md:block'>
@@ -156,13 +179,13 @@ export default function RouteListingPage() {
 
         </div>
         <div className="flex gap-10">
-          <Separator className="w-[49%]" />
-          <Separator className="w-[49%]" />
+          <Separator className="w-[45%]" />
+          <Separator className="w-[54%]" />
         </div>
 
 
         <div className="flex items-start md:flex-row flex-col gap-x-5">
-          <div className="md:w-[50%] w-[100%]">
+          <div className="md:w-[45%] w-[100%]">
             <RouteTable data={paginatedRoutes} totalData={totalUsers} />
             {parseInt(tripRevenue) > 0 && (
               <div className="mt-4 flex md:justify-end justify-start  text-lg">
@@ -170,11 +193,11 @@ export default function RouteListingPage() {
               </div>
             )}
           </div>
-          <div className='relative mb-2 mt-4 md:hidden '>
+          <div className='relative -left-12 mt-4 md:hidden '>
             <Heading title={`Closing Voucher`} description="" />
           </div>
           <div className="md:w-[1px] w-[100%] h-[1px] relative mt-4 md:bottom-20 md:h-[28rem] bg-neutral-200"></div>
-          <div className="md:w-[50%] w-[100%] ">
+          <div className="md:w-[55%] w-[100%] ">
             {!isVoucherShow && tripsInformation.length >= 0 ? (
               <Button
                 disabled={tripsInformation.length <= 0}
@@ -188,6 +211,7 @@ export default function RouteListingPage() {
                 busId={busId}
                 driverId={driverId}
                 voucherNumber={voucherNumber}
+                routeId={selectedRoute}
                 setTotalExpense={setTotalExpense}
                 tripRevenue={tripRevenue}
                 TotalExpense={totalExpense}

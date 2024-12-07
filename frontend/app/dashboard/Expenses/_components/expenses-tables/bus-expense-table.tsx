@@ -2,13 +2,13 @@
 
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { Expense } from '@/lib/slices/expenses-slices';
-import { columns } from './columns';
-import { DataTableExpense } from './data-table-expense';
+import { BusExpensecolumns } from './BusExpenseColumn';
+import { DataTableBusExpense } from './data-table-bus-expense';
 import {
   useExpensesTableFilters
 } from './use-expenses-table-filters';
 
-export default function RouteTable({
+export default function BusExpenseTable({
   data,
   totalData
 }: {
@@ -41,7 +41,7 @@ export default function RouteTable({
           onReset={resetFilters}
         />
       </div>
-      <DataTableExpense columns={columns} data={data} totalItems={totalData} />
+      <DataTableBusExpense columns={BusExpensecolumns} data={data} totalItems={totalData} />
       
     </div>
   );

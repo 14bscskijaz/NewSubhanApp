@@ -14,34 +14,34 @@ export const columns: ColumnDef<Expense>[] = [
     header: 'S.No',
     cell: ({ row }) => <SerialNo rowIndex = {row.index}/>
   },
-  {
-    id: 'busNumber',
-    header: 'Bus Number',
-    cell: (
-      { row } // Parent component usage
-    ) => <BusNumber busId={Number(row.original.busId)} />
-  },
-  {
-    id: 'voucherNumber',
-    header: 'Voucher Number',
-    cell: (
-      { row } // Parent component usage
-    ) => <VoucherNumber voucherId={Number(row.original.voucherId)} />
-  },
-  {
-    id: 'revenue',
-    header: 'Revenue',
-    cell: (
-      { row } // Parent component usage
-    ) => <Revenue voucherId={Number(row.original.voucherId)} />
-  },
-  {
-    id: 'route',
-    header: 'Route',
-    cell: (
-      { row } // Parent component usage
-    ) => <Routes routeId={Number(row.original.routeId)} />
-  },
+  // {
+  //   id: 'busNumber',
+  //   header: 'Bus Number',
+  //   cell: (
+  //     { row } // Parent component usage
+  //   ) => <BusNumber busId={Number(row.original.busId)} />
+  // },
+  // {
+  //   id: 'voucherNumber',
+  //   header: 'Voucher Number',
+  //   cell: (
+  //     { row } // Parent component usage
+  //   ) => <VoucherNumber voucherId={Number(row.original.voucherId)} />
+  // },
+  // {
+  //   id: 'revenue',
+  //   header: 'Revenue',
+  //   cell: (
+  //     { row } // Parent component usage
+  //   ) => <Revenue voucherId={Number(row.original.voucherId)} />
+  // },
+  // {
+  //   id: 'route',
+  //   header: 'Route',
+  //   cell: (
+  //     { row } // Parent component usage
+  //   ) => <Routes routeId={Number(row.original.routeId)} />
+  // },
   {
     accessorKey: 'description',
     header: 'Description'

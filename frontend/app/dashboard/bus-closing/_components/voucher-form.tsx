@@ -38,6 +38,7 @@ interface BusClosingVoucherFormProps {
   tripRevenue: string;
   TotalExpense: string;
   date: string | undefined;
+  routeId:string;
 }
 
 const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
@@ -51,7 +52,8 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   setIsVoucherShow,
   setBusId,
   setDriverId,
-  setVoucherNumber
+  setVoucherNumber,
+  routeId
 }) => {
   const employees = useSelector<RootState, Employee[]>(allEmployees);
   const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(
@@ -82,7 +84,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       busId: Number(busId),
       driverId: Number(driverId),
       conductorId: '',
-      routeId: 3,
+      routeId: Number(routeId),
       voucherNumber,
       commission: getExpenseValue('driverCommission'),
       diesel: null,
@@ -172,9 +174,6 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       );
 
       dispatch(setTripInformation([])); 
-      // setBusId("")
-      // setDriverId("")
-      // setVoucherNumber("")
       methods.reset(); 
       setIsVoucherShow(false)
     } catch (error) {
@@ -186,8 +185,8 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="mt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      <form onSubmit={methods.handleSubmit(onSubmit)} className="">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
           {/* Dropdown for Conductor */}
           <div>
             <Label htmlFor="conductorId">Conductor</Label>
@@ -234,7 +233,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           ].map((field) => (
             <div key={field}>
               <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
-              <Input id={field} type="number" {...methods.register(field as any)} />
+              <Input id={field} type="number" {...methods.register(field as any)} min={0} />
             </div>
           ))}
 

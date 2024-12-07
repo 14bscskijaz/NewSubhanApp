@@ -36,8 +36,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(false);
     }
   };
-
   const handleUpdate = async (updatedPrice: TicketPriceRaw) => {
+
+    
     await updateTicketPrice(data.id, updatedPrice)
     dispatch(updateTicketRaw(updatedPrice));
   };

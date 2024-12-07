@@ -33,7 +33,7 @@ export default function PricingListingPage({ }: TPricingListingPage) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
-  const [pageLimit, setPageLimit] = useState(10);
+  const [pageLimit, setPageLimit] = useState(5);
 
   const dispatch = useDispatch();
   const fetchTicket = async () => {
@@ -50,7 +50,7 @@ export default function PricingListingPage({ }: TPricingListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const sourceParam = searchParams.get('source') || '';
-    const limitParam = searchParams.get('limit') || '10';
+    const limitParam = searchParams.get('limit') || '5';
 
     setPage(Number(pageParam));
     setSearch(searchParam);
@@ -58,31 +58,43 @@ export default function PricingListingPage({ }: TPricingListingPage) {
     setPageLimit(Number(limitParam));
   }, [searchParams]);
 
-  // Get filtered tickets from Redux state and process data
-  const displayTickets = ticketsRaw.map((ticket) => {
-    const route = routes.find((route) => route.id === ticket.routeId);
-    if (route) {
-      return {
-        id: ticket.id,
-        source: route.sourceCity,
-        sourceStation: route.sourceAdda,
-        destination: route.destinationCity,
-        destinationStation: route.destinationAdda,
-        ticketPrice: ticket.ticketPrice,
-        busType: ticket.busType
-      };
-    } else {
-      return {
-        id: ticket.id,
-        source: 'Unknown',
-        sourceStation: 'Unknown',
-        destination: 'Unknown',
-        destinationStation: 'Unknown',
-        ticketPrice: ticket.ticketPrice,
-        busType: ticket.busType
-      };
-    }
-  });
+const uniqueTicketsRaw = ticketsRaw.filter(
+  (ticket, index, self) =>
+    index === self.findIndex(
+      (t) =>
+        t.id === ticket.id ||
+        (t.routeId === ticket.routeId && t.busType === ticket.busType)
+    )
+);
+
+// Map the unique tickets to display format
+const displayTickets = uniqueTicketsRaw.map((ticket) => {
+  const route = routes.find((route) => route.id === ticket.routeId);
+  if (route) {
+    return {
+      id: ticket.id,
+      source: route.sourceCity,
+      sourceStation: route.sourceAdda,
+      destination: route.destinationCity,
+      destinationStation: route.destinationAdda,
+      ticketPrice: ticket.ticketPrice,
+      busType: ticket.busType,
+      routeId: ticket.routeId,
+    };
+  } else {
+    return {
+      id: ticket.id,
+      source: 'Unknown',
+      sourceStation: 'Unknown',
+      destination: 'Unknown',
+      destinationStation: 'Unknown',
+      ticketPrice: ticket.ticketPrice,
+      busType: ticket.busType,
+      routeId: ticket.routeId,
+    };
+  }
+});
+
 
   // Filtering based on search parameters
   const filteredTickets = displayTickets.filter((ticket) => {

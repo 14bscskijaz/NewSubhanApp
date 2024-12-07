@@ -315,9 +315,6 @@ export default function NewRouteDialog({
               className="flex-col !space-x-0 gap-y-2 !items-start"
             />
 
-
-
-
             {/* Full Ticket Luxury Count */}
             <div className="grid gap-2">
               <Label htmlFor="fullTicketBusinessCount" className='text-gradient'>
@@ -431,9 +428,6 @@ export default function NewRouteDialog({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
             <Button type="submit">Save</Button>
           </DialogFooter>
         </form>

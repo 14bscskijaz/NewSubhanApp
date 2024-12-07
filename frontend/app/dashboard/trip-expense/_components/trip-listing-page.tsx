@@ -25,13 +25,12 @@ export default function TripListingPage({ }: TTripListingPage) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
-  const [pageLimit, setPageLimit] = useState(10);
+  const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch();
 
   const fetchFixedTripExpense = async () => {
     const fetchFixedExpense = await getAllFixedTripExpenses();
     const routes = await getAllRoutes()
-    console.log(fetchFixedExpense, "fetchFixedExpense");
     dispatch(setFixedTripExpense(fetchFixedExpense));
     dispatch(setRoute(routes));
     const tickets = await getAllTicketPrices()
@@ -43,7 +42,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';
-    const limitParam = searchParams.get('limit') || '10';
+    const limitParam = searchParams.get('limit') || '5';
 
     setPage(Number(pageParam));
     setSearch(searchParam);

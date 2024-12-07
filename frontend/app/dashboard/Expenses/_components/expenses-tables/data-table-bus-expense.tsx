@@ -34,7 +34,7 @@ export function DataTableBusExpense<TData, TValue>({
   columns,
   data,
   totalItems,
-  pageSizeOptions = [10, 20, 30, 40, 50]
+  pageSizeOptions = [2, 3, 4, 5, 10]
 }: DataTableProps<TData, TValue>) {
   const { open } = useSidebar();
   const [currentPage, setCurrentPage] = useQueryState(
@@ -45,12 +45,12 @@ export function DataTableBusExpense<TData, TValue>({
     'limit',
     parseAsInteger
       .withOptions({ shallow: false, history: 'push' })
-      .withDefault(10)
+      .withDefault(5) // Default to 5 rows per page
   );
 
   const paginationState = {
     pageIndex: currentPage - 1,
-    pageSize: pageSize
+    pageSize: pageSize // Ensure this matches the default value above
   };
 
   const pageCount = Math.ceil(totalItems / pageSize);
@@ -137,16 +137,6 @@ export function DataTableBusExpense<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
-
-          {/* Add NewExpenseDialog after the last row with a separator */}
-          {/* <TableRow>
-          </TableRow> */}
-          {/* <TableRow>
-            <TableCell colSpan={columns.length} className="text-left">
-              <NewExpensesDialog />
-            </TableCell>
-          </TableRow> */}
-          
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

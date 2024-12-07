@@ -27,14 +27,13 @@ export default function ClosingExpenseListingPage({ }: TExpenseListingPage) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
-  const [pageLimit, setPageLimit] = useState(10);
+  const [pageLimit, setPageLimit] = useState(5);
 
   const dispatch = useDispatch();
 
   const fetchFixedBusClosing = async () => {
     const routes = await getAllRoutes();
     const fixedBusClosing = await getAllFixedBusClosingExpenses()
-    console.log(fixedBusClosing, "fixedBusClosing");
     dispatch(setRoute(routes));
     dispatch(setClosingExpense(fixedBusClosing))
 
@@ -45,7 +44,7 @@ export default function ClosingExpenseListingPage({ }: TExpenseListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';
-    const limitParam = searchParams.get('limit') || '10';
+    const limitParam = searchParams.get('limit') || '5';
 
     setPage(Number(pageParam));
     setSearch(searchParam);

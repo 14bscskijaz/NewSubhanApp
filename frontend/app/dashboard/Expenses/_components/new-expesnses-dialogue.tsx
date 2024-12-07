@@ -11,19 +11,19 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Expense, addExpense } from "@/lib/slices/expenses-slices"
+import { Expense, addExpense, allExpenses } from "@/lib/slices/expenses-slices"
 import { RootState } from "@/lib/store"; // Adjust the path as needed
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 export default function NewExpensesDialog() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const expenses = useSelector<RootState, Expense[]>(allExpenses);
   const [tab, setTab] = useState<"bus" | "general">("general")
   const [description, setDescription] = useState("")
   const [amount, setAmount] = useState<number | "">("")
-  const [busId, setBusId] = useState<number | "">("")  
+  const [busId, setBusId] = useState<string|number>("")  
   
   const dispatch = useDispatch()
 
@@ -43,9 +43,10 @@ export default function NewExpensesDialog() {
     };
   
     dispatch(addExpense(newExpense));
-  
     setOpen(false);
+    
     resetForm();
+    console.log(expenses,"expenses");
   }
   
   // Reset form values
@@ -98,15 +99,15 @@ export default function NewExpensesDialog() {
               <>
                 <div className="grid gap-2">
                 <SelectField
-                  id="busId"
-                  value={busId?.toString()}
+                  id="busNumber"
+                  value={busId}
                   onChange={(value) => setBusId(Number(value))}
                   placeholder="Select Bus"
                   options={buses.map((bus) => ({
                     value: bus.id,
                     label: bus.busNumber,
                   }))}
-                  label="Select Bus"
+                  label="Bus Number"
                   className="flex-col !space-x-0 gap-y-2 !items-start"
                 />
                 </div>

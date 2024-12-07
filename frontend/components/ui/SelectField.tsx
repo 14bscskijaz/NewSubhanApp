@@ -17,7 +17,7 @@ import { Input } from "./input";
 
 type ComboboxProps = {
     id: string;
-    value: string | undefined;
+    value: string | number |undefined;
     onChange: (value: string) => void;
     placeholder: string;
     options: option[];

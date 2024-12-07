@@ -36,6 +36,12 @@ const initialState: TicketState = {
       ticketPrice: 2700
     },
     {
+      id: 1,
+      routeId: 1,
+      busType: 'Business',
+      ticketPrice: 2700
+    },
+    {
       id: 2,
       routeId: 1,
       busType: 'Standard',

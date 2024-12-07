@@ -57,8 +57,6 @@ export default function EditPricingDialog({
   const filteredRoutes = routes.filter(route =>
     ticketRoutes.some(ticket => ticket.routeId === route.id)
   );  
-  // Default route (selected route from the filtered list)
-  const currentRoute = filteredRoutes.find(route => route.id === routeId);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

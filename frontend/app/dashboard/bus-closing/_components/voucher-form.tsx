@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import NetExpenses from './net-expense';
 import { createBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
 import { createTrip } from '@/app/actions/trip.action';
+import { useToast } from '@/hooks/use-toast';
 
 interface BusClosingVoucherFormProps {
   driverId: string;
@@ -38,7 +39,8 @@ interface BusClosingVoucherFormProps {
   tripRevenue: string;
   TotalExpense: string;
   date: string | undefined;
-  routeId:string;
+  routeId: string;
+  conductorId:string;
 }
 
 const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
@@ -53,9 +55,10 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   setBusId,
   setDriverId,
   setVoucherNumber,
-  routeId
+  routeId,
+  conductorId
 }) => {
-  const employees = useSelector<RootState, Employee[]>(allEmployees);
+  const { toast } = useToast();
   const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(
     allClosingExpenses
   );
@@ -75,15 +78,13 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
     return routeFixedClosingExpense ? routeFixedClosingExpense[expenseName] : null;
   };
 
-  const conductors = employees.filter(
-    (employee) => employee.employeeType.toLowerCase() === 'conductor'
-  );
+  
 
   const methods = useForm({
     defaultValues: {
       busId: Number(busId),
       driverId: Number(driverId),
-      conductorId: '',
+      conductorId: Number(conductorId),
       routeId: Number(routeId),
       voucherNumber,
       commission: getExpenseValue('driverCommission'),
@@ -136,7 +137,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   }, [methods, tripRevenue]);
 
   const onSubmit = async (data: any) => {
-    setLoading(true); // Set loading state
+    setLoading(true);
     try {
       const sanitizedData = {
         ...data,
@@ -173,48 +174,37 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         })
       );
 
-      dispatch(setTripInformation([])); 
-      methods.reset(); 
-      setIsVoucherShow(false)
+      dispatch(setTripInformation([]));
+      methods.reset();
+      setIsVoucherShow(false);
+
+      // Show success toast
+      toast({
+        title: 'Success',
+        description: 'Bus closing voucher created successfully!',
+        variant: 'default',
+      });
     } catch (error) {
       console.error('Error during submission:', error);
+
+      // Show error toast
+      toast({
+        title: 'Error',
+        description: 'An error occurred while creating the voucher.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false); // Reset loading state
     }
   };
 
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className="">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 mt-2 sm:grid-cols-2 md:grid-cols-4 gap-5">
           {/* Dropdown for Conductor */}
-          <div>
-            <Label htmlFor="conductorId">Conductor</Label>
-            <Select
-              onValueChange={(value) => methods.setValue('conductorId', value)}
-              value={methods.watch('conductorId') || ''}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Conductor">
-                  {(() => {
-                    const selectedConductor = conductors.find(
-                      (c) => String(c.id) === String(methods.watch('conductorId'))
-                    );
-                    return selectedConductor
-                      ? `${selectedConductor.firstName} ${selectedConductor.lastName}`
-                      : 'Select Conductor';
-                  })()}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {conductors.map((conductor) => (
-                  <SelectItem key={conductor?.id} value={String(conductor?.id)}>
-                    {conductor.firstName + ' ' + conductor.lastName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          
 
           {/* Input Fields */}
           {[

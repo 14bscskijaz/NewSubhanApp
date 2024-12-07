@@ -33,7 +33,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   totalItems,
-  pageSizeOptions = [10, 20, 30, 40, 50]
+  pageSizeOptions = [2, 3, 4, 5, 10]
 }: DataTableProps<TData, TValue>) {
   const { open } = useSidebar();
   const [currentPage, setCurrentPage] = useQueryState(
@@ -44,7 +44,7 @@ export function DataTable<TData, TValue>({
     'limit',
     parseAsInteger
       .withOptions({ shallow: false, history: 'push' })
-      .withDefault(10)
+      .withDefault(5)
   );
 
   const paginationState = {

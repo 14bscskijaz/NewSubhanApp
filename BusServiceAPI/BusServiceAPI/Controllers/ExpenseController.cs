@@ -28,7 +28,7 @@ namespace BusServiceAPI.Controllers
                 {
                     Id = e.Id,
                     Date = e.Date,
-                    Type = e.Type,
+                    Type = e.Type.ToString(),
                     BusId = e.Bus.Id,
                     BusClosingVoucherId = e.BusClosingVoucher.Id,
                     Amount = e.Amount,
@@ -48,7 +48,7 @@ namespace BusServiceAPI.Controllers
                 {
                     Id = e.Id,
                     Date = e.Date,
-                    Type = e.Type,
+                    Type = e.Type.ToString(),
                     BusId = e.Bus.Id,
                     BusClosingVoucherId = e.BusClosingVoucher.Id,
                     Amount = e.Amount,
@@ -69,7 +69,7 @@ namespace BusServiceAPI.Controllers
             var expense = new Expense
             {
                 Date = expenseDto.Date,
-                Type = expenseDto.Type,
+                Type = Enum.Parse<ExpenseType>(expenseDto.Type),
                 BusId = expenseDto.BusId,
                 BusClosingVoucherId = expenseDto.BusClosingVoucherId,
                 Amount = expenseDto.Amount,
@@ -83,7 +83,7 @@ namespace BusServiceAPI.Controllers
             {
                 Id = expense.Id,
                 Date = expense.Date,
-                Type = expense.Type,
+                Type = expense.Type.ToString(),
                 BusId = expense.BusId,
                 BusClosingVoucherId = expense.BusClosingVoucherId,
                 Amount = expense.Amount,
@@ -101,7 +101,7 @@ namespace BusServiceAPI.Controllers
             if (expense == null) return NotFound();
 
             expense.Date = expenseDto.Date;
-            expense.Type = expenseDto.Type;
+            expense.Type = Enum.Parse<ExpenseType>(expenseDto.Type);
             expense.BusId = expenseDto.BusId;
             expense.BusClosingVoucherId = expenseDto.BusClosingVoucherId;
             expense.Amount = expenseDto.Amount;

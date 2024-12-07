@@ -396,7 +396,6 @@ export default function NewRouteDialog({
                 placeholder="Calculated revenue"
                 value={tripData.miscellaneousAmount}
                 onChange={handleInputChange}
-                min={0}
               />
             </div>
 

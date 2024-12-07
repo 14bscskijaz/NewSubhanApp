@@ -24,8 +24,9 @@ namespace BusServiceAPI.Controllers
                 .Select(tp => new TicketPricingDTO
                 {
                     Id = tp.Id,
-                    RouteId = tp.Route.Id,
-                    TicketPrice = tp.TicketPrice
+                    RouteId = tp.RouteId,
+                    TicketPrice = tp.TicketPrice,
+                    BusType = tp.BusType.ToString(),
                 }).ToList();
 
             return Ok(ticketPricings);
@@ -38,8 +39,9 @@ namespace BusServiceAPI.Controllers
                 .Select(tp => new TicketPricingDTO
                 {
                     Id = tp.Id,
-                    RouteId = tp.Route.Id,
-                    TicketPrice = tp.TicketPrice
+                    RouteId = tp.RouteId,
+                    TicketPrice = tp.TicketPrice,
+                    BusType = tp.BusType.ToString()
                 })
                 .FirstOrDefault(tp => tp.Id == id);
 
@@ -54,8 +56,10 @@ namespace BusServiceAPI.Controllers
 
             var ticketPricing = new TicketPricing
             {
-                Id = ticketPricingDto.RouteId,
-                TicketPrice = ticketPricingDto.TicketPrice
+                RouteId = ticketPricingDto.RouteId,
+                TicketPrice = ticketPricingDto.TicketPrice,
+                BusType = (BusTypeEnum)Enum.Parse(typeof(BusTypeEnum), ticketPricingDto.BusType)
+
             };
 
             _context.TicketPricings.Add(ticketPricing);
@@ -64,8 +68,9 @@ namespace BusServiceAPI.Controllers
             var createdTicketPricing = new TicketPricingDTO
             {
                 Id = ticketPricing.Id,
-                RouteId = ticketPricing.Route.Id,
-                TicketPrice = ticketPricing.TicketPrice
+                RouteId = ticketPricing.RouteId,
+                TicketPrice = ticketPricing.TicketPrice,
+                BusType = ticketPricing.BusType.ToString(),
             };
 
             return CreatedAtAction(nameof(GetTicketPricing), new { id = createdTicketPricing.Id }, createdTicketPricing);
@@ -77,8 +82,9 @@ namespace BusServiceAPI.Controllers
             var ticketPricing = _context.TicketPricings.Find(id);
             if (ticketPricing == null) return NotFound();
 
-            ticketPricing.Route.Id = ticketPricingDto.RouteId;
+            ticketPricing.RouteId = ticketPricingDto.RouteId;
             ticketPricing.TicketPrice = ticketPricingDto.TicketPrice;
+            ticketPricing.BusType = (BusTypeEnum)Enum.Parse(typeof(BusTypeEnum), ticketPricingDto.BusType);
 
             _context.SaveChanges();
             return NoContent();

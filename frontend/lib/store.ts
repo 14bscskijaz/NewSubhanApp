@@ -8,6 +8,8 @@ import busClosingSlice from './slices/bus-closing';
 import tripInformationSlice from './slices/trip-information';
 import busClosingVoucherSlice from './slices/bus-closing-voucher';
 import fixedClosingExpenseSlice from './slices/fixed-closing-expense-slice';
+import expensesSlices from './slices/expenses-slices';
+import tripInformationSaved from './slices/trip-information-saved';
 
 // Configure the Redux store
 export const store = configureStore({
@@ -20,7 +22,9 @@ export const store = configureStore({
     busClosings: busClosingSlice,
     tripsInformation: tripInformationSlice,
     closingExpenses: fixedClosingExpenseSlice,
-    busClosingVouchers: busClosingVoucherSlice
+    busClosingVouchers: busClosingVoucherSlice,
+    expenses:expensesSlices,
+    savedTripsInformation:tripInformationSaved
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -38,6 +42,9 @@ export type RootState = {
   tripsInformation: ReturnType<typeof tripInformationSlice>;
   busClosingVouchers: ReturnType<typeof busClosingVoucherSlice>;
   closingExpenses: ReturnType<typeof fixedClosingExpenseSlice>;
+  expenses:ReturnType<typeof expensesSlices>
+  savedTripsInformation:ReturnType<typeof tripInformationSaved>
+  
 };
 
 export type AppDispatch = typeof store.dispatch;

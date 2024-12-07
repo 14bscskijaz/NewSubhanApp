@@ -25,7 +25,7 @@ namespace BusServiceAPI.Controllers
                 {
                     Id = b.Id,
                     BusNumber = b.BusNumber,
-                    BusType = b.BusType,
+                    BusType = b.BusType.ToString() ,
                     BusOwner = b.BusOwner,
                     Description = b.Description,
                     BusStatus = b.BusStatus
@@ -42,7 +42,7 @@ namespace BusServiceAPI.Controllers
                 {
                     Id = b.Id,
                     BusNumber = b.BusNumber,
-                    BusType = b.BusType,
+                    BusType = b.BusType.ToString() ,
                     BusOwner = b.BusOwner,
                     Description = b.Description,
                     BusStatus = b.BusStatus
@@ -61,7 +61,7 @@ namespace BusServiceAPI.Controllers
             var bus = new Bus
             {
                 BusNumber = busDto.BusNumber,
-                BusType = busDto.BusType,
+                BusType = (BusTypeEnum)Enum.Parse(typeof(BusTypeEnum), busDto.BusType),
                 BusOwner = busDto.BusOwner,
                 Description = busDto.Description,
                 BusStatus = busDto.BusStatus
@@ -74,7 +74,7 @@ namespace BusServiceAPI.Controllers
             {
                 Id = bus.Id,
                 BusNumber = bus.BusNumber,
-                BusType = bus.BusType,
+                BusType = bus.BusType.ToString(),
                 BusOwner = bus.BusOwner,
                 Description = bus.Description,
                 BusStatus = bus.BusStatus
@@ -90,7 +90,7 @@ namespace BusServiceAPI.Controllers
             if (bus == null) return NotFound();
 
             bus.BusNumber = busDto.BusNumber;
-            bus.BusType = busDto.BusType;
+            bus.BusType = (BusTypeEnum)Enum.Parse(typeof(BusTypeEnum), busDto.BusType);
             bus.BusOwner = busDto.BusOwner;
             bus.Description = busDto.Description;
             bus.BusStatus = busDto.BusStatus;

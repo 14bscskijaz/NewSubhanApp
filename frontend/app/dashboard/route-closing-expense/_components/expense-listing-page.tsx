@@ -1,22 +1,25 @@
 'use client';
+import { getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import {
   ClosingExpense,
-  allClosingExpenses
-} from '@/lib/slices/fixed-closing-expense-slice'; // Import ClosingExpense
+  allClosingExpenses,
+  setClosingExpense
+} from '@/lib/slices/fixed-closing-expense-slice';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import NewTripDialog from './new-expense-dialogue'; // Consider renaming if it's specific to Trip, e.g. "NewClosingExpenseDialog"
-import ClosingExpenseTable from './route-closing-tables'; // You may need to rename the table component
+import { useDispatch, useSelector } from 'react-redux';
 import NewExpenseDialog from './new-expense-dialogue';
+import ClosingExpenseTable from './route-closing-tables';
+import { getAllRoutes } from '@/app/actions/route.action';
+import { setRoute } from '@/lib/slices/route-slices';
 
 type TExpenseListingPage = {};
 
-export default function ClosingExpenseListingPage({}: TExpenseListingPage) {
+export default function ClosingExpenseListingPage({ }: TExpenseListingPage) {
   const closingExpenses = useSelector<RootState, ClosingExpense[]>(
     allClosingExpenses
   );
@@ -24,13 +27,24 @@ export default function ClosingExpenseListingPage({}: TExpenseListingPage) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
-  const [pageLimit, setPageLimit] = useState(10);
+  const [pageLimit, setPageLimit] = useState(5);
+
+  const dispatch = useDispatch();
+
+  const fetchFixedBusClosing = async () => {
+    const routes = await getAllRoutes();
+    const fixedBusClosing = await getAllFixedBusClosingExpenses()
+    dispatch(setRoute(routes));
+    dispatch(setClosingExpense(fixedBusClosing))
+
+  }
 
   useEffect(() => {
+    fetchFixedBusClosing()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';
-    const limitParam = searchParams.get('limit') || '10';
+    const limitParam = searchParams.get('limit') || '5';
 
     setPage(Number(pageParam));
     setSearch(searchParam);
@@ -42,13 +56,13 @@ export default function ClosingExpenseListingPage({}: TExpenseListingPage) {
   const filteredClosingExpenses = closingExpenses.filter((expense) => {
     const matchesSearch = search
       ? expense.driverCommission.toString().includes(search.toLowerCase()) ||
-        expense.coilExpense.toString().includes(search.toLowerCase()) ||
-        expense.tollTax.toString().includes(search.toLowerCase()) ||
-        expense.halfSafai.toString().includes(search.toLowerCase()) ||
-        expense.fullSafai.toString().includes(search.toLowerCase()) ||
-        expense.refreshmentRate.toString().includes(search.toLowerCase()) ||
-        expense.dcParchi.toString().includes(search.toLowerCase()) ||
-        expense.alliedMorde.toString().includes(search.toLowerCase())
+      expense.cOilExpense.toString().includes(search.toLowerCase()) ||
+      expense.tollTax.toString().includes(search.toLowerCase()) ||
+      expense.halfSafai.toString().includes(search.toLowerCase()) ||
+      expense.fullSafai.toString().includes(search.toLowerCase()) ||
+      expense.refreshmentRate.toString().includes(search.toLowerCase()) ||
+      expense.dcPerchi.toString().includes(search.toLowerCase()) ||
+      expense.alliedMorde.toString().includes(search.toLowerCase())
       : true;
 
     const matchesCount = source

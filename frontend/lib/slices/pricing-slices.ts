@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { string } from 'zod';
 
 // Define the Route type with busType
 export type TicketPrice = {
@@ -33,7 +32,13 @@ const initialState: TicketState = {
     {
       id: 1,
       routeId: 1,
-      busType: 'Luxury',
+      busType: 'Business',
+      ticketPrice: 2700
+    },
+    {
+      id: 1,
+      routeId: 1,
+      busType: 'Business',
       ticketPrice: 2700
     },
     {
@@ -45,7 +50,7 @@ const initialState: TicketState = {
     {
       id: 3,
       routeId: 2,
-      busType: 'Luxury',
+      busType: 'Business',
       ticketPrice: 2700
     },
     {
@@ -57,7 +62,7 @@ const initialState: TicketState = {
     {
       id: 5,
       routeId: 3,
-      busType: 'Luxury',
+      busType: 'Business',
       ticketPrice: 2100
     },
     {
@@ -69,7 +74,7 @@ const initialState: TicketState = {
     {
       id: 7,
       routeId: 4,
-      busType: 'Luxury',
+      busType: 'Business',
       ticketPrice: 2100
     },
     {
@@ -114,12 +119,18 @@ const TicketSlice = createSlice({
       if (index !== -1) {
         state.ticketsRaw[index] = action.payload;
       }
-    }
+    },
+    setTicketRaw: (
+      state,
+      action: PayloadAction<Omit<TicketPriceRaw[], 'id'>>
+    ) => {
+      state.ticketsRaw = action.payload
+    },
   }
 });
 
 // Export actions and reducer
-export const { addTicketRaw, removeTicketRaw, updateTicketRaw } =
+export const { addTicketRaw, removeTicketRaw, updateTicketRaw,setTicketRaw } =
   TicketSlice.actions;
 export default TicketSlice.reducer;
 

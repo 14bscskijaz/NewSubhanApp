@@ -1,4 +1,3 @@
-import { InputField } from '../_components/ui/InputField';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,17 +16,18 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { FixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
-import { Trip } from '@/lib/slices/fixed-trip-expense';
 import { RootState } from '@/lib/store';
 import { Pen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { InputField } from '../_components/ui/InputField';
 
 type EditTripDialogProps = {
-  trip: Trip;
-  onUpdate: (updatedRoute: Trip) => void;
+  trip: FixedTripExpense;
+  onUpdate: (updatedRoute: FixedTripExpense) => void;
 };
 
 export default function EditTripDialog({
@@ -94,8 +94,8 @@ export default function EditTripDialog({
                 <SelectContent>
                   {filteredRoutes.map((route) => (
                     <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.source} (${route.sourceStation})`} -{' '}
-                      {`${route.destination} (${route.destinationStation})`}
+                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
+                      {`${route.destinationCity} (${route.destinationAdda})`}
                     </SelectItem>
                   ))}
                 </SelectContent>

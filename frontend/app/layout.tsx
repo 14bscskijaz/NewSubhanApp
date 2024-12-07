@@ -1,11 +1,11 @@
 import { auth } from '@/auth';
 import Providers from '@/components/layout/providers';
-import { Toaster } from '@/components/ui/sonner';
+import { StoreProviders } from '@/lib/store-provider';
 import type { Metadata } from 'next';
 import { Lato } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
-import { StoreProviders } from '@/lib/store-provider';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'Next Shadcn',
@@ -30,7 +30,7 @@ export default async function RootLayout({
       className={`${lato.className}`}
       suppressHydrationWarning={true}
     >
-      <body className={'overflow-hidden '}>
+      <body className='overflow-x-hidden md:overflow-hidden '>
         <NextTopLoader showSpinner={false} />
         <Providers session={session}>
           <StoreProviders>

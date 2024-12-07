@@ -20,10 +20,12 @@
         // Navigation properties
         public Bus Bus { get; set; }
         public Employee Driver { get; set; }
-        public Employee Conductor { get; set; }
+        public Employee? Conductor { get; set; }
         public int BusId { get; set; }
         public int DriverId { get; set; }
-        public int ConductorId { get; set; }
+        public int? ConductorId { get; set; }
+        public Route Route { get; set; }
+        public int RouteId { get; set; }
     }
 
 }

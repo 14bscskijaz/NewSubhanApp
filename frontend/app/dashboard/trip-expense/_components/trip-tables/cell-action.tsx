@@ -1,21 +1,15 @@
+import { deleteFixedTripExpense, updateFixedTripExpenses } from '@/app/actions/FixedTripExpense.action';
 import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
-import {
-  Employee,
-  removeEmployee,
-  updateEmployee
-} from '@/lib/slices/employe-slices'; // Import your delete and update actions
+import { FixedTripExpense, removeFixedTripExpense, updateFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { AppDispatch } from '@/lib/store';
 import { Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditTripDialog from '../edit-trip-dialogue';
-import { Route, removeRoute, updateRoute } from '@/lib/slices/route-slices';
-import { Trip, removeTrip, updateTrip } from '@/lib/slices/fixed-trip-expense';
 
 interface CellActionProps {
-  data: Trip;
+  data: FixedTripExpense;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -27,7 +21,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
-      dispatch(removeTrip(data.id));
+      await deleteFixedTripExpense(data.id);
+      dispatch(removeFixedTripExpense(data.id));
       setOpen(false);
     } catch (error) {
       console.error('Failed to delete route:', error);
@@ -36,8 +31,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const handleUpdate = (updatedTrip: Trip) => {
-    dispatch(updateTrip(updatedTrip));
+  const handleUpdate = async (updatedTrip: FixedTripExpense) => {
+    await updateFixedTripExpenses(data.id, updatedTrip)
+    dispatch(updateFixedTripExpense(updatedTrip));
   };
 
   return (

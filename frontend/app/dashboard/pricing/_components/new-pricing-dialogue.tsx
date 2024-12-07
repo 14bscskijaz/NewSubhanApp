@@ -13,10 +13,11 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { TicketPrice, TicketPriceRaw, addTicketRaw } from "@/lib/slices/pricing-slices"
+import { TicketPrice, TicketPriceRaw, addTicketRaw, setTicketRaw } from "@/lib/slices/pricing-slices"
 import { Route, allRoutes } from "@/lib/slices/route-slices"
 import { RootState } from "@/lib/store"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { createTicketPrice, getAllTicketPrices } from "@/app/actions/pricing.action"
 
 export default function NewPricingDialog() {
   const routes = useSelector<RootState, Route[]>(allRoutes)
@@ -27,17 +28,17 @@ export default function NewPricingDialog() {
 
   const dispatch = useDispatch()
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const newTicket: TicketPriceRaw = {
-      id: Date.now(),
+    const newTicket: Omit<TicketPriceRaw,"id"> = {
       routeId: Number(routeId),
       ticketPrice: Number(ticketPrice),
       busType,
     }
-
-    dispatch(addTicketRaw(newTicket))
+    await createTicketPrice(newTicket)
+    const allTicketData = await getAllTicketPrices()
+    dispatch(setTicketRaw(allTicketData))
     setOpen(false)
     resetForm()
   }
@@ -56,7 +57,7 @@ export default function NewPricingDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add New Ticket Price
+          <Plus className="mr-2 h-4 w-4" /> Add Ticket
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[400px] overflow-y-auto custom-scrollbar">
@@ -81,7 +82,7 @@ export default function NewPricingDialog() {
                       key={route.id}
                       value={`${route.id}`} 
                     >
-                      {route.source} ({route.sourceStation}) - {route.destination} ({route.destinationStation})
+                      {route.sourceCity} ({route.sourceAdda}) - {route.destinationCity} ({route.destinationAdda})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -107,7 +108,7 @@ export default function NewPricingDialog() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Standard">Standard</SelectItem>
-                  <SelectItem value="Luxury">Luxury</SelectItem>
+                  <SelectItem value="Business">Business</SelectItem>
                 </SelectContent>
               </Select>
             </div>

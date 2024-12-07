@@ -6,20 +6,20 @@ interface StatusBadgeProps {
     let bgColor = '';
     let textColor = 'text-white';
   
-    switch (status) {
-      case 'Active':
+    switch (status?.toLowerCase()) {
+      case 'active':
         bgColor = 'bg-green-500';
         break;
-      case 'Pending':
+      case 'pending':
         bgColor = 'bg-yellow-500 text-black';
         break;
-      case 'Terminated':
+      case 'terminated':
         bgColor = 'bg-red-500';
         break;
-      case 'Inactive':
+      case 'inactive':
         bgColor = 'bg-red-500';
         break;
-        case 'On Leave':
+        case 'on leave':
           bgColor = 'bg-yellow-500 text-black';
           break;
       default:

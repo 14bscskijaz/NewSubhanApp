@@ -1,13 +1,12 @@
+import { deleteBus, updateBuses } from '@/app/actions/bus.action';
 import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
-import { Employee, removeEmployee, updateEmployee } from '@/lib/slices/employe-slices'; // Import your delete and update actions
+import { Buses, removeBus, updateBus } from '@/lib/slices/bus-slices';
 import { AppDispatch } from '@/lib/store';
 import { Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditBusDialog from '../edit-bus-dialogue';
-import { Buses, removeBus, updateBus } from '@/lib/slices/bus-slices';
 
 interface CellActionProps {
   data: Buses;
@@ -22,6 +21,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
+      await deleteBus(data.id)
       dispatch(removeBus(data.id));
       setOpen(false);
     } catch (error) {
@@ -31,8 +31,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     }
   };
 
-  const handleUpdate = (updatedEmployee: Buses) => {
-    dispatch(updateBus(updatedEmployee));
+  const handleUpdate = async(updatedBus: Buses,id:number) => {
+    await updateBuses(id,updatedBus)
+    dispatch(updateBus(updatedBus));
   };
 
 
@@ -47,7 +48,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       <div className="flex gap-2">
         <EditBusDialog bus={data} onUpdate={handleUpdate} />
         <span className='my-2.5 cursor-pointer'>
-        <Trash onClick={() => setOpen(true)} className="mr-2 h-4 w-4" />
+          <Trash onClick={() => setOpen(true)} className="mr-2 h-4 w-4" />
         </span>
       </div>
     </>

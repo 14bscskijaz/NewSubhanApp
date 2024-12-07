@@ -1,51 +1,59 @@
 "use client";
+import { getAllBuses } from '@/app/actions/bus.action';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
+import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
+import { RootState } from '@/lib/store';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import BusTable from './bus-tables';
 import NewEmployeeDialog from './new-bus-dialogue';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store';
-import { useEffect, useState } from 'react';
-import { Employee, allEmployees } from '@/lib/slices/employe-slices';
-import { useSearchParams } from 'next/navigation'; // Import useSearchParams
-import { Buses, allBuses } from '@/lib/slices/bus-slices';
 
 type TBusListingPage = {};
 
-export default function BusListingPage({}: TBusListingPage) {
+export default function BusListingPage({ }: TBusListingPage) {
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const searchParams = useSearchParams(); // Use the hook to access search params
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState(''); // Change gender to status
-  const [pageLimit, setPageLimit] = useState(10);
+  const [pageLimit, setPageLimit] = useState(5);
+
+  const dispatch = useDispatch();
+
+  const fetchEmoployee = async () => {
+    const allBusesData = await getAllBuses();
+    dispatch(setBus(allBusesData))
+  }
 
   useEffect(() => {
+    fetchEmoployee()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
-    const statusParam = searchParams.get('status') || ''; // Change from gender to status
-    const limitParam = searchParams.get('limit') || '10';
+    const statusParam = searchParams.get('status') || '';
+    const limitParam = searchParams.get('limit') || '5';
 
     setPage(Number(pageParam));
     setSearch(searchParam);
-    setStatus(statusParam); // Set status instead of gender
+    setStatus(statusParam);
     setPageLimit(Number(limitParam));
   }, [searchParams]);
 
   const filteredBuses = buses.filter(buse => {
     const matchesSearch =
       search ?
-      buse.bus_owner.toLowerCase().includes(search.toLowerCase()) ||
-      buse.bus_number.toLowerCase().includes(search.toLowerCase()) :
+        buse.busOwner.toLowerCase().includes(search.toLowerCase()) ||
+        buse.busNumber.toLowerCase().includes(search.toLowerCase()) :
         true;
 
     const matchesStatus =
       status ?
-        buse.bus_status.toLowerCase() === status.toLowerCase() : 
+        buse.busStatus.toLowerCase() === status.toLowerCase() :
         true;
 
-    return matchesSearch && matchesStatus; // Combine both filters
+    return matchesSearch && matchesStatus; 
   });
 
   const totalBuses = filteredBuses.length;

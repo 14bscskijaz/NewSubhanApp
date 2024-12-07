@@ -18,6 +18,9 @@ import {
 } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { useSidebar } from '../sidebar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
+import { Button } from '../button';
+import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -30,7 +33,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   totalItems,
-  pageSizeOptions = [10, 20, 30, 40, 50]
+  pageSizeOptions = [2, 3, 4, 5, 10]
 }: DataTableProps<TData, TValue>) {
   const { open } = useSidebar();
   const [currentPage, setCurrentPage] = useQueryState(
@@ -41,15 +44,13 @@ export function DataTable<TData, TValue>({
     'limit',
     parseAsInteger
       .withOptions({ shallow: false, history: 'push' })
-      .withDefault(10)
+      .withDefault(5)
   );
 
   const paginationState = {
     pageIndex: currentPage - 1,
     pageSize: pageSize
   };
-
-  // console.log(data, "dta");
 
   const pageCount = Math.ceil(totalItems / pageSize);
 
@@ -83,7 +84,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <ScrollArea className="w-full  overflow-x-auto rounded-md border">
+      <ScrollArea className="w-full overflow-x-auto rounded-md border">
         <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -135,11 +136,20 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
+
+          {/* Add NewExpenseDialog after the last row with a separator */}
+          {/* <TableRow>
+          </TableRow> */}
+          {/* <TableRow>
+            <TableCell colSpan={columns.length} className="text-left">
+              <NewExpensesDialog />
+            </TableCell>
+          </TableRow> */}
+          
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-
-      {/* <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
+      <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
         <div className="flex w-full items-center justify-between">
           <div className="flex-1 text-sm text-muted-foreground">
             {totalItems > 0 ? (
@@ -230,7 +240,7 @@ export function DataTable<TData, TValue>({
             </Button>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }

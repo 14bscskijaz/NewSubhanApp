@@ -6,17 +6,15 @@ type TripRevenueT = {
 }
 const NetExpenses = ({ tripRevenue, TotalExpense }: TripRevenueT) => {
     return (
-        <div className='text-lg font-bold flex  mt-8 '>
-            <div className='flex flex-col'>
-                <div>Trips Revenue </div>
-                <div>Route Expense </div>
-                <div>Gross Revenue </div>
-            </div>
-            <div className='flex flex-col'>
-                <div> : {tripRevenue} </div>
-                <div> : {TotalExpense} </div>
-                <div> : {Number(tripRevenue) - Number(TotalExpense)}</div>
-            </div>
+        <div className='font-bold grid grid-cols-2 text-sm w-72 place-self-end mt-2'>
+            <div className='border bg-gradient-border text-base px-2 py-1 rounded-tl-md text-gradient'>Description </div>
+            <div className='border bg-gradient-border px-2 py-1 text-base rounded-tr-md text-gradient '>Value</div>
+            <div className='border-x border-t bg-gradient-border  px-2 py-1 '>Trips Revenue </div>
+            <div className='border-x border-t bg-gradient-border px-2 py-1  '>{tripRevenue} </div>
+            <div className='border-x border-b bg-gradient-border px-2 py-1'>Route Expense </div>
+            <div className='border-x border-b bg-gradient-border px-2 py-1 '>{TotalExpense || 0} </div>
+            <div className='border bg-gradient-border text-gradient px-2 py-1 rounded-bl-md text-base'>Gross Revenue </div>
+            <div className='border bg-gradient-border px-2 py-1 rounded-br-md text-base'>{Number(tripRevenue) - Number(TotalExpense)}</div>
 
         </div>
     )

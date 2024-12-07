@@ -20,12 +20,13 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
-import { addClosingExpense } from '@/lib/slices/fixed-closing-expense-slice';
+import { ClosingExpense, addClosingExpense, setClosingExpense } from '@/lib/slices/fixed-closing-expense-slice';
 import { RootState } from '@/lib/store';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
+import { createFixedBusClosingExpense, getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action';
 
 export default function NewExpenseDialog() {
   const [open, setOpen] = useState(false);
@@ -53,7 +54,7 @@ export default function NewExpenseDialog() {
     setRouteId(Number(selectedRouteId));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // Check if routeId is valid before submitting
@@ -62,19 +63,21 @@ export default function NewExpenseDialog() {
       return;
     }
 
-    const newExpense = {
-      RouteId: routeId,
-      DriverCommission: Number(driverCommission),
-      COilExpense: Number(cOilExpense),
-      TollTax: Number(tollTax),
-      HalfSafai: Number(halfSafai),
-      FullSafai: Number(fullSafai),
+    const newExpense:Omit<ClosingExpense,"id"> = {
+      routeId: Number(routeId)??0,
+      driverCommission: Number(driverCommission),
+      cOilExpense: Number(cOilExpense),
+      tollTax: Number(tollTax),
+      halfSafai: Number(halfSafai),
+      fullSafai: Number(fullSafai),
       refreshmentRate: Number(refreshmentRate),
-      DcParchi: Number(dcParchi),
+      dcPerchi: Number(dcParchi),
       alliedMorde: Number(alliedMorde)
     };
 
-    dispatch(addClosingExpense(newExpense));
+    await createFixedBusClosingExpense(newExpense)
+    const closingExpenses = await getAllFixedBusClosingExpenses();
+    dispatch(setClosingExpense(closingExpenses))
     setOpen(false);
     resetForm();
   };
@@ -121,8 +124,8 @@ export default function NewExpenseDialog() {
                 <SelectContent>
                   {filteredRoutes.map((route) => (
                     <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.source} (${route.sourceStation})`} -{' '}
-                      {`${route.destination} (${route.destinationStation})`}
+                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
+                      {`${route.destinationCity} (${route.destinationAdda})`}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -13,6 +13,7 @@ export type TripInformation = {
   actualRevenue: string; // Auto
   miscellaneousAmount: string;
   revenueDiffExplanation: string;
+  date?: string
 };
 
 export type TripInformationInput = TripInformation & {
@@ -75,6 +76,12 @@ const tripInformationSlice = createSlice({
   name: 'tripsInformation',
   initialState,
   reducers: {
+    setTripInformation: (
+      state,
+      action: PayloadAction<Omit<TripInformation[], 'id'>>
+    ) => {
+      state.tripsInformation = action.payload;
+    },
     addTripInformation: (
       state,
       action: PayloadAction<Omit<TripInformation, 'id'>>
@@ -115,7 +122,8 @@ const tripInformationSlice = createSlice({
 export const {
   addTripInformation,
   removeTripInformation,
-  updateTripInformation
+  updateTripInformation,
+  setTripInformation
 } = tripInformationSlice.actions;
 export default tripInformationSlice.reducer;
 

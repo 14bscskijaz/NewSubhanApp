@@ -59,6 +59,13 @@ const fixedTripExpenseSlice = createSlice({
   name: 'fixedTripExpense',
   initialState,
   reducers: {
+    setFixedTripExpense: (
+      state,
+      action: PayloadAction<Omit<FixedTripExpense[], 'id'>>
+    ) => {
+      state.fixedTripExpenses = action.payload
+    },
+
     // Action to add a trip with auto-incremented ID
     addFixedTripExpense: (
       state,
@@ -99,6 +106,7 @@ const fixedTripExpenseSlice = createSlice({
 
 // Export actions and reducer
 export const {
+  setFixedTripExpense,
   addFixedTripExpense,
   removeFixedTripExpense,
   updateFixedTripExpense

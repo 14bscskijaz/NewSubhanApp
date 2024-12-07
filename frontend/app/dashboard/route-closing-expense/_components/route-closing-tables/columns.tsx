@@ -14,33 +14,33 @@ export const columns: ColumnDef<ClosingExpense>[] = [
   {
     id: 'source-destination',
     header: 'Route',
-    cell: ({ row }) => <SourceDestination routeId={row.original.RouteId} />
+    cell: ({ row }) => <SourceDestination routeId={row.original.routeId} />
   },
   {
     id: 'source-station-destination-station',
     header: 'Station',
     cell: ({ row }) => (
-      <SourceStationDestinationStation routeId={row.original.RouteId} />
+      <SourceStationDestinationStation routeId={row.original.routeId} />
     )
   },
   {
-    accessorKey: 'DriverCommission',
+    accessorKey: 'driverCommission',
     header: 'Driver Commission'
   },
   {
-    accessorKey: 'COilExpense',
+    accessorKey: 'cOilExpense',
     header: 'C. Oil Expense'
   },
   {
-    accessorKey: 'TollTax',
+    accessorKey: 'tollTax',
     header: 'Toll Tax'
   },
   {
-    accessorKey: 'HalfSafai',
+    accessorKey: 'halfSafai',
     header: 'Half Safai'
   },
   {
-    accessorKey: 'FullSafai',
+    accessorKey: 'fullSafai',
     header: 'Full Safai'
   },
   {
@@ -48,7 +48,7 @@ export const columns: ColumnDef<ClosingExpense>[] = [
     header: 'Refreshment Rate'
   },
   {
-    accessorKey: 'DcParchi',
+    accessorKey: 'dcPerchi',
     header: 'DC Parchi (Fsd Only)'
   },
   {

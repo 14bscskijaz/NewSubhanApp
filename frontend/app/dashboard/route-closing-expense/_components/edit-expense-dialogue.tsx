@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,7 +18,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
@@ -32,12 +32,10 @@ type EditClosingExpenseDialogProps = {
 
 export default function EditClosingExpenseDialog({
   closingExpense,
-  onUpdate
+  onUpdate,
 }: EditClosingExpenseDialogProps) {
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    ...closingExpense
-  });
+  const [formData, setFormData] = useState({ ...closingExpense });
 
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
@@ -45,28 +43,30 @@ export default function EditClosingExpenseDialog({
   // Filter routes that exist in ticketsRaw
   const filteredRoutes = routes.filter((route) =>
     ticketsRaw.some((ticket) => ticket.routeId === route.id)
-  );
-
+  ); 
   useEffect(() => {
-    setFormData({
-      ...closingExpense
-    });
+    setFormData({ ...closingExpense });
+
+    
   }, [closingExpense]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value === '' ? 0 : parseFloat(value), // Convert empty strings to 0
+    }));
   };
 
   const handleRouteChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, RouteId: parseInt(value) }));
+    setFormData((prev) => ({ ...prev, routeId: parseInt(value) }));
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onUpdate(formData); // Call onUpdate with updated ClosingExpense data
+    onUpdate(formData); 
     setOpen(false);
   };
 
@@ -94,7 +94,7 @@ export default function EditClosingExpenseDialog({
               </Label>
               <Select
                 onValueChange={handleRouteChange}
-                value={formData.RouteId?.toString() || ''}
+                value={formData.routeId?.toString() || ''}
               >
                 <SelectTrigger id="route">
                   <SelectValue placeholder="Select route" />
@@ -102,8 +102,8 @@ export default function EditClosingExpenseDialog({
                 <SelectContent>
                   {filteredRoutes.map((route) => (
                     <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.source} (${route.sourceStation})`} -{' '}
-                      {`${route.destination} (${route.destinationStation})`}
+                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
+                      {`${route.destinationCity} (${route.destinationAdda})`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -111,65 +111,65 @@ export default function EditClosingExpenseDialog({
             </div>
             {/* Driver Commission */}
             <div className="grid gap-2">
-              <Label htmlFor="DriverCommission" className="text-gradient">
+              <Label htmlFor="driverCommission" className="text-gradient">
                 Driver Commission
               </Label>
               <Input
-                id="DriverCommission"
+                id="driverCommission"
                 type="number"
-                value={formData.DriverCommission || ''}
+                value={formData.driverCommission.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter driver commission"
               />
             </div>
             {/* COil Expense */}
             <div className="grid gap-2">
-              <Label htmlFor="COilExpense" className="text-gradient">
+              <Label htmlFor="cOilExpense" className="text-gradient">
                 COil Expense
               </Label>
               <Input
-                id="COilExpense"
+                id="cOilExpense"
                 type="number"
-                value={formData.COilExpense || ''}
+                value={formData.cOilExpense.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter COil Expense"
               />
             </div>
             {/* Toll Tax */}
             <div className="grid gap-2">
-              <Label htmlFor="TollTax" className="text-gradient">
+              <Label htmlFor="tollTax" className="text-gradient">
                 Toll Tax
               </Label>
               <Input
-                id="TollTax"
+                id="tollTax"
                 type="number"
-                value={formData.TollTax || ''}
+                value={formData.tollTax.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter toll tax"
               />
             </div>
             {/* Half Safai */}
             <div className="grid gap-2">
-              <Label htmlFor="HalfSafai" className="text-gradient">
+              <Label htmlFor="halfSafai" className="text-gradient">
                 Half Safai
               </Label>
               <Input
-                id="HalfSafai"
+                id="halfSafai"
                 type="number"
-                value={formData.HalfSafai || ''}
+                value={formData.halfSafai.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter half safai"
               />
             </div>
             {/* Full Safai */}
             <div className="grid gap-2">
-              <Label htmlFor="FullSafai" className="text-gradient">
+              <Label htmlFor="fullSafai" className="text-gradient">
                 Full Safai
               </Label>
               <Input
-                id="FullSafai"
+                id="fullSafai"
                 type="number"
-                value={formData.FullSafai || ''}
+                value={formData.fullSafai.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter full safai"
               />
@@ -182,20 +182,20 @@ export default function EditClosingExpenseDialog({
               <Input
                 id="refreshmentRate"
                 type="number"
-                value={formData.refreshmentRate || ''}
+                value={formData.refreshmentRate.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter refreshment rate"
               />
             </div>
             {/* DC Parchi */}
             <div className="grid gap-2">
-              <Label htmlFor="DcParchi" className="text-gradient">
+              <Label htmlFor="dcPerchi" className="text-gradient">
                 DC Parchi
               </Label>
               <Input
-                id="DcParchi"
+                id="dcPerchi"
                 type="number"
-                value={formData.DcParchi || ''}
+                value={formData.dcPerchi.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter DC parchis"
               />
@@ -208,7 +208,7 @@ export default function EditClosingExpenseDialog({
               <Input
                 id="alliedMorde"
                 type="number"
-                value={formData.alliedMorde || ''}
+                value={formData.alliedMorde.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter allied morde"
               />

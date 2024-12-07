@@ -14,15 +14,15 @@ export const columns: ColumnDef<Employee>[] = [
   {
     id: 'name',
     header: 'Name',
-    cell: ({ row }) => `${row.original.first_name} ${row.original.last_name}`
+    cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`
   },
   {
     accessorKey: 'cnic',
     header: 'CNIC',
-    cell: ({ row }) => row.original.cnic // Display the CNIC data
+    cell: ({ row }) => row.original.cnic 
   },
   {
-    accessorKey: 'employee_type',
+    accessorKey: 'employeeType',
     header: 'Employee Type'
   },
   {
@@ -30,21 +30,21 @@ export const columns: ColumnDef<Employee>[] = [
     header: 'Address'
   },
   {
-    accessorKey: 'mobile_number',
+    accessorKey: 'mobileNumber',
     header: 'Mobile Number'
   },
   {
-    accessorKey: 'hire_date',
+    accessorKey: 'hireDate',
     header: 'Hire Date',
     cell: ({ row }) =>
-      row.original.hire_date
-        ? new Date(row.original.hire_date).toLocaleDateString('en-GB')
+      row.original.hireDate
+        ? new Date(row.original.hireDate).toLocaleDateString('en-GB')
         : ''
   },
   {
     accessorKey: 'employee_status',
     header: 'Employee Status',
-    cell: ({ row }) => <StatusBadge status={row.original.employee_status} />
+    cell: ({ row }) => <StatusBadge status={row.original.employeeStatus} />
   },
   {
     accessorKey: 'dob',

@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Employee, setEmployee } from "@/lib/slices/employe-slices";
+import { Employee, addEmployee, setEmployee } from "@/lib/slices/employe-slices";
 import { createEmployee, getAllEmployees } from "@/app/actions/employee.action";
 
 export default function NewEmployeeDialog() {
@@ -90,9 +90,10 @@ export default function NewEmployeeDialog() {
       notes,
     };
 
-    await createEmployee(newEmployee);
-    const getAllEmployee = await getAllEmployees();
-    dispatch(setEmployee(getAllEmployee));
+    // await createEmployee(newEmployee);
+    // const getAllEmployee = await getAllEmployees();
+    // dispatch(setEmployee(getAllEmployee));
+    dispatch(addEmployee(newEmployee));
     setOpen(false);
     resetForm();
   };

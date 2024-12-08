@@ -6,6 +6,8 @@ import { Lato } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistor } from '@/lib/store';
 
 export const metadata: Metadata = {
   title: 'Next Shadcn',
@@ -33,9 +35,9 @@ export default async function RootLayout({
       <body className='overflow-x-hidden md:overflow-hidden '>
         <NextTopLoader showSpinner={false} />
         <Providers session={session}>
-          <StoreProviders>
-            <Toaster />
-            {children}
+          <StoreProviders>           
+              <Toaster />
+              {children}
           </StoreProviders>
         </Providers>
       </body>

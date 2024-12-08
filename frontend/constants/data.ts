@@ -155,8 +155,22 @@ export const navItems: NavItem[] = [
     items: [] 
   },
   {
-    title: 'General Expenses',
+    title: 'Daily Closing',
     url: '/dashboard/Expenses',
+    icon: 'bus',
+    isActive: false,
+    items: [] 
+  },
+  {
+    title: 'View Closing Vouchers',
+    url: '/dashboard/view-closing-voucher',
+    icon: 'bus',
+    isActive: false,
+    items: [] 
+  },
+  {
+    title: 'View Daily Closing',
+    url: '/dashboard/view-daily-expense',
     icon: 'bus',
     isActive: false,
     items: [] 

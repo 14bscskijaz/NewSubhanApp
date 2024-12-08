@@ -93,7 +93,7 @@ const savedTripInformationSlice = createSlice({
   name: 'savedTripsInformation',
   initialState,
   reducers: {
-    addTripInformation: (
+    addSavedTripInformation: (
       state,
       action: PayloadAction<Omit<SavedTripInformation, 'id'>>
     ) => {
@@ -111,14 +111,14 @@ const savedTripInformationSlice = createSlice({
     },
 
     // Action to remove a bus closing by ID
-    removeTripInformation: (state, action: PayloadAction<number>) => {
+    removeSavedTripInformation: (state, action: PayloadAction<number>) => {
       state.savedTripsInformation = state.savedTripsInformation.filter(
         (tripInformation) => tripInformation.id !== action.payload
       );
     },
 
     // Action to update a bus closing by ID
-    updateTripInformation: (state, action: PayloadAction<SavedTripInformation>) => {
+    updateSavedTripInformation: (state, action: PayloadAction<SavedTripInformation>) => {
       const index = state.savedTripsInformation.findIndex(
         (tripInformation) => tripInformation.id === action.payload.id
       );
@@ -131,9 +131,9 @@ const savedTripInformationSlice = createSlice({
 
 // Export actions and reducer
 export const {
-  addTripInformation,
-  removeTripInformation,
-  updateTripInformation
+  addSavedTripInformation,
+  removeSavedTripInformation,
+  updateSavedTripInformation
 } = savedTripInformationSlice.actions;
 export default savedTripInformationSlice.reducer;
 

@@ -48,8 +48,8 @@ export default function NewBusDialog() {
     };
 
     try {
-      const createdBus = await createBus(newBus);
-      dispatch(addBus(createdBus));
+      // const createdBus = await createBus(newBus);
+      dispatch(addBus(newBus));
       setOpen(false);
       resetForm();
     } catch (error: any) {

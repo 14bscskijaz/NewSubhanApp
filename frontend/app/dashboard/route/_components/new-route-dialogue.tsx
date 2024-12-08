@@ -36,7 +36,7 @@ export default function NewRouteDialog() {
       destinationCity:destination,
       destinationAdda:destinationStation,
     };
-    await createRoute(newRoute)
+    // await createRoute(newRoute)
     dispatch(addRoute(newRoute));
     setOpen(false);
     resetForm();

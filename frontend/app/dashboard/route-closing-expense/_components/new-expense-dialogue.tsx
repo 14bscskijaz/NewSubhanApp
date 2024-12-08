@@ -75,9 +75,10 @@ export default function NewExpenseDialog() {
       alliedMorde: Number(alliedMorde)
     };
 
-    await createFixedBusClosingExpense(newExpense)
-    const closingExpenses = await getAllFixedBusClosingExpenses();
-    dispatch(setClosingExpense(closingExpenses))
+    // await createFixedBusClosingExpense(newExpense)
+    // const closingExpenses = await getAllFixedBusClosingExpenses();
+    // dispatch(setClosingExpense(closingExpenses))
+    dispatch(addClosingExpense(newExpense))
     setOpen(false);
     resetForm();
   };

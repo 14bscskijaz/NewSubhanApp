@@ -33,206 +33,7 @@ const getCurrentISODateTime = (): string => {
 };
 
 const initialState: BusClosingVoucherState = {
-  busClosingVouchers: [
-    {
-      id: 1,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '5',
-      voucherNumber: '1',
-      commission: 5000,
-      diesel: 3000,
-      dieselLitres: 100,
-      coilTechnician: 1000,
-      toll: 500,
-      cleaning: 200,
-      alliedmor: 400,
-      cityParchi: 300,
-      refreshment: 700,
-      revenue: 15000
-    },
-    {
-      id: 2,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '18',
-      busId: '6',
-      voucherNumber: '2',
-      commission: 4000,
-      diesel: 2500,
-      dieselLitres: 80,
-      coilTechnician: 800,
-      toll: 300,
-      cleaning: 150,
-      alliedmor: 350,
-      cityParchi: 200,
-      refreshment: 600,
-      revenue: 12000
-    },
-    {
-      id: 3,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '18',
-      busId: '13',
-      voucherNumber: '3',
-      commission: 5500,
-      diesel: 3500,
-      dieselLitres: 120,
-      coilTechnician: 1200,
-      toll: 700,
-      cleaning: 250,
-      alliedmor: 450,
-      cityParchi: 400,
-      refreshment: 750,
-      revenue: 16000
-    },
-    {
-      id: 4,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '14',
-      voucherNumber: '4',
-      commission: 6000,
-      diesel: 4000,
-      dieselLitres: 130,
-      coilTechnician: 1500,
-      toll: 800,
-      cleaning: 300,
-      alliedmor: 500,
-      cityParchi: 450,
-      refreshment: 800,
-      revenue: 17000
-    },
-    {
-      id: 5,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '14',
-      voucherNumber: '4',
-      commission: 6000,
-      diesel: 4000,
-      dieselLitres: 130,
-      coilTechnician: 1500,
-      toll: 800,
-      cleaning: 300,
-      alliedmor: 500,
-      cityParchi: 450,
-      refreshment: 800,
-      revenue: 17000
-    },
-    {
-      id: 6,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '14',
-      voucherNumber: '4',
-      commission: 6000,
-      diesel: 4000,
-      dieselLitres: 130,
-      coilTechnician: 1500,
-      toll: 800,
-      cleaning: 300,
-      alliedmor: 500,
-      cityParchi: 450,
-      refreshment: 800,
-      revenue: 17000
-    },
-    {
-      id: 7,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '14',
-      voucherNumber: '4',
-      commission: 6000,
-      diesel: 4000,
-      dieselLitres: 130,
-      coilTechnician: 1500,
-      toll: 800,
-      cleaning: 300,
-      alliedmor: 500,
-      cityParchi: 450,
-      refreshment: 800,
-      revenue: 17000
-    },
-    {
-      id: 8,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '14',
-      voucherNumber: '4',
-      commission: 6000,
-      diesel: 4000,
-      dieselLitres: 130,
-      coilTechnician: 1500,
-      toll: 800,
-      cleaning: 300,
-      alliedmor: 500,
-      cityParchi: 450,
-      refreshment: 800,
-      revenue: 17000
-    },
-    {
-      id: 9,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '14',
-      voucherNumber: '4',
-      commission: 6000,
-      diesel: 4000,
-      dieselLitres: 130,
-      coilTechnician: 1500,
-      toll: 800,
-      cleaning: 300,
-      alliedmor: 500,
-      cityParchi: 450,
-      refreshment: 800,
-      revenue: 17000
-    },
-    {
-      id: 10,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '14',
-      voucherNumber: '4',
-      commission: 6000,
-      diesel: 4000,
-      dieselLitres: 130,
-      coilTechnician: 1500,
-      toll: 800,
-      cleaning: 300,
-      alliedmor: 500,
-      cityParchi: 450,
-      refreshment: 800,
-      revenue: 17000
-    },
-    {
-      id: 11,
-      date: getCurrentISODateTime(),
-      driverId: '16',
-      conductorId: '17',
-      busId: '14',
-      voucherNumber: '4',
-      commission: 6000,
-      diesel: 4000,
-      dieselLitres: 130,
-      coilTechnician: 1500,
-      toll: 800,
-      cleaning: 300,
-      alliedmor: 500,
-      cityParchi: 450,
-      refreshment: 800,
-      revenue: 17000
-    },
-  ]
+  busClosingVouchers: []
 };
 
 // Create the slice
@@ -247,23 +48,25 @@ const busClosingVoucherSlice = createSlice({
       state.busClosingVouchers = action.payload;
     },
     // Action to add a new BusClosingVoucher
-    addBusClosingVoucher: (
-      state,
-      action: PayloadAction<Omit<BusClosingVoucher, 'id'>>
-    ) => {
-      const newId =
-        state.busClosingVouchers.length > 0
-          ? state.busClosingVouchers[state.busClosingVouchers.length - 1].id + 1
-          : 1;
+   // Action to add a new BusClosingVoucher
+   addBusClosingVoucher: (
+    state,
+    action: PayloadAction<Omit<BusClosingVoucher, 'id'>>
+  ) => {
+    const newId =
+      state.busClosingVouchers.length > 0
+        ? state.busClosingVouchers[state.busClosingVouchers.length - 1].id + 1
+        : 1;
 
-      const newBusClosingVoucher: BusClosingVoucher = {
-        ...action.payload,
-        id: newId,
-        date: getCurrentISODateTime()
-      };
+    const newBusClosingVoucher: BusClosingVoucher = {
+      ...action.payload,
+      id: newId,
+      date: getCurrentISODateTime()
+    };
 
-      state.busClosingVouchers.push(newBusClosingVoucher);
-    },
+    // Push the new voucher to the state (mutating the state directly)
+    state.busClosingVouchers.push(newBusClosingVoucher);
+  },
 
     // Action to remove a BusClosingVoucher by ID
     removeBusClosingVoucher: (state, action: PayloadAction<number>) => {

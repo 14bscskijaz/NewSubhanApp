@@ -26,6 +26,10 @@ import NetExpenses from './net-expense';
 import { createBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
 import { createTrip } from '@/app/actions/trip.action';
 import { useToast } from '@/hooks/use-toast';
+import { addSavedTripInformation } from '@/lib/slices/trip-information-saved';
+import { BusClosingVoucher, addBusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
+import { Buses, allBuses } from '@/lib/slices/bus-slices';
+import { Route, allRoutes } from '@/lib/slices/route-slices';
 
 interface BusClosingVoucherFormProps {
   driverId: string;
@@ -40,7 +44,7 @@ interface BusClosingVoucherFormProps {
   TotalExpense: string;
   date: string | undefined;
   routeId: string;
-  conductorId:string;
+  conductorId: string;
 }
 
 const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
@@ -62,7 +66,11 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(
     allClosingExpenses
   );
+  const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers)
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation);
+  const buses = useSelector<RootState, Buses[]>(allBuses);
+  const routes = useSelector<RootState, Route[]>(allRoutes);
+  const employees = useSelector<RootState, Employee[]>(allEmployees);
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false); // Loading state
@@ -78,7 +86,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
     return routeFixedClosingExpense ? routeFixedClosingExpense[expenseName] : null;
   };
 
-  
+
 
   const methods = useForm({
     defaultValues: {
@@ -145,6 +153,85 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
     return () => subscription.unsubscribe();
   }, [methods, tripRevenue]);
 
+  const printPDF = (data:any) => {
+    const filterBus = buses.find(bus=>Number(bus.id)==Number(data.busId));
+    const filterRoute = routes.find(route=>route.id==data.routeId);
+    // const filterTripRoute = routes.find(route=>route.id===tripsInformation.routeId);
+    const filterDriver = employees.find(employee=>Number(employee.id)==Number(data.driverId));
+    const filterConductor = employees.find(employee=>Number(employee.id)===Number(data.conductorId));
+    // Create the content to be printed
+    const printContent = `
+      <html>
+        <head>
+          <title>Bus Closing Voucher and Trip Information</title>
+          <style>
+            body { font-family: Arial, sans-serif; }
+            h1, h2 { text-align: center; }
+            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+            th, td { border: 1px solid black; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+          </style>
+        </head>
+        <body>
+          <h1>Bus Closing Voucher and Trip Information</h1>
+          <h2>Bus Closing Voucher Details</h2>
+          <table>
+            <tr><th>Voucher Number</th><td>${data.voucherNumber || '-'}</td></tr>
+            <tr><th>Bus Number</th><td>${filterBus?.busNumber || '-'}</td></tr>
+            <tr><th>Route</th><td>${filterRoute?.sourceCity+"-"+filterRoute?.destinationCity || '-'}</td></tr>
+            <tr><th>Driver</th><td>${filterDriver && filterDriver?.firstName+" "+filterDriver?.lastName|| '-'}</td></tr>
+            <tr><th>Conductor</th><td>${filterConductor && filterConductor?.firstName+" "+filterConductor?.lastName|| '-'}</td></tr>
+            <tr><th>Commission</th><td>${data.commission || '-'}</td></tr>
+            <tr><th>Diesel Litres</th><td>${data.dieselLitres || '-'}</td></tr>
+            <tr><th>Miscellaneous</th><td>${data.miscellaneous || '-'}</td></tr>
+            <tr><th>Generator</th><td>${data.generator || '-'}</td></tr>
+            <tr><th>Repair</th><td>${data.repair || '-'}</td></tr>
+            <tr><th>Refreshment</th><td>${data.refreshment || '-'}</td></tr>
+            <tr><th>City Parchi</th><td>${data.cityParchi || '-'}</td></tr>
+            <tr><th>Alliedmor</th><td>${data.alliedmor || '-'}</td></tr>
+            <tr><th>Cleaning</th><td>${data.cleaning || '-'}</td></tr>
+            <tr><th>Toll</th><td>${data.toll || '-'}</td></tr>
+            <tr><th>Coil Technician</th><td>${data.coilTechnician || '-'}</td></tr>
+            <tr><th>Diesel</th><td>${data.diesel || '-'}</td></tr>
+            <tr><th>Revenue</th><td>${data.revenue || '-'}</td></tr>
+          </table>
+          <h2>Trip Information</h2>
+          <table>
+            
+            ${tripsInformation.map(trip => `
+              <tr>
+                <tr><th>Passenger Count</th><td>${trip.passengerCount || '-'}</td></tr>
+                <tr><th>Full Ticket Business Count</th><td>${trip.fullTicketBusinessCount || '-'}</td></tr>
+                <tr><th>Full Ticket Count</th><td>${trip.fullTicketCount || '-'}</td></tr>
+                <tr><th>Half Ticket Count</th><td>${trip.halfTicketCount || '-'}</td></tr>
+                <tr><th>Free Ticket Count</th><td>${trip.freeTicketCount || '-'}</td></tr>
+                <tr><th>Actual Revenue</th><td>${trip.actualRevenue || '-'}</td></tr>
+                <tr><th>Miscellaneous Amount</th><td>${trip.miscellaneousAmount || '-'}</td></tr>
+                <tr><th>Revenue Difference Explanation</th><td>${trip.revenueDiffExplanation || '-'}</td></tr>
+              </tr>
+            `).join('')}
+          </table>
+        </body>
+      </html>
+    `;
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.focus();
+
+      // Use setTimeout to ensure the content is loaded before printing
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 250);
+    } else {
+      console.error('Failed to open print window');
+    }
+  };
+
   const onSubmit = async (data: any) => {
     setLoading(true);
     try {
@@ -170,7 +257,9 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         revenue: Number(data.revenue) || 0,
       };
 
-      const newVoucher = await createBusClosingVoucher(sanitizedData);
+      // const newVoucher = await createBusClosingVoucher(sanitizedData);
+      dispatch(addBusClosingVoucher(sanitizedData));
+      const newVoucher = vouchers[vouchers.length - 1];
 
       const updatedTripInfo = tripsInformation.map((info: TripInformation) => ({
         ...info,
@@ -179,7 +268,8 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
       await Promise.all(
         updatedTripInfo.map(async (trip) => {
-          await createTrip(trip);
+          // await createTrip(trip);
+          dispatch(addSavedTripInformation(trip))
         })
       );
 
@@ -193,6 +283,8 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         description: 'Bus closing voucher created successfully!',
         variant: 'default',
       });
+
+      printPDF(sanitizedData);
     } catch (error) {
       console.error('Error during submission:', error);
 
@@ -213,7 +305,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       <form onSubmit={methods.handleSubmit(onSubmit)} className="">
         <div className="grid grid-cols-1 mt-2 sm:grid-cols-2 md:grid-cols-4 gap-5">
           {/* Dropdown for Conductor */}
-          
+
 
           {/* Input Fields */}
           {[

@@ -1,4 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
+import { combineReducers } from 'redux';
+
 import employeSlices from './slices/employe-slices';
 import routeSlices from './slices/route-slices';
 import busSlices from './slices/bus-slices';
@@ -10,27 +14,43 @@ import busClosingVoucherSlice from './slices/bus-closing-voucher';
 import fixedClosingExpenseSlice from './slices/fixed-closing-expense-slice';
 import expensesSlices from './slices/expenses-slices';
 import tripInformationSaved from './slices/trip-information-saved';
+import savedExpenses from './slices/saved-expenses';
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  // Optionally, you can blacklist or whitelist specific reducers
+  // blacklist: ['someReducer']
+  // whitelist: ['someReducer']
+};
+
+const rootReducer = combineReducers({
+  employees: employeSlices,
+  routes: routeSlices,
+  buses: busSlices,
+  tickets: TicketSlices,
+  fixedTripExpenses: fixedTripExpenseSlice,
+  busClosings: busClosingSlice,
+  tripsInformation: tripInformationSlice,
+  closingExpenses: fixedClosingExpenseSlice,
+  busClosingVouchers: busClosingVoucherSlice,
+  expenses: expensesSlices,
+  savedTripsInformation: tripInformationSaved,
+  savedExpense: savedExpenses
+});
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Configure the Redux store
 export const store = configureStore({
-  reducer: {
-    employees: employeSlices,
-    routes: routeSlices,
-    buses: busSlices,
-    tickets: TicketSlices,
-    fixedTripExpenses: fixedTripExpenseSlice,
-    busClosings: busClosingSlice,
-    tripsInformation: tripInformationSlice,
-    closingExpenses: fixedClosingExpenseSlice,
-    busClosingVouchers: busClosingVoucherSlice,
-    expenses:expensesSlices,
-    savedTripsInformation:tripInformationSaved
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false
     })
 });
+
+export const persistor = persistStore(store);
 
 export type RootState = {
   routes: ReturnType<typeof routeSlices>;
@@ -44,9 +64,8 @@ export type RootState = {
   closingExpenses: ReturnType<typeof fixedClosingExpenseSlice>;
   expenses:ReturnType<typeof expensesSlices>
   savedTripsInformation:ReturnType<typeof tripInformationSaved>
+  savedExpense:ReturnType<typeof savedExpenses>
   
 };
-
 export type AppDispatch = typeof store.dispatch;
 
-// Wrap your app with the Redux provider

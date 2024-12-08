@@ -27,7 +27,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
-      await deleteTicketPrice(data.id);
+      // await deleteTicketPrice(data.id);
       dispatch(removeTicketRaw(data.id));
       setOpen(false);
     } catch (error) {
@@ -39,7 +39,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const handleUpdate = async (updatedPrice: TicketPriceRaw) => {
 
     
-    await updateTicketPrice(data.id, updatedPrice)
+    // await updateTicketPrice(data.id, updatedPrice)
     dispatch(updateTicketRaw(updatedPrice));
   };
 

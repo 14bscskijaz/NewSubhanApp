@@ -29,18 +29,18 @@ export default function ClosingExpenseListingPage({ }: TExpenseListingPage) {
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const fetchFixedBusClosing = async () => {
-    const routes = await getAllRoutes();
-    const fixedBusClosing = await getAllFixedBusClosingExpenses()
-    dispatch(setRoute(routes));
-    dispatch(setClosingExpense(fixedBusClosing))
+  // const fetchFixedBusClosing = async () => {
+  //   const routes = await getAllRoutes();
+  //   const fixedBusClosing = await getAllFixedBusClosingExpenses()
+  //   dispatch(setRoute(routes));
+  //   dispatch(setClosingExpense(fixedBusClosing))
 
-  }
+  // }
 
   useEffect(() => {
-    fetchFixedBusClosing()
+    // fetchFixedBusClosing()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';

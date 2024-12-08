@@ -7,7 +7,7 @@ import PageContainer from '@/components/layout/page-container'
 import InputField from '@/components/ui/InputField'
 import SelectField from '@/components/ui/SelectField'
 import { Button } from '@/components/ui/button'
-import { DatePicker } from '@/components/ui/date-picker'; // Import your custom DatePicker
+import { DatePicker } from '@/components/ui/date-picker'
 import { Heading } from '@/components/ui/heading'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
@@ -23,7 +23,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import NewRouteDialog from './new-trip-info-dialogue'
 import RouteTable from './trip-info-tables'
 import VoucherForm from './voucher-form'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function RouteListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
@@ -47,19 +46,19 @@ export default function RouteListingPage() {
 
   const searchParams = useSearchParams()
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const fetchAllData = async () => {
-    const allBuses = await getAllBuses();
-    const allEmployees = await getAllEmployees();
-    const allRoutes = await getAllRoutes();
-    dispatch(setRoute(allRoutes));
-    dispatch(setEmployee(allEmployees));
-    dispatch(setBus(allBuses));
-  }
-  useEffect(() => {
-    fetchAllData();
-  }, [])
+  // const fetchAllData = async () => {
+  //   const allBuses = await getAllBuses();
+  //   const allEmployees = await getAllEmployees();
+  //   const allRoutes = await getAllRoutes();
+  //   dispatch(setRoute(allRoutes));
+  //   dispatch(setEmployee(allEmployees));
+  //   dispatch(setBus(allBuses));
+  // }
+  // useEffect(() => {
+  //   fetchAllData();
+  // }, [])
 
   useEffect(() => {
     const pageParam = searchParams.get('page') || '1'

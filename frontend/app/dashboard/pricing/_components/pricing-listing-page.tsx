@@ -35,18 +35,18 @@ export default function PricingListingPage({ }: TPricingListingPage) {
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
 
-  const dispatch = useDispatch();
-  const fetchTicket = async () => {
-    const routes = await getAllRoutes()
-    const allTicketData = await getAllTicketPrices()
-    console.log(allTicketData, "allTicketData");
-    dispatch(setTicketRaw(allTicketData))
-    dispatch(setRoute(routes))
+  // const dispatch = useDispatch();
+  // const fetchTicket = async () => {
+  //   const routes = await getAllRoutes()
+  //   const allTicketData = await getAllTicketPrices()
+  //   console.log(allTicketData, "allTicketData");
+  //   dispatch(setTicketRaw(allTicketData))
+  //   dispatch(setRoute(routes))
 
-  }
+  // }
 
   useEffect(() => {
-    fetchTicket();
+    // fetchTicket();
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const sourceParam = searchParams.get('source') || '';

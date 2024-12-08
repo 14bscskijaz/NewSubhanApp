@@ -19,7 +19,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
-      data && data?.id&& await deleteEmployee(Number(data.id))
+      // data && data?.id&& await deleteEmployee(Number(data.id))
       dispatch(removeEmployee(data.id));
       setOpen(false);
     } catch (error) {
@@ -30,7 +30,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const handleUpdate = async(updatedEmployee: Employee) => {
-    await updateEmployeeAPI(Number(data.id),updatedEmployee)
+    // await updateEmployeeAPI(Number(data.id),updatedEmployee)
     dispatch(updateEmployee(updatedEmployee));
   };
   

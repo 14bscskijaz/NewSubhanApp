@@ -1,17 +1,16 @@
 'use client';
-import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
-import { getAllBuses } from '@/app/actions/bus.action';
-import { getAllRoutes } from '@/app/actions/route.action';
 import PageContainer from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Heading } from '@/components/ui/heading';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
-import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
+import { useToast } from '@/hooks/use-toast';
+import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
+import { Buses, allBuses } from '@/lib/slices/bus-slices';
 import { Expense, allExpenses, setExpenses } from '@/lib/slices/expenses-slices';
-import { setRoute } from '@/lib/slices/route-slices';
+import { Route, allRoutes } from '@/lib/slices/route-slices';
+import { addSavedExpense } from '@/lib/slices/saved-expenses';
 import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
@@ -20,9 +19,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import RouteTable from './expenses-tables';
 import BusExpenseTable from './expenses-tables/bus-expense-table';
 import NetExpenses from './net-expense';
-import { addSavedExpense, allSavedExpenses } from '@/lib/slices/saved-expenses';
-import { useToast } from '@/hooks/use-toast';
-import { useBusNumber } from './utils/fetchData';
 
 type TExpensesListingPage = {};
 
@@ -30,6 +26,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const busClosingVouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const expenses = useSelector<RootState, Expense[]>(allExpenses);
   const buses = useSelector<RootState, Buses[]>(allBuses);
+  const routes = useSelector<RootState, Route[]>(allRoutes);
   const savedTrips = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
@@ -134,6 +131,21 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const TotalExpense = totalBusExpenses + totalGeneralExpenses;
 
   const printExpenses = () => {
+    // Create Maps for quick lookups
+    const BusNumberMap = new Map(buses.map(({ id, busNumber }) => [id, busNumber]));
+    const VoucherMap = new Map(
+      busClosingVouchers.map(({ id, voucherNumber, revenue, routeId }) => [
+        id,
+        { voucherNumber, revenue, routeId },
+      ])
+    );
+    const RouteMap = new Map(
+      routes.map(({ id, sourceAdda, destinationAdda, destinationCity, sourceCity }) => [
+        id,
+        { sourceAdda, sourceCity, destinationAdda, destinationCity },
+      ])
+    );
+
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       const content = `
@@ -141,71 +153,127 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
           <head>
             <title>Expenses Report</title>
             <style>
-              body { font-family: Arial, sans-serif; }
-              table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-              th { background-color: #f2f2f2; }
-              h2 { margin-top: 20px; }
+              body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f6f8;
+                color: #333;
+                margin: 0;
+                padding: 20px;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+              }
+              th, td {
+                border: 1px solid #333;
+                padding: 8px;
+                text-align: left;
+              }
+              th {
+                background-color: #e8f5e9;
+                color: #2a5934;
+              }
+              tbody tr:nth-child(even) {
+                background-color: #e8f5e9;
+              }
+              tbody tr:nth-child(odd) {
+                background-color: #ffffff;
+              }
+              h1, h2 {
+                color: #2a5934;
+                border-bottom: 2px solid #333;
+                padding-bottom: 5px;
+              }
+              tfoot th {
+                background-color: #2a5934;
+                color: #2a5934;
+              }
+              tfoot td {
+                font-weight: bold;
+                background-color: #d0e8d2;
+              }
             </style>
           </head>
           <body>
             <h1>Expenses Report</h1>
-            <p>Date: ${selectedDate ? selectedDate.toLocaleDateString() : 'All Dates'}</p>
-            
+            <p><strong>Date:</strong> ${selectedDate ? selectedDate.toLocaleDateString() : 'All Dates'}</p>
+
             <h2>Bus Expenses</h2>
             <table>
               <thead>
                 <tr>
-                  <th>Bus ID</th>
-                  <th>Voucher ID</th>
-                  <th>Date</th>
+                  <th>Bus Number</th>
+                  <th>Voucher Number</th>
+                  <th>Revenue</th>
+                  <th>Route</th>
+                  <th>Description</th>
                   <th>Amount</th>
                 </tr>
               </thead>
               <tbody>
-                ${busExpenses.map(expense => `
-                  <tr>
-                    <td>${expense.busId}</td>
-                    <td>${expense.voucherId}</td>
-                    <td>${new Date(expense.date).toLocaleDateString()}</td>
-                    <td>${expense.amount || 0}</td>
-                  </tr>
-                `).join('')}
+                ${busExpenses
+                  .map(expense => {
+                    const voucher:any = VoucherMap.get(Number(expense?.voucherId) || 0) || {};
+                    const {
+                      sourceCity = 'N/A',
+                      sourceAdda = 'N/A',
+                      destinationCity = 'N/A',
+                      destinationAdda = 'N/A',
+                    } = RouteMap.get(voucher.routeId || 0) || {};
+                    return `
+                      <tr>
+                        <td>${BusNumberMap.get(expense?.busId || 0) || 'N/A'}</td>
+                        <td>${voucher.voucherNumber || 'N/A'}</td>
+                        <td>${voucher.revenue || 0}</td>
+                        <td>${
+                          sourceCity !== 'N/A'
+                            ? `${sourceCity} (${sourceAdda}) - ${destinationCity} (${destinationAdda})`
+                            : 'N/A'
+                        }</td>
+                        <td>${expense.description || 'N/A'}</td>
+                        <td>${expense.amount || 0}</td>
+                      </tr>
+                    `;
+                  })
+                  .join('')}
               </tbody>
               <tfoot>
                 <tr>
-                  <th colspan="3">Total Bus Expenses</th>
+                  <th colspan="5">Total Bus Expenses</th>
                   <td>${totalBusExpenses}</td>
                 </tr>
               </tfoot>
             </table>
-            
+
             <h2>General Expenses</h2>
             <table>
               <thead>
                 <tr>
                   <th>Description</th>
-                  <th>Date</th>
                   <th>Amount</th>
                 </tr>
               </thead>
               <tbody>
-                ${generalExpenses.map(expense => `
-                  <tr>
-                    <td>${expense.description || ''}</td>
-                    <td>${new Date(expense.date).toLocaleDateString()}</td>
-                    <td>${expense.amount || 0}</td>
-                  </tr>
-                `).join('')}
+                ${generalExpenses
+                  .map(
+                    expense => `
+                    <tr>
+                      <td>${expense.description || 'N/A'}</td>
+                      <td>${expense.amount || 0}</td>
+                    </tr>
+                  `
+                  )
+                  .join('')}
               </tbody>
               <tfoot>
                 <tr>
-                  <th colspan="2">Total General Expenses</th>
+                  <th>Total General Expenses</th>
                   <td>${totalGeneralExpenses}</td>
                 </tr>
               </tfoot>
             </table>
-            
+
             <h2>Summary</h2>
             <table>
               <tr>
@@ -224,6 +292,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
           </body>
         </html>
       `;
+
       printWindow.document.write(content);
       printWindow.document.close();
       printWindow.focus();
@@ -231,14 +300,24 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
         printWindow.print();
         printWindow.close();
       }, 250);
+    } else {
+      toast({
+        title: 'Error',
+        description: 'Unable to open print window. Please check your browser settings.',
+        variant: 'destructive',
+        duration: 1500,
+      });
     }
   };
+  
+
+
 
   const handleSubmitExpenses = () => {
     expenses.forEach((expense) => {
       dispatch(addSavedExpense(expense));
     });
-    
+
     toast({
       title: "Success",
       description: "Expenses submitted successfully!",

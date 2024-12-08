@@ -15,11 +15,13 @@ import { TicketPriceRaw, allTicketsRaw, setTicketRaw } from '@/lib/slices/pricin
 import { getAllTicketPrices } from '@/app/actions/pricing.action';
 import { getAllRoutes } from '@/app/actions/route.action';
 import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
+import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
 
 type TTripListingPage = {};
 
 export default function TripListingPage({ }: TTripListingPage) {
   const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
+  const SavedTripInformation = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
   // const routes = useSelector<RootState, Route[]>(allRoutes);
   // const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
   const searchParams = useSearchParams();
@@ -61,6 +63,13 @@ export default function TripListingPage({ }: TTripListingPage) {
       voucher.dieselLitres?.toString().includes(search.toLowerCase())
       : true;
 
+      // const totalR = expenses.reduce((sum, expense) => {
+      //   const foundVoucher = busClosingVouchers.find(v => v.id === expense.voucherId);
+      //   if (foundVoucher) {
+      //     return sum + (foundVoucher.revenue || 0);
+      //   }
+      //   return sum;
+      // }, 0);
     // const matchesCount = source
     //   ? trip.routeCommission.toString() === source.toLowerCase() ||
     //   trip.rewardCommission.toString() === source.toLowerCase() ||

@@ -154,33 +154,63 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   }, [methods, tripRevenue]);
 
   const printPDF = (data:any) => {
-    const filterBus = buses.find(bus=>Number(bus.id)==Number(data.busId));
-    const filterRoute = routes.find(route=>route.id==data.routeId);
-    // const filterTripRoute = routes.find(route=>route.id===tripsInformation.routeId);
-    const filterDriver = employees.find(employee=>Number(employee.id)==Number(data.driverId));
-    const filterConductor = employees.find(employee=>Number(employee.id)===Number(data.conductorId));
-    // Create the content to be printed
+    const filterBus = buses.find(bus => Number(bus.id) === Number(data.busId));
+    const filterRoute = routes.find(route => route.id === data.routeId);
+    const filterDriver = employees.find(employee => Number(employee.id) === Number(data.driverId));
+    const filterConductor = employees.find(employee => Number(employee.id) === Number(data.conductorId));
+  
     const printContent = `
       <html>
         <head>
           <title>Bus Closing Voucher and Trip Information</title>
           <style>
-            body { font-family: Arial, sans-serif; }
-            h1, h2 { text-align: center; }
-            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-            th, td { border: 1px solid black; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; }
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f9f9f9;
+              color: #333;
+            }
+            h1, h2 {
+              text-align: left;
+              border-bottom: 2px solid #333;
+              color: #2a5934;
+            }
+            table {
+              width: 90%;
+              margin: 20px auto;
+              border-collapse: collapse;
+              background-color: #fff;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 12px;
+              text-align: left;
+            }
+            th {
+              background-color: #e8f5e9;
+              color: #2a5934;
+              text-transform: capitalize;
+              letter-spacing: 1px;
+            }
+            tr:nth-child(even) {
+              background-color: #f2f2f2;
+            }
+            tr:hover {
+              background-color: #f1f1f1;
+            }
           </style>
         </head>
         <body>
           <h1>Bus Closing Voucher and Trip Information</h1>
+          <p><strong>Date:</strong> ${date ? new Date(date).toLocaleDateString() : 'All Dates'}</p>
           <h2>Bus Closing Voucher Details</h2>
           <table>
             <tr><th>Voucher Number</th><td>${data.voucherNumber || '-'}</td></tr>
             <tr><th>Bus Number</th><td>${filterBus?.busNumber || '-'}</td></tr>
-            <tr><th>Route</th><td>${filterRoute?.sourceCity+"-"+filterRoute?.destinationCity || '-'}</td></tr>
-            <tr><th>Driver</th><td>${filterDriver && filterDriver?.firstName+" "+filterDriver?.lastName|| '-'}</td></tr>
-            <tr><th>Conductor</th><td>${filterConductor && filterConductor?.firstName+" "+filterConductor?.lastName|| '-'}</td></tr>
+            <tr><th>Route</th><td>${filterRoute?.sourceCity + " - " + filterRoute?.destinationCity || '-'}</td></tr>
+            <tr><th>Driver</th><td>${filterDriver ? `${filterDriver.firstName} ${filterDriver.lastName}` : '-'}</td></tr>
+            <tr><th>Conductor</th><td>${filterConductor ? `${filterConductor.firstName} ${filterConductor.lastName}` : '-'}</td></tr>
             <tr><th>Commission</th><td>${data.commission || '-'}</td></tr>
             <tr><th>Diesel Litres</th><td>${data.dieselLitres || '-'}</td></tr>
             <tr><th>Miscellaneous</th><td>${data.miscellaneous || '-'}</td></tr>
@@ -195,34 +225,30 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             <tr><th>Diesel</th><td>${data.diesel || '-'}</td></tr>
             <tr><th>Revenue</th><td>${data.revenue || '-'}</td></tr>
           </table>
+  
           <h2>Trip Information</h2>
           <table>
-            
             ${tripsInformation.map(trip => `
-              <tr>
-                <tr><th>Passenger Count</th><td>${trip.passengerCount || '-'}</td></tr>
-                <tr><th>Full Ticket Business Count</th><td>${trip.fullTicketBusinessCount || '-'}</td></tr>
-                <tr><th>Full Ticket Count</th><td>${trip.fullTicketCount || '-'}</td></tr>
-                <tr><th>Half Ticket Count</th><td>${trip.halfTicketCount || '-'}</td></tr>
-                <tr><th>Free Ticket Count</th><td>${trip.freeTicketCount || '-'}</td></tr>
-                <tr><th>Actual Revenue</th><td>${trip.actualRevenue || '-'}</td></tr>
-                <tr><th>Miscellaneous Amount</th><td>${trip.miscellaneousAmount || '-'}</td></tr>
-                <tr><th>Revenue Difference Explanation</th><td>${trip.revenueDiffExplanation || '-'}</td></tr>
-              </tr>
+              <tr><th>Passenger Count</th><td>${trip.passengerCount || '-'}</td></tr>
+              <tr><th>Full Ticket Business Count</th><td>${trip.fullTicketBusinessCount || '-'}</td></tr>
+              <tr><th>Full Ticket Count</th><td>${trip.fullTicketCount || '-'}</td></tr>
+              <tr><th>Half Ticket Count</th><td>${trip.halfTicketCount || '-'}</td></tr>
+              <tr><th>Free Ticket Count</th><td>${trip.freeTicketCount || '-'}</td></tr>
+              <tr><th>Actual Revenue</th><td>${trip.actualRevenue || '-'}</td></tr>
+              <tr><th>Miscellaneous Amount</th><td>${trip.miscellaneousAmount || '-'}</td></tr>
+              <tr><th>Revenue Difference Explanation</th><td>${trip.revenueDiffExplanation || '-'}</td></tr>
             `).join('')}
           </table>
         </body>
       </html>
     `;
-
-    // Create a new window for printing
+  
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(printContent);
       printWindow.document.close();
       printWindow.focus();
-
-      // Use setTimeout to ensure the content is loaded before printing
+  
       setTimeout(() => {
         printWindow.print();
         printWindow.close();
@@ -282,6 +308,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         title: 'Success',
         description: 'Bus closing voucher created successfully!',
         variant: 'default',
+        duration:1000
       });
 
       printPDF(sanitizedData);
@@ -293,6 +320,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         title: 'Error',
         description: 'An error occurred while creating the voucher.',
         variant: 'destructive',
+        duration:1200
       });
     } finally {
       setLoading(false); // Reset loading state

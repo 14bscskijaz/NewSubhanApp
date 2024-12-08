@@ -78,21 +78,29 @@ export default function EditPricingDialog({
     }));
   };
 
+  const handleBusTypeChange = (newBusType: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      busType: newBusType,
+    }));
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
 
     const updatedFormData = {
       ...formData,
-      routeId: formData.routeId !== undefined ? formData.routeId : 0 // Provide default if undefined
+      routeId: formData.routeId !== undefined ? formData.routeId : 0
     };
-
+    console.log(updatedFormData,"updatedFormData");
+    
     onUpdate(updatedFormData); // Pass updated data with valid routeId
     setOpen(false);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} modal={true} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <span className="my-2.5 mr-2 cursor-pointer">
           <Pen className="h-4 w-4" />
@@ -133,19 +141,22 @@ export default function EditPricingDialog({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="busType">
-                Bus <span className="text-gradient">Type</span>
-              </Label>
-              <Select value={busType} onValueChange={setBusType}>
-                <SelectTrigger id="busType">
-                  <SelectValue placeholder="Select Bus Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Standard">Standard</SelectItem>
-                  <SelectItem value="Business">Business</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Label htmlFor="busType">
+              Bus <span className="text-gradient">Type</span>
+            </Label>
+            <Select
+              value={formData.busType}
+              onValueChange={handleBusTypeChange}
+            >
+              <SelectTrigger id="busType">
+                <SelectValue placeholder="Select Bus Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Standard">Standard</SelectItem>
+                <SelectItem value="Business">Business</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           </div>
           <DialogFooter>
             <Button type="submit">Update Ticket Price</Button>

@@ -22,6 +22,7 @@ import BusExpenseTable from './expenses-tables/bus-expense-table';
 import NetExpenses from './net-expense';
 import { addSavedExpense, allSavedExpenses } from '@/lib/slices/saved-expenses';
 import { useToast } from '@/hooks/use-toast';
+import { useBusNumber } from './utils/fetchData';
 
 type TExpensesListingPage = {};
 
@@ -133,8 +134,6 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const TotalExpense = totalBusExpenses + totalGeneralExpenses;
 
   const printExpenses = () => {
-// const filterVoucher = busClosingVouchers.find()
-    // const busNumber = 
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       const content = `
@@ -166,7 +165,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               <tbody>
                 ${busExpenses.map(expense => `
                   <tr>
-                    <td>${expense.busId}</td>
+                    <td>${useBusNumber(expense.busId)}</td>
                     <td>${expense.voucherId}</td>
                     <td>${new Date(expense.date).toLocaleDateString()}</td>
                     <td>${expense.amount || 0}</td>

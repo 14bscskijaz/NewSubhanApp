@@ -165,7 +165,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               <tbody>
                 ${busExpenses.map(expense => `
                   <tr>
-                    <td>${useBusNumber(expense.busId)}</td>
+                    <td>${expense.busId}</td>
                     <td>${expense.voucherId}</td>
                     <td>${new Date(expense.date).toLocaleDateString()}</td>
                     <td>${expense.amount || 0}</td>

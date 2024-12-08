@@ -69,8 +69,11 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   const [expenses, setExpenses] = useState<number>(0);
 
   const routeFixedClosingExpense = useMemo(() => {
+    fixedClosingExpenses.forEach((expense) => {
+      console.log("Expense: ", expense);
+    });
     return fixedClosingExpenses.find(
-      (expense) => expense.routeId === Number(tripsInformation.at(-1)?.routeId)
+      (expense) => expense.routeId === Number(routeId)
     );
   }, [fixedClosingExpenses, tripsInformation]);
 
@@ -135,8 +138,8 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
   useEffect(() => {
 
-    // console.log("Form data", methods.getValues());
-    // console.log("Fixed trip expense: ", routeFixedClosingExpense);
+    console.log("Form data", methods.getValues());
+    console.log("Fixed trip expense: ", routeFixedClosingExpense);
 
     const subscription = methods.watch((data) => {
       handleRevenueCalculation(data);

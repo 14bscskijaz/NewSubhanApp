@@ -174,7 +174,7 @@ export const navItems: NavItem[] = [
         icon: 'userPen'
       },
       {
-        title: 'Route Closing Expense Rate',
+        title: 'Closing Expense Rate',
         url: '/dashboard/route-closing-expense',
         icon: 'login'
       }
@@ -188,3 +188,29 @@ export const navItems: NavItem[] = [
   //   items: [] // No child items
   // }
 ];
+
+export const allCities = [
+  "Faisalabad",
+  "Islamabad",
+  "Rawalpindi",
+  "Lahore",
+  "Karachi",
+  "Peshawar",
+  "Quetta",
+  "Multan",
+  "Sialkot",
+  "Gujranwala",
+  "Sargodha",
+  "Bahawalpur",
+  "Sukkur",
+  "Jhang",
+  "Sheikhupura",
+  "Larkana",
+  "Gujrat",
+  "Mardan",
+  "Kasur",
+  "Rahim Yar Khan",
+  "Sahiwal",
+  "Okara",
+  "Dera Ghazi Khan",
+]

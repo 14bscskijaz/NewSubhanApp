@@ -24,7 +24,7 @@ import NewRouteDialog from './new-trip-info-dialogue'
 import RouteTable from './trip-info-tables'
 import VoucherForm from './voucher-form'
 
-export default function RouteListingPage() {
+export default function TripInfoListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const employees = useSelector<RootState, Employee[]>(allEmployees);

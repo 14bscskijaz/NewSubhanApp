@@ -78,7 +78,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
   const routeFixedClosingExpense = useMemo(() => {
     return fixedClosingExpenses.find(
-      (expense) => expense.routeId === Number(tripsInformation.at(-1)?.routeId)
+      (expense) => expense.routeId === Number(routeId)
     );
   }, [fixedClosingExpenses, tripsInformation]);
 

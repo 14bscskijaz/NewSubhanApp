@@ -188,7 +188,7 @@ export const navItems: NavItem[] = [
         icon: 'userPen'
       },
       {
-        title: 'Route Closing Expense Rate',
+        title: 'Closing Expense Rate',
         url: '/dashboard/route-closing-expense',
         icon: 'login'
       }

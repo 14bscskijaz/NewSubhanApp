@@ -24,6 +24,7 @@ import { Pen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TicketPriceDisplay } from './pricing-listing-page';
+import SelectField from '@/components/ui/SelectField';
 
 type EditPricingDialogProps = {
   ticket: TicketPriceDisplay;
@@ -32,7 +33,7 @@ type EditPricingDialogProps = {
 
 export default function EditPricingDialog({
   ticket,
-  onUpdate
+  onUpdate,
 }: EditPricingDialogProps) {
   const routes = useSelector<RootState, Route[]>(allRoutes); // Get all routes from Redux
   const ticketRoutes = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
@@ -40,41 +41,41 @@ export default function EditPricingDialog({
   const [busType, setBusType] = useState(ticket.busType);
   const [routeId, setRouteId] = useState<number | undefined>(ticket?.routeId);
   const [formData, setFormData] = useState({
-    ...ticket
+    ...ticket,
   });
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setFormData({
-      ...ticket
+      ...ticket,
     });
     if (!routeId && ticket.routeId) {
       setRouteId(ticket.routeId);
     }
   }, [ticket]);
 
-  // Filter routes based on ticketRaw data (routes that exist in the ticketRaw slice)
-  const filteredRoutes = routes.filter(route =>
-    ticketRoutes.some(ticket => ticket.routeId === route.id)
-  );  
+  // Filter routes based on ticketRoutes (only include routes with matching IDs)
+  const filteredRoutes = routes.filter((route) =>
+    ticketRoutes.some((ticket) => ticket.routeId === route.id)
+  );
 
+  // Handle input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [id]: id === 'ticketPrice' ? parseFloat(value) : value
+      [id]: id === "ticketPrice" ? parseFloat(value) : value,
     }));
   };
 
   const handleRouteChange = (routeId: string) => {
-    // Use Number() to ensure proper type for routeId
     const selectedRouteId = Number(routeId);
     setRouteId(selectedRouteId);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      routeId: selectedRouteId
+      routeId: selectedRouteId,
     }));
   };
 
@@ -88,14 +89,12 @@ export default function EditPricingDialog({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-
     const updatedFormData = {
       ...formData,
-      routeId: formData.routeId !== undefined ? formData.routeId : 0
+      routeId: formData.routeId !== undefined ? formData.routeId : 0,
     };
-    console.log(updatedFormData,"updatedFormData");
-    
-    onUpdate(updatedFormData); // Pass updated data with valid routeId
+
+    onUpdate(updatedFormData); // Pass updated data
     setOpen(false);
   };
 
@@ -115,48 +114,43 @@ export default function EditPricingDialog({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-6">
-            <div className="grid gap-2">
-              <Label htmlFor="routeId">Route</Label>
-              <Select value={routeId?.toString()} onValueChange={handleRouteChange}>
-                <SelectTrigger id="routeId">
-                  <SelectValue placeholder="Select Route" />
-                </SelectTrigger>
-                <SelectContent>
-                  {filteredRoutes.map((route) => (
-                    <SelectItem key={route.id} value={String(route.id)}>
-                      {route.sourceCity} - {route.destinationCity}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <SelectField
+              id="route"
+              label="Select Route"
+              value={formData.routeId?.toString() || ""}
+              onChange={handleRouteChange}
+              placeholder="Select Route"
+              options={filteredRoutes.map((route) => ({
+                value: route.id.toString(),
+                label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+              }))}
+              className="flex-col !items-start !space-x-0"
+            />
             <div className="grid gap-2">
               <Label htmlFor="ticketPrice">Ticket Price</Label>
               <Input
                 id="ticketPrice"
                 type="number"
-                value={formData.ticketPrice || ''}
+                value={formData.ticketPrice || ""}
                 onChange={handleInputChange}
                 placeholder="Enter ticket price"
               />
             </div>
             <div className="grid gap-2">
-            <Label htmlFor="busType">
-              Bus <span className="text-gradient">Type</span>
-            </Label>
-            <Select
-              value={formData.busType}
-              onValueChange={handleBusTypeChange}
-            >
-              <SelectTrigger id="busType">
-                <SelectValue placeholder="Select Bus Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Standard">Standard</SelectItem>
-                <SelectItem value="Business">Business</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <Label htmlFor="busType">Bus Type</Label>
+              <Select
+                value={formData.busType}
+                onValueChange={handleBusTypeChange}
+              >
+                <SelectTrigger id="busType">
+                  <SelectValue placeholder="Select Bus Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Standard">Standard</SelectItem>
+                  <SelectItem value="Business">Business</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <DialogFooter>
             <Button type="submit">Update Ticket Price</Button>
@@ -166,3 +160,4 @@ export default function EditPricingDialog({
     </Dialog>
   );
 }
+

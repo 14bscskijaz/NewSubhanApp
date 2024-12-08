@@ -18,6 +18,7 @@ import { Route, allRoutes } from "@/lib/slices/route-slices"
 import { RootState } from "@/lib/store"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createTicketPrice, getAllTicketPrices } from "@/app/actions/pricing.action"
+import SelectField from "@/components/ui/SelectField"
 
 export default function NewPricingDialog() {
   const routes = useSelector<RootState, Route[]>(allRoutes)
@@ -71,24 +72,18 @@ export default function NewPricingDialog() {
           </DialogHeader>
           <div className="grid gap-6 py-6">
             {/* Route Dropdown */}
-            <div className="grid gap-2">
-              <Label htmlFor="route" className="text-gradient">Route</Label>
-              <Select onValueChange={handleRouteChange}>
-                <SelectTrigger id="route">
-                  <SelectValue placeholder="Select route" />
-                </SelectTrigger>
-                <SelectContent>
-                  {routes.map((route) => (
-                    <SelectItem
-                      key={route.id}
-                      value={`${route.id}`} 
-                    >
-                      {route.sourceCity} ({route.sourceAdda}) - {route.destinationCity} ({route.destinationAdda})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <SelectField
+              id="route"
+              label="Select Route"
+              value={routeId.toString()}
+              onChange={handleRouteChange}
+              placeholder="Select Route"
+              options={routes.map((route) => ({
+                value: route.id.toString(),
+                label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+              }))}
+              className="flex-col !items-start !space-x-0"
+            />
             {/* Ticket Price Input */}
             <div className="grid gap-2">
               <Label htmlFor="ticketPrice">Ticket Price</Label>

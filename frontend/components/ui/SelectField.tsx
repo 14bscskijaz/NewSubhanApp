@@ -58,8 +58,8 @@ export default function SelectField({
                         aria-expanded={open}
                         className="w-full justify-between overflow-hidden"
                     >
-                        {Number(value)>0
-                            ? options.find((option) => option.value == value)?.label
+                        {value
+                            ? options.find((option) => option.value === value)?.label
                             : placeholder}
                         <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
                     </Button>

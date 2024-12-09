@@ -63,7 +63,8 @@ export default function NewTripDialog() {
       steward: Number(steward),
       counter: Number(counter),
       dcParchi: Number(dcParchi),
-      refreshment: Number(refreshment)
+      refreshment: Number(refreshment),
+      driverCommission:1
     };
     // await createFixedTripExpense(newTrip);
     // const fixedExpenses = await getAllFixedTripExpenses()

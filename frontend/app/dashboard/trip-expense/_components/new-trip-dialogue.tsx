@@ -1,6 +1,5 @@
-'use client';
-
 import { createFixedTripExpense, getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action';
+import SelectField from '@/components/ui/SelectField';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -30,13 +29,15 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export default function NewTripDialog() {
   const [open, setOpen] = useState(false);
-  const [routeId, setRouteId] = useState<number | ''>(0);
+  const [routeId, setRouteId] = useState<string | ''>("0");
   const [routeCommission, setRouteCommission] = useState<number | ''>('');
   const [rewardCommission, setRewardCommission] = useState<number | ''>('');
   const [steward, setSteward] = useState<number | ''>('');
   const [counter, setCounter] = useState<number | ''>('');
   const [dcParchi, setDcParchi] = useState<number | ''>('');
   const [refreshment, setRefreshment] = useState<number | ''>('');
+  const [driverCommission, setDriverCommission] = useState<string>('');
+  const [isPercentage, setIsPercentage] = useState<boolean>(true);
 
   const dispatch = useDispatch();
 
@@ -50,20 +51,22 @@ export default function NewTripDialog() {
   );
 
   const handleRouteChange = (selectedRouteId: string) => {
-    setRouteId(Number(selectedRouteId));
+    setRouteId(selectedRouteId);
   };
 
-  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newTrip:Omit<FixedTripExpense,"id"> = {
+    const newTrip: Omit<FixedTripExpense, "id"> = {
       routeId: Number(routeId) ?? 0,
       routeCommission: Number(routeCommission),
       rewardCommission: Number(rewardCommission),
       steward: Number(steward),
       counter: Number(counter),
       dcParchi: Number(dcParchi),
-      refreshment: Number(refreshment)
+      refreshment: Number(refreshment),
+      driverCommission: Number(driverCommission),
+      isPercentage 
     };
     // await createFixedTripExpense(newTrip);
     // const fixedExpenses = await getAllFixedTripExpenses()
@@ -74,13 +77,15 @@ export default function NewTripDialog() {
   };
 
   const resetForm = () => {
-    setRouteId(0);
+    setRouteId("");
     setRouteCommission('');
     setRewardCommission('');
     setSteward('');
     setCounter('');
     setDcParchi('');
     setRefreshment('');
+    setDriverCommission('');
+    setIsPercentage(true);
   };
 
   return (
@@ -103,24 +108,18 @@ export default function NewTripDialog() {
           </DialogHeader>
           <div className="grid grid-cols-1 gap-12 py-6 md:grid-cols-2">
             {/* Route Selection */}
-            <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="route" className="text-gradient">
-                Route
-              </Label>
-              <Select onValueChange={handleRouteChange}>
-                <SelectTrigger id="route">
-                  <SelectValue placeholder="Select route" />
-                </SelectTrigger>
-                <SelectContent>
-                  {filteredRoutes.map((route) => (
-                    <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
-                      {`${route.destinationCity} (${route.destinationAdda})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <SelectField
+              id="route"
+              label="Select Route"
+              value={routeId}
+              onChange={handleRouteChange}
+              placeholder="Select Route"
+              options={routes.map((route) => ({
+                value: route.id.toString(),
+                label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+              }))}
+              className="flex-col !items-start !space-x-0"
+            />
             {/* Route Commission */}
             <div className="grid gap-2">
               <Label htmlFor="routeCommission" className="text-gradient">
@@ -219,12 +218,62 @@ export default function NewTripDialog() {
                 }
               />
             </div>
+            {/* Driver Commission */}
+            <div className="grid gap-2">
+              <Label htmlFor="driverCommission" className="text-gradient">
+                Driver Commission
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="driverCommission"
+                  type="number"
+                  placeholder={
+                    isPercentage
+                      ? "Enter Driver Commission (max 100)"
+                      : "Enter Driver Commission"
+                  }
+                  value={driverCommission}
+                  onChange={(e) => {
+                    const value = e.target.value; // Get raw input value
+                    if (isPercentage) {
+                      // If percentage, ensure value is within 0-100
+                      if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+                        setDriverCommission(value);
+                      }
+                    } else {
+                      // If not percentage, allow any value
+                      setDriverCommission(value);
+                    }
+                  }}
+                />
+                <Select
+                  onValueChange={(value) => {
+                    setIsPercentage(value === "true");
+                    setDriverCommission(""); 
+                  }}
+                  defaultValue={isPercentage.toString()}
+                >
+                  <SelectTrigger id="isPercentage" className="w-20 text-gradient">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">%</SelectItem>
+                    <SelectItem value="false">#</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
           </div>
           <DialogFooter>
-            <Button type="submit">Save Route</Button>
+            <Button type="submit">Save</Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
 }
+

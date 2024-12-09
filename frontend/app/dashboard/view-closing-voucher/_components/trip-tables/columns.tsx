@@ -8,6 +8,7 @@ import SourceStationDestinationStation from './SourceStationDestinationStation';
 import BusNumber from './BusNumber';
 import { BusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import Revenue from './Revenue';
+import Expense from './Expense';
 
 export const columns: ColumnDef<BusClosingVoucher>[] = [
   {
@@ -41,19 +42,26 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
     id: 'busNumber',
     header: 'Bus Number',
     cell: (
-      { row } // Parent component usage
+      { row }
     ) => <BusNumber busId={Number(row.original.busId)} />
   },
-  // {
-  //   id: 'revenue',
-  //   header: 'Revenue',
-  //   cell: (
-  //     { row } // Parent component usage
-  //   ) => <Revenue voucherId={Number(row.original.revenue)} />
-  // },
+  {
+    id: 'revenue',
+    header: 'Revenue',
+    cell: (
+      { row }
+    ) => <Revenue voucherId={Number(row.original.id)} />
+  },
+  {
+    id: 'expense',
+    header: 'Expense',
+    cell: (
+      { row } 
+    ) => <Expense voucherId={Number(row.original.id)} />
+  },
   {
     accessorKey: 'revenue',
-    header: 'Revenue'
+    header: 'Net Revenue'
   },
   // {
   //   accessorKey: 'dcParchi',

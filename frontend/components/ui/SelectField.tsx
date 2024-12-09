@@ -17,12 +17,12 @@ import { Input } from "./input";
 
 type ComboboxProps = {
     id: string;
-    value: string | number |undefined;
-    onChange: (value: string ) => void;
+    value: string | number | undefined;
+    onChange: (value: string) => void;
     placeholder: string;
     options: option[];
     label: string;
-    className?:any;
+    className?: any;
 };
 type option = {
     value: string | number;
@@ -58,8 +58,8 @@ export default function SelectField({
                         aria-expanded={open}
                         className="w-full justify-between overflow-hidden"
                     >
-                        {value
-                            ? options.find((option) => option.value === value)?.label
+                        {Number(value)>0
+                            ? options.find((option) => option.value == value)?.label
                             : placeholder}
                         <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
                     </Button>
@@ -76,9 +76,9 @@ export default function SelectField({
                         <CommandList>
                             <CommandEmpty>No options found.</CommandEmpty>
                             <CommandGroup>
-                                {filteredOptions.map((option:option) => (
+                                {filteredOptions.map((option: option) => (
                                     <CommandItem
-                                    className="group"
+                                        className="group"
                                         key={option.value}
                                         value={option.value.toString()}
                                         onSelect={(selectedValue: string) => {

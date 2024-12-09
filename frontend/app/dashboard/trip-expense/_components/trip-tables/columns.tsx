@@ -5,6 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import SourceDestination from './SourceDestination';
 import SourceStationDestinationStation from './SourceStationDestinationStation';
+import DriverCommission from './DriverCommission';
 
 export const columns: ColumnDef<FixedTripExpense>[] = [
   {
@@ -37,6 +38,13 @@ export const columns: ColumnDef<FixedTripExpense>[] = [
   {
     accessorKey: 'rewardCommission',
     header: 'Reward Commission'
+  },
+  {
+    id: 'driverCommission',
+    header: 'Driver Commission',
+    cell: ({ row }) => (
+      <DriverCommission isPercentage={row.original.isPercentage} driverCommission={row.original.driverCommission} />
+    )
   },
   {
     accessorKey: 'steward',

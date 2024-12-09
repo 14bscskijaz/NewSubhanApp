@@ -24,6 +24,7 @@ import { Pen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { InputField } from '../_components/ui/InputField';
+import { Input } from '@/components/ui/input';
 
 type EditTripDialogProps = {
   trip: FixedTripExpense;
@@ -36,6 +37,8 @@ export default function EditTripDialog({
 }: EditTripDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({ ...trip });
+  const [driverCommission, setDriverCommission] = useState('');
+  const [isPercentage, setIsPercentage] = useState(true);
 
   useEffect(() => {
     setFormData({ ...trip });
@@ -49,6 +52,19 @@ export default function EditTripDialog({
     ticketsRaw.some((ticket) => ticket.routeId === route.id)
   );
 
+  const handleDriverCommissionChange = (value: string) => {
+    if (isPercentage) {
+      // Ensure value is between 0 and 100 when percentage is selected
+      if (value === '' || (Number(value) >= 0 && Number(value) <= 100)) {
+        setDriverCommission(value);
+      }
+    } else {
+      // Allow any numeric value when not percentage
+      setDriverCommission(value);
+    }
+  };
+
+
   const handleInputChange = (id: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
@@ -59,7 +75,13 @@ export default function EditTripDialog({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onUpdate(formData);
+    const updatedFormData = {
+      ...formData,
+      driverCommission: Number(driverCommission),
+      isPercentage
+    };
+
+    onUpdate(updatedFormData);
     setOpen(false);
   };
 
@@ -151,6 +173,40 @@ export default function EditTripDialog({
               onChange={handleInputChange}
               placeholder="Enter refreshment amount"
             />
+             <div className="grid gap-2">
+              <Label htmlFor="driverCommission" className="text-gradient">
+                Driver Commission
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="driverCommission"
+                  type="number"
+                  placeholder={
+                    isPercentage
+                      ? 'Enter Driver Commission (max 100)'
+                      : 'Enter Driver Commission'
+                  }
+                  value={driverCommission}
+                  onChange={(e) => handleDriverCommissionChange(e.target.value)}
+                />
+                <Select
+                  onValueChange={(value) => {
+                    setIsPercentage(value === 'true');
+                    setDriverCommission(''); // Reset commission when type changes
+                  }}
+                  defaultValue={isPercentage.toString()}
+                >
+                  <SelectTrigger id="isPercentage" className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">%</SelectItem>
+                    <SelectItem value="false">#</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
           </div>
           <DialogFooter>
             <Button type="submit">Update Trip</Button>

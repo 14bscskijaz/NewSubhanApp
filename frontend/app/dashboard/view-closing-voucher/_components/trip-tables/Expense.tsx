@@ -7,13 +7,12 @@ type VoucherProps = {
     voucherId: number;
 };
 
-const Revenue: React.FC<VoucherProps> = ({ voucherId }) => {
+const Expense: React.FC<VoucherProps> = ({ voucherId }) => {
     const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
 
     // Find the voucher with the given VoucherId
     const foundVoucher = vouchers.find((voucher) => voucher.id === voucherId);
-
-    const allRevenue = Number(foundVoucher?.alliedmor)+
+    const allExpenses = Number(foundVoucher?.alliedmor)+
     Number(foundVoucher?.cityParchi)+
     Number(foundVoucher?.cleaning)+
     Number(foundVoucher?.coilTechnician)+
@@ -21,13 +20,11 @@ const Revenue: React.FC<VoucherProps> = ({ voucherId }) => {
     Number(foundVoucher?.diesel)+
     Number(foundVoucher?.dieselLitres)+
     Number(foundVoucher?.refreshment)+
-    Number(foundVoucher?.toll)+
-    Number(foundVoucher?.revenue);
-
+    Number(foundVoucher?.toll);
     return (
         <div>
             {foundVoucher ? (
-                <p>{allRevenue}</p>
+                <p>{allExpenses}</p>
             ) : (
                 <p>N/A</p>
             )}
@@ -35,4 +32,4 @@ const Revenue: React.FC<VoucherProps> = ({ voucherId }) => {
     );
 };
 
-export default Revenue;
+export default Expense;

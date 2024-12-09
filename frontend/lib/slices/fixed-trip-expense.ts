@@ -11,6 +11,8 @@ export type FixedTripExpense = {
   counter: number;
   dcParchi: number;
   refreshment: number;
+  driverCommission:number;
+  isPercentage?:boolean;
 };
 
 // Define the TripState interface
@@ -29,7 +31,9 @@ const initialState: FixedTripExpenseState = {
       steward: 50,
       counter: 100,
       dcParchi: 0,
-      refreshment: 75
+      refreshment: 75,
+      driverCommission:5,
+      isPercentage:true
     },
     {
       id: 2,
@@ -39,7 +43,9 @@ const initialState: FixedTripExpenseState = {
       steward: 60,
       counter: 110,
       dcParchi: 0,
-      refreshment: 80
+      refreshment: 80,
+      driverCommission:5,
+      isPercentage:true
     },
     {
       id: 3,
@@ -49,7 +55,9 @@ const initialState: FixedTripExpenseState = {
       steward: 70,
       counter: 120,
       dcParchi: 50,
-      refreshment: 90
+      refreshment: 90,
+      driverCommission:5,
+      isPercentage:true
     }
   ]
 };

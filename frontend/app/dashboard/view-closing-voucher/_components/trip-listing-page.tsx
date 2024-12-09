@@ -35,9 +35,11 @@ export default function TripListingPage({ }: TTripListingPage) {
   const dispatch = useDispatch();
 
   const fetchFixedTripExpense = async () => {
-    const fetchFixedExpense = await getAllBusClosingVouchers();
+    const fetchBusClosingExpense = await getAllBusClosingVouchers();
     const routes = await getAllRoutes()
-    dispatch(setBusClosingVoucher(fetchFixedExpense));
+    console.log(fetchBusClosingExpense,"fetchBusClosingExpense");
+    
+    dispatch(setBusClosingVoucher(fetchBusClosingExpense));
     dispatch(setRoute(routes));
     const tickets = await getAllTicketPrices()
     dispatch(setTicketRaw(tickets));

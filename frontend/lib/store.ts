@@ -16,13 +16,13 @@ import expensesSlices from './slices/expenses-slices';
 import tripInformationSaved from './slices/trip-information-saved';
 import savedExpenses from './slices/saved-expenses';
 
-const persistConfig = {
-  key: 'root',
-  storage,
-  // Optionally, you can blacklist or whitelist specific reducers
-  // blacklist: ['someReducer']
-  // whitelist: ['someReducer']
-};
+// const persistConfig = {
+//   key: 'root',
+//   storage,
+//   // Optionally, you can blacklist or whitelist specific reducers
+//   // blacklist: ['someReducer']
+//   // whitelist: ['someReducer']
+// };
 
 const rootReducer = combineReducers({
   employees: employeSlices,
@@ -39,11 +39,12 @@ const rootReducer = combineReducers({
   savedExpense: savedExpenses
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+// const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Configure the Redux store
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
+  // reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false

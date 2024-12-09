@@ -23,13 +23,13 @@ export default function BusListingPage({ }: TBusListingPage) {
 
   const dispatch = useDispatch();
 
-  // const fetchEmoployee = async () => {
-  //   const allBusesData = await getAllBuses();
-  //   dispatch(setBus(allBusesData))
-  // }
+  const fetchEmoployee = async () => {
+    const allBusesData = await getAllBuses();
+    dispatch(setBus(allBusesData))
+  }
 
   useEffect(() => {
-    // fetchEmoployee()
+    fetchEmoployee()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const statusParam = searchParams.get('status') || '';

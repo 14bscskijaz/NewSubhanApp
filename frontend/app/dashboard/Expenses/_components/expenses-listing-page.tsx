@@ -6,10 +6,10 @@ import { Heading } from '@/components/ui/heading';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
-import { Buses, allBuses } from '@/lib/slices/bus-slices';
+import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
+import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
 import { Expense, allExpenses, setExpenses } from '@/lib/slices/expenses-slices';
-import { Route, allRoutes } from '@/lib/slices/route-slices';
+import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
 import { addSavedExpense } from '@/lib/slices/saved-expenses';
 import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
 import { RootState } from '@/lib/store';
@@ -19,6 +19,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import RouteTable from './expenses-tables';
 import BusExpenseTable from './expenses-tables/bus-expense-table';
 import NetExpenses from './net-expense';
+import { getAllBuses } from '@/app/actions/bus.action';
+import { getAllRoutes } from '@/app/actions/route.action';
+import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
+import { createExpense } from '@/app/actions/expenses.action';
 
 type TExpensesListingPage = {};
 
@@ -38,15 +42,15 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
   const dispatch = useDispatch();
 
-  // const fetchData = async () => {
-  //   const allBusesData = await getAllBuses();
-  //   const allRoutes = await getAllRoutes();
-  //   const allVouchers = await getAllBusClosingVouchers()
+  const fetchData = async () => {
+    const allBusesData = await getAllBuses();
+    const allRoutes = await getAllRoutes();
+    const allVouchers = await getAllBusClosingVouchers()
 
-  //   dispatch(setBus(allBusesData))
-  //   dispatch(setRoute(allRoutes))
-  //   dispatch(setBusClosingVoucher(allVouchers))
-  // }
+    dispatch(setBus(allBusesData))
+    dispatch(setRoute(allRoutes))
+    dispatch(setBusClosingVoucher(allVouchers))
+  }
 
   useEffect(() => {
     const fetchFilteredData = () => {
@@ -87,7 +91,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
   // Effect to handle pagination parameters from the URL
   useEffect(() => {
-    // fetchData();
+    fetchData();
     const pageParam = searchParams.get('page') || '1';
     const pageGeneralParam = searchParams.get('generalPage') || '1';
     const limitParam = searchParams.get('limit') || '5';
@@ -213,30 +217,29 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               </thead>
               <tbody>
                 ${busExpenses
-                  .map(expense => {
-                    const voucher:any = VoucherMap.get(Number(expense?.voucherId) || 0) || {};
-                    const {
-                      sourceCity = 'N/A',
-                      sourceAdda = 'N/A',
-                      destinationCity = 'N/A',
-                      destinationAdda = 'N/A',
-                    } = RouteMap.get(voucher.routeId || 0) || {};
-                    return `
+          .map(expense => {
+            const voucher: any = VoucherMap.get(Number(expense?.voucherId) || 0) || {};
+            const {
+              sourceCity = 'N/A',
+              sourceAdda = 'N/A',
+              destinationCity = 'N/A',
+              destinationAdda = 'N/A',
+            } = RouteMap.get(voucher.routeId || 0) || {};
+            return `
                       <tr>
                         <td>${BusNumberMap.get(expense?.busId || 0) || 'N/A'}</td>
                         <td>${voucher.voucherNumber || 'N/A'}</td>
                         <td>${voucher.revenue || 0}</td>
-                        <td>${
-                          sourceCity !== 'N/A'
-                            ? `${sourceCity} (${sourceAdda}) - ${destinationCity} (${destinationAdda})`
-                            : 'N/A'
-                        }</td>
+                        <td>${sourceCity !== 'N/A'
+                ? `${sourceCity} (${sourceAdda}) - ${destinationCity} (${destinationAdda})`
+                : 'N/A'
+              }</td>
                         <td>${expense.description || 'N/A'}</td>
                         <td>${expense.amount || 0}</td>
                       </tr>
                     `;
-                  })
-                  .join('')}
+          })
+          .join('')}
               </tbody>
               <tfoot>
                 <tr>
@@ -256,15 +259,15 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               </thead>
               <tbody>
                 ${generalExpenses
-                  .map(
-                    expense => `
+          .map(
+            expense => `
                     <tr>
                       <td>${expense.description || 'N/A'}</td>
                       <td>${expense.amount || 0}</td>
                     </tr>
                   `
-                  )
-                  .join('')}
+          )
+          .join('')}
               </tbody>
               <tfoot>
                 <tr>
@@ -309,26 +312,41 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
       });
     }
   };
+
+
+
+
+  const handleSubmitExpenses = async () => {
+    try {
+      // Use map to return an array of promises
+      const expensePromises = expenses.map(async (expense) => {
+        await createExpense(expense);
+      });
   
-
-
-
-  const handleSubmitExpenses = () => {
-    expenses.forEach((expense) => {
-      dispatch(addSavedExpense(expense));
-    });
-
-    toast({
-      title: "Success",
-      description: "Expenses submitted successfully!",
-      duration: 3000,
-    });
-
-    setTimeout(() => {
-      printExpenses();
-    }, 1000);
+      // Wait until all promises are resolved
+      await Promise.all(expensePromises);
+  
+      // Show success toast after all operations are complete
+      toast({
+        title: "Success",
+        description: "Expenses submitted successfully!",
+        duration: 3000,
+      });
+  
+      // Wait before printing expenses
+      setTimeout(() => {
+        printExpenses();
+      }, 1000);
+    } catch (error) {
+      // Handle errors if any expense creation fails
+      toast({
+        title: "Error",
+        description: "Failed to submit expenses. Please try again.",
+        duration: 3000,
+      });
+    }
   };
-
+  
   return (
     <PageContainer scrollable>
       <div className="space-y-4">

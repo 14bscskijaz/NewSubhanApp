@@ -21,7 +21,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
-      // await deleteFixedTripExpense(data.id);
+      await deleteFixedTripExpense(data.id);
       dispatch(removeFixedTripExpense(data.id));
       setOpen(false);
     } catch (error) {
@@ -32,7 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const handleUpdate = async (updatedTrip: FixedTripExpense) => {
-    // await updateFixedTripExpenses(data.id, updatedTrip)
+    await updateFixedTripExpenses(data.id, updatedTrip)
     dispatch(updateFixedTripExpense(updatedTrip));
   };
 

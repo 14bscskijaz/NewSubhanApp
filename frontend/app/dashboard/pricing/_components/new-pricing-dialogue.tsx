@@ -37,10 +37,14 @@ export default function NewPricingDialog() {
       ticketPrice: Number(ticketPrice),
       busType,
     }
-    // await createTicketPrice(newTicket)
-    // const allTicketData = await getAllTicketPrices()
-    // dispatch(setTicketRaw(allTicketData))
-    dispatch(addTicketRaw(newTicket))
+    console.log(newTicket,"Tice");
+    
+    await createTicketPrice(newTicket)
+    console.log("Data submmit");
+    
+    const allTicketData = await getAllTicketPrices()
+    dispatch(setTicketRaw(allTicketData))
+    // dispatch(addTicketRaw(newTicket))
     setOpen(false)
     resetForm()
   }

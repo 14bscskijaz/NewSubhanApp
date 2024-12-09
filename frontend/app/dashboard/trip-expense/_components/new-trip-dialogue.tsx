@@ -29,14 +29,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export default function NewTripDialog() {
   const [open, setOpen] = useState(false);
-  const [routeId, setRouteId] = useState<string | ''>("0");
+  const [routeId, setRouteId] = useState<string | ''>("");
   const [routeCommission, setRouteCommission] = useState<number | ''>('');
   const [rewardCommission, setRewardCommission] = useState<number | ''>('');
   const [steward, setSteward] = useState<number | ''>('');
   const [counter, setCounter] = useState<number | ''>('');
   const [dcParchi, setDcParchi] = useState<number | ''>('');
   const [refreshment, setRefreshment] = useState<number | ''>('');
-  const [driverCommission, setDriverCommission] = useState<string>('');
+  // const [driverCommission, setDriverCommission] = useState<string>('');
   const [isPercentage, setIsPercentage] = useState<boolean>(true);
 
   const dispatch = useDispatch();
@@ -56,22 +56,22 @@ export default function NewTripDialog() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    const filterRouteCommission = isPercentage?Number(routeCommission)/100:Number(routeCommission)
     const newTrip: Omit<FixedTripExpense, "id"> = {
       routeId: Number(routeId) ?? 0,
-      routeCommission: Number(routeCommission),
+      routeCommission: filterRouteCommission,
       rewardCommission: Number(rewardCommission),
       steward: Number(steward),
       counter: Number(counter),
       dcParchi: Number(dcParchi),
       refreshment: Number(refreshment),
-      driverCommission: Number(driverCommission),
-      isPercentage 
+      // driverCommission: Number(driverCommission),
+      // isPercentage 
     };
-    // await createFixedTripExpense(newTrip);
-    // const fixedExpenses = await getAllFixedTripExpenses()
-    // dispatch(setFixedTripExpense(fixedExpenses));
-    dispatch(addFixedTripExpense(newTrip));
+    await createFixedTripExpense(newTrip);
+    const fixedExpenses = await getAllFixedTripExpenses()
+    dispatch(setFixedTripExpense(fixedExpenses));
+    // dispatch(addFixedTripExpense(newTrip));
     setOpen(false);
     resetForm();
   };
@@ -84,7 +84,7 @@ export default function NewTripDialog() {
     setCounter('');
     setDcParchi('');
     setRefreshment('');
-    setDriverCommission('');
+    // setDriverCommission('');
     setIsPercentage(true);
   };
 
@@ -121,7 +121,7 @@ export default function NewTripDialog() {
               className="flex-col !items-start !space-x-0"
             />
             {/* Route Commission */}
-            <div className="grid gap-2">
+            {/* <div className="grid gap-2">
               <Label htmlFor="routeCommission" className="text-gradient">
                 Route Commission
               </Label>
@@ -136,7 +136,7 @@ export default function NewTripDialog() {
                   )
                 }
               />
-            </div>
+            </div> */}
             {/* Other Inputs */}
             <div className="grid gap-2">
               <Label htmlFor="rewardCommission" className="text-gradient">
@@ -220,36 +220,35 @@ export default function NewTripDialog() {
             </div>
             {/* Driver Commission */}
             <div className="grid gap-2">
-              <Label htmlFor="driverCommission" className="text-gradient">
-                Driver Commission
+              <Label htmlFor="standCommission" className="text-gradient">
+                Stand Commission
               </Label>
               <div className="flex items-center gap-2">
                 <Input
-                  id="driverCommission"
+                  id="standCommission"
                   type="number"
                   placeholder={
                     isPercentage
-                      ? "Enter Driver Commission (max 100)"
-                      : "Enter Driver Commission"
+                      ? "Enter Stand Commission (max 100)"
+                      : "Enter Stand Commission"
                   }
-                  value={driverCommission}
+                  value={routeCommission}
                   onChange={(e) => {
-                    const value = e.target.value; // Get raw input value
+                    const value = e.target.value; 
                     if (isPercentage) {
-                      // If percentage, ensure value is within 0-100
                       if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
-                        setDriverCommission(value);
+                        setRouteCommission(Number(value));
                       }
                     } else {
                       // If not percentage, allow any value
-                      setDriverCommission(value);
+                      setRouteCommission(Number(value));
                     }
                   }}
                 />
                 <Select
                   onValueChange={(value) => {
                     setIsPercentage(value === "true");
-                    setDriverCommission(""); 
+                    setRouteCommission(""); 
                   }}
                   defaultValue={isPercentage.toString()}
                 >

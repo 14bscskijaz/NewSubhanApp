@@ -90,10 +90,10 @@ export default function NewEmployeeDialog() {
       notes,
     };
 
-    // await createEmployee(newEmployee);
-    // const getAllEmployee = await getAllEmployees();
-    // dispatch(setEmployee(getAllEmployee));
-    dispatch(addEmployee(newEmployee));
+    await createEmployee(newEmployee);
+    const getAllEmployee = await getAllEmployees();
+    dispatch(setEmployee(getAllEmployee));
+    // dispatch(addEmployee(newEmployee));
     setOpen(false);
     resetForm();
   };

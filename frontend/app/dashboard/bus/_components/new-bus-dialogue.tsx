@@ -1,6 +1,6 @@
 "use client";
 
-import { createBus } from "@/app/actions/bus.action";
+import { createBus, getAllBuses } from "@/app/actions/bus.action";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Buses, addBus } from "@/lib/slices/bus-slices";
+import { Buses, addBus, setBus } from "@/lib/slices/bus-slices";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -48,8 +48,10 @@ export default function NewBusDialog() {
     };
 
     try {
-      // const createdBus = await createBus(newBus);
-      dispatch(addBus(newBus));
+      const createdBus = await createBus(newBus);
+      const allBusesData = await getAllBuses();
+      dispatch(setBus(allBusesData))
+      // dispatch(addBus(newBus));
       setOpen(false);
       resetForm();
     } catch (error: any) {

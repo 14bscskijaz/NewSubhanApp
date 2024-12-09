@@ -22,16 +22,15 @@ export default function RouteListingPage({}: TRouteListingPage) {
   const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch()
 
-  // const fetchRoutes = async() =>{
-  //   const getRoutes = await getAllRoutes()
-  //   dispatch(setRoute(getRoutes));
-  //   console.log(getRoutes,"getRoutes");
-    
-  // }
+  const fetchRoutes = async() =>{
+    const getRoutes = await getAllRoutes()
+    dispatch(setRoute(getRoutes));
+    // console.log(getRoutes,"getRoutes");
+  }
 
 
   useEffect(() => {
-    // fetchRoutes()
+    fetchRoutes()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const sourceParam = searchParams.get('source') || '';

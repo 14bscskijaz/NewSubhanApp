@@ -153,12 +153,12 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
     return () => subscription.unsubscribe();
   }, [methods, tripRevenue]);
 
-  const printPDF = (data:any) => {
+  const printPDF = (data: any) => {
     const filterBus = buses.find(bus => Number(bus.id) === Number(data.busId));
     const filterRoute = routes.find(route => route.id === data.routeId);
     const filterDriver = employees.find(employee => Number(employee.id) === Number(data.driverId));
     const filterConductor = employees.find(employee => Number(employee.id) === Number(data.conductorId));
-  
+
     const printContent = `
       <html>
         <head>
@@ -242,13 +242,13 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         </body>
       </html>
     `;
-  
+
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(printContent);
       printWindow.document.close();
       printWindow.focus();
-  
+
       setTimeout(() => {
         printWindow.print();
         printWindow.close();
@@ -283,9 +283,10 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         revenue: Number(data.revenue) || 0,
       };
 
-      // const newVoucher = await createBusClosingVoucher(sanitizedData);
-      dispatch(addBusClosingVoucher(sanitizedData));
-      const newVoucher = vouchers[vouchers.length - 1];
+      const newVoucher = await createBusClosingVoucher(sanitizedData);
+
+      // dispatch(addBusClosingVoucher(sanitizedData));
+      // const newVoucher = vouchers[vouchers.length - 1];
 
       const updatedTripInfo = tripsInformation.map((info: TripInformation) => ({
         ...info,
@@ -294,8 +295,8 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
       await Promise.all(
         updatedTripInfo.map(async (trip) => {
-          // await createTrip(trip);
-          dispatch(addSavedTripInformation(trip))
+          await createTrip(trip);
+          // dispatch(addSavedTripInformation(trip))
         })
       );
 
@@ -308,7 +309,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         title: 'Success',
         description: 'Bus closing voucher created successfully!',
         variant: 'default',
-        duration:1000
+        duration: 1000
       });
 
       printPDF(sanitizedData);
@@ -320,7 +321,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         title: 'Error',
         description: 'An error occurred while creating the voucher.',
         variant: 'destructive',
-        duration:1200
+        duration: 1200
       });
     } finally {
       setLoading(false); // Reset loading state

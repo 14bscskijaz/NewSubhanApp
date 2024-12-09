@@ -9,6 +9,7 @@ import { Trash } from 'lucide-react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditRouteDialog from '../edit-trip-info-dialogue';
+import { deleteTrip } from '@/app/actions/trip.action';
 
 interface CellActionProps {
   data: TripInformation;

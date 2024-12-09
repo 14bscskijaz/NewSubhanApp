@@ -28,17 +28,17 @@ export default function TripListingPage({ }: TTripListingPage) {
   const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch();
 
-  // const fetchFixedTripExpense = async () => {
-  //   const fetchFixedExpense = await getAllFixedTripExpenses();
-  //   const routes = await getAllRoutes()
-  //   dispatch(setFixedTripExpense(fetchFixedExpense));
-  //   dispatch(setRoute(routes));
-  //   const tickets = await getAllTicketPrices()
-  //   dispatch(setTicketRaw(tickets));
-  // };
+  const fetchFixedTripExpense = async () => {
+    const fetchFixedExpense = await getAllFixedTripExpenses();
+    const routes = await getAllRoutes();
+    dispatch(setFixedTripExpense(fetchFixedExpense));
+    dispatch(setRoute(routes));
+    const tickets = await getAllTicketPrices();
+    dispatch(setTicketRaw(tickets));
+  };
 
   useEffect(() => {
-    // fetchFixedTripExpense()
+    fetchFixedTripExpense()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';

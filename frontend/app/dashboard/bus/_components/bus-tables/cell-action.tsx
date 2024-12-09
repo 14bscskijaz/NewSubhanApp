@@ -21,7 +21,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
-      // await deleteBus(data.id)
+      await deleteBus(data.id)
       dispatch(removeBus(data.id));
       setOpen(false);
     } catch (error) {
@@ -32,7 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const handleUpdate = async(updatedBus: Buses,id:number) => {
-    // await updateBuses(id,updatedBus)
+    await updateBuses(id,updatedBus)
     dispatch(updateBus(updatedBus));
   };
 

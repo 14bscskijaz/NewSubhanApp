@@ -29,60 +29,60 @@ interface TicketState {
 
 const initialState: TicketState = {
   ticketsRaw: [
-    {
-      id: 1,
-      routeId: 1,
-      busType: 'Business',
-      ticketPrice: 2700
-    },
-    {
-      id: 1,
-      routeId: 1,
-      busType: 'Business',
-      ticketPrice: 2700
-    },
-    {
-      id: 2,
-      routeId: 1,
-      busType: 'Standard',
-      ticketPrice: 2100
-    },
-    {
-      id: 3,
-      routeId: 2,
-      busType: 'Business',
-      ticketPrice: 2700
-    },
-    {
-      id: 4,
-      routeId: 2,
-      busType: 'Standard',
-      ticketPrice: 2100
-    },
-    {
-      id: 5,
-      routeId: 3,
-      busType: 'Business',
-      ticketPrice: 2100
-    },
-    {
-      id: 6,
-      routeId: 3,
-      busType: 'Standard',
-      ticketPrice: 1600
-    },
-    {
-      id: 7,
-      routeId: 4,
-      busType: 'Business',
-      ticketPrice: 2100
-    },
-    {
-      id: 8,
-      routeId: 4,
-      busType: 'Standard',
-      ticketPrice: 1600
-    }
+    // {
+    //   id: 1,
+    //   routeId: 1,
+    //   busType: 'Business',
+    //   ticketPrice: 2700
+    // },
+    // {
+    //   id: 1,
+    //   routeId: 1,
+    //   busType: 'Business',
+    //   ticketPrice: 2700
+    // },
+    // {
+    //   id: 2,
+    //   routeId: 1,
+    //   busType: 'Standard',
+    //   ticketPrice: 2100
+    // },
+    // {
+    //   id: 3,
+    //   routeId: 2,
+    //   busType: 'Business',
+    //   ticketPrice: 2700
+    // },
+    // {
+    //   id: 4,
+    //   routeId: 2,
+    //   busType: 'Standard',
+    //   ticketPrice: 2100
+    // },
+    // {
+    //   id: 5,
+    //   routeId: 3,
+    //   busType: 'Business',
+    //   ticketPrice: 2100
+    // },
+    // {
+    //   id: 6,
+    //   routeId: 3,
+    //   busType: 'Standard',
+    //   ticketPrice: 1600
+    // },
+    // {
+    //   id: 7,
+    //   routeId: 4,
+    //   busType: 'Business',
+    //   ticketPrice: 2100
+    // },
+    // {
+    //   id: 8,
+    //   routeId: 4,
+    //   busType: 'Standard',
+    //   ticketPrice: 1600
+    // }
   ]
 };
 

@@ -28,58 +28,58 @@ interface SavedTripInformationState {
 // Define the initial state
 const initialState: SavedTripInformationState = {
   savedTripsInformation: [
-    {
-      id: 1,
-      routeClosingVoucherId: "1",
-      routeId: "3",
-      passengerCount: "40",
-      fullTicketCount: "35",
-      halfTicketCount: "5",
-      freeTicketCount: "0",
-      actualRevenue: "2000",
-      revenueDiffExplanation: 'hello',
-      miscellaneousAmount: "12",
-      fullTicketBusinessCount: '1'
-    },
-    {
-      id: 2,
-      routeClosingVoucherId: "2",
-      routeId: "4",
-      passengerCount: "50",
-      fullTicketCount: "40",
-      halfTicketCount: "5",
-      freeTicketCount: "5",
-      actualRevenue: "3000",
-      revenueDiffExplanation: 'Promotion tickets issued.',
-      fullTicketBusinessCount: '1',
-      miscellaneousAmount: '12'
-    },
-    {
-      id: 3,
-      routeClosingVoucherId: "3",
-      routeId: "6",
-      passengerCount: "50",
-      fullTicketCount: "40",
-      halfTicketCount: "5",
-      freeTicketCount: "5",
-      actualRevenue: "3000",
-      revenueDiffExplanation: 'Promotion tickets issued.',
-      fullTicketBusinessCount: '1',
-      miscellaneousAmount: '12'
-    },
-    {
-      id: 4,
-      routeClosingVoucherId: "4",
-      routeId: "7",
-      passengerCount: "50",
-      fullTicketCount: "40",
-      halfTicketCount: "5",
-      freeTicketCount: "5",
-      actualRevenue: "3000",
-      revenueDiffExplanation: 'Promotion tickets issued.',
-      fullTicketBusinessCount: '1',
-      miscellaneousAmount: '12'
-    },
+    // {
+    //   id: 1,
+    //   routeClosingVoucherId: "1",
+    //   routeId: "3",
+    //   passengerCount: "40",
+    //   fullTicketCount: "35",
+    //   halfTicketCount: "5",
+    //   freeTicketCount: "0",
+    //   actualRevenue: "2000",
+    //   revenueDiffExplanation: 'hello',
+    //   miscellaneousAmount: "12",
+    //   fullTicketBusinessCount: '1'
+    // },
+    // {
+    //   id: 2,
+    //   routeClosingVoucherId: "2",
+    //   routeId: "4",
+    //   passengerCount: "50",
+    //   fullTicketCount: "40",
+    //   halfTicketCount: "5",
+    //   freeTicketCount: "5",
+    //   actualRevenue: "3000",
+    //   revenueDiffExplanation: 'Promotion tickets issued.',
+    //   fullTicketBusinessCount: '1',
+    //   miscellaneousAmount: '12'
+    // },
+    // {
+    //   id: 3,
+    //   routeClosingVoucherId: "3",
+    //   routeId: "6",
+    //   passengerCount: "50",
+    //   fullTicketCount: "40",
+    //   halfTicketCount: "5",
+    //   freeTicketCount: "5",
+    //   actualRevenue: "3000",
+    //   revenueDiffExplanation: 'Promotion tickets issued.',
+    //   fullTicketBusinessCount: '1',
+    //   miscellaneousAmount: '12'
+    // },
+    // {
+    //   id: 4,
+    //   routeClosingVoucherId: "4",
+    //   routeId: "7",
+    //   passengerCount: "50",
+    //   fullTicketCount: "40",
+    //   halfTicketCount: "5",
+    //   freeTicketCount: "5",
+    //   actualRevenue: "3000",
+    //   revenueDiffExplanation: 'Promotion tickets issued.',
+    //   fullTicketBusinessCount: '1',
+    //   miscellaneousAmount: '12'
+    // },
   ]
 };
 

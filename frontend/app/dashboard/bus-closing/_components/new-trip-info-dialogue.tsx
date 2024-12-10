@@ -67,7 +67,7 @@ export default function NewRouteDialog({
   //   tickets.find(ticket => ticket.routeId === Number(routeId))?.ticketPrice
   // );
 
-  const performRevenueCalculationMaths = (
+  const calcTicketEarnings = (
     fullCount: number,
     halfCount: number,
     luxuryCount: number,
@@ -95,32 +95,39 @@ export default function NewRouteDialog({
     )?.ticketPrice;
 
     let ticketEarnings = 0;
-    if (standardTicketPrice !== undefined && luxuryTicketPrice !== undefined) {
+    if (standardTicketPrice !== undefined || luxuryTicketPrice !== undefined) {
       const fullCount = Number(updatedData.fullTicketCount) || 0;
       const halfCount = Number(updatedData.halfTicketCount) || 0;
       const luxuryCount = Number(updatedData.fullTicketBusinessCount) || 0;
-      const revenue = performRevenueCalculationMaths(
+      const revenue = calcTicketEarnings(
         fullCount,
         halfCount,
         luxuryCount,
-        standardTicketPrice,
-        luxuryTicketPrice
+        standardTicketPrice ?? 0,
+        luxuryTicketPrice ?? 0
       );
       ticketEarnings = revenue;
     }
 
-    // Subtract the fixed trip expenses from the ticket earnings(
+    // Subtract the fixed trip expenses from the ticket earnings. Possibly can be undefined
     const expenseForThisRouteId = fixedTripExpenses.find(
       (expense: { routeId: number; }) => expense.routeId === Number(updatedData.routeId)
     );
 
     let remaining = ticketEarnings;
-    remaining -= expenseForThisRouteId?.routeCommission ?? 0;
     remaining -= expenseForThisRouteId?.rewardCommission ?? 0;
     remaining -= expenseForThisRouteId?.steward ?? 0;
     remaining -= expenseForThisRouteId?.counter ?? 0;
     remaining -= expenseForThisRouteId?.dcParchi ?? 0;
     remaining -= expenseForThisRouteId?.refreshment ?? 0;
+
+    // Calculate Stand Commission (routeCommission variable in code)
+    if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
+      remaining -= expenseForThisRouteId.routeCommission;
+    } else if (expenseForThisRouteId && expenseForThisRouteId.routeCommission < 1) {
+      const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings;
+      remaining -= standCommissionValue;
+    } 
 
     // Add or subtract the miscellaneous amount
     if (updatedData.miscellaneousAmount) {

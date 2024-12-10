@@ -6,7 +6,7 @@ type StandCommissionT = {
 
 const StandCommission = ({standCommission }: StandCommissionT) => {
     
-    const commission =standCommission > 0 ? standCommission : standCommission + "%"
+    const commission = standCommission > 1 ? standCommission.toString() : `${(standCommission * 100).toString()} %`
     return (
         <div>{commission}</div>
     )

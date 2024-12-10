@@ -144,7 +144,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   useEffect(() => {
 
     // console.log("Form data", methods.getValues());
-    // console.log("Fixed trip expense: ", routeFixedClosingExpense);
+    // console.log("Fixed, based on route, Closing expense: ", routeFixedClosingExpense);
 
     const subscription = methods.watch((data) => {
       handleRevenueCalculation(data);

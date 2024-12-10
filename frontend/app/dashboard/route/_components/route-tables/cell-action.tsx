@@ -20,7 +20,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
-      // await deleteRoute(data.id)
+      await deleteRoute(data.id)
       dispatch(removeRoute(data.id));
       setOpen(false);
     } catch (error) {
@@ -31,7 +31,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const handleUpdate = async(updatedRoute: Route) => {
-    // await updatedRoutes(data.id,updatedRoute)
+    await updatedRoutes(data.id,updatedRoute)
     dispatch(updateRoute(updatedRoute));
   };
 

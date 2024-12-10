@@ -2,10 +2,10 @@
 'use client';
 import { FixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
+import StandCommission from './DriverCommission';
 import SourceDestination from './SourceDestination';
 import SourceStationDestinationStation from './SourceStationDestinationStation';
-import DriverCommission from './DriverCommission';
+import { CellAction } from './cell-action';
 
 export const columns: ColumnDef<FixedTripExpense>[] = [
   {
@@ -31,19 +31,19 @@ export const columns: ColumnDef<FixedTripExpense>[] = [
       <SourceStationDestinationStation routeId={row.original.routeId} />
     )
   },
-  {
-    accessorKey: 'routeCommission',
-    header: 'Route Commission'
-  },
+  // {
+  //   accessorKey: 'routeCommission',
+  //   header: 'Stand Commission'
+  // },
   {
     accessorKey: 'rewardCommission',
     header: 'Reward Commission'
   },
   {
-    id: 'driverCommission',
-    header: 'Driver Commission',
+    id: 'routeCommission',
+    header: 'Stand Commission',
     cell: ({ row }) => (
-      <DriverCommission isPercentage={row.original.isPercentage} driverCommission={row.original.driverCommission} />
+      <StandCommission standCommission={row.original.routeCommission} />
     )
   },
   {

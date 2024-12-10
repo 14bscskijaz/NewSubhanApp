@@ -21,16 +21,16 @@ export default function EmployeeListingPage({}: TEmployeeListingPage) {
   const [status, setStatus] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // const fetchEmoployee = async() =>{
-  //   const allEmployeeData = await getAllEmployees()
-  //   dispatch(setEmployee(allEmployeeData))
+  const fetchEmoployee = async() =>{
+    const allEmployeeData = await getAllEmployees()
+    dispatch(setEmployee(allEmployeeData))
     
-  // }
+  }
 
   useEffect(() => {
-    // fetchEmoployee()
+    fetchEmoployee()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const statusParam = searchParams.get('status') || '';

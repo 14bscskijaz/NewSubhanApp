@@ -58,6 +58,8 @@ export default function EditBusDialog({
       description,
       busStatus: busStatus,
     };
+    console.log(updatedBus,"updatedBus");
+    
 
     onUpdate(updatedBus,bus.id);
     setOpen(false);

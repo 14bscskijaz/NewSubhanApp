@@ -11,7 +11,7 @@ export type FixedTripExpense = {
   counter: number;
   dcParchi: number;
   refreshment: number;
-  driverCommission:number;
+  driverCommission?:number;
   isPercentage?:boolean;
 };
 

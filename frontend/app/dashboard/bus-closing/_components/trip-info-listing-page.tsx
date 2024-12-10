@@ -23,6 +23,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import NewRouteDialog from './new-trip-info-dialogue'
 import RouteTable from './trip-info-tables'
 import VoucherForm from './voucher-form'
+import { getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action'
+import { setFixedTripExpense } from '@/lib/slices/fixed-trip-expense'
 
 export default function TripInfoListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
@@ -46,19 +48,21 @@ export default function TripInfoListingPage() {
 
   const searchParams = useSearchParams()
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // const fetchAllData = async () => {
-  //   const allBuses = await getAllBuses();
-  //   const allEmployees = await getAllEmployees();
-  //   const allRoutes = await getAllRoutes();
-  //   dispatch(setRoute(allRoutes));
-  //   dispatch(setEmployee(allEmployees));
-  //   dispatch(setBus(allBuses));
-  // }
-  // useEffect(() => {
-  //   fetchAllData();
-  // }, [])
+  const fetchAllData = async () => {
+    const allBuses = await getAllBuses();
+    const allEmployees = await getAllEmployees();
+    const allRoutes = await getAllRoutes();
+    const fixedTripExpenses = await getAllFixedTripExpenses();
+    dispatch(setRoute(allRoutes));
+    dispatch(setEmployee(allEmployees));
+    dispatch(setBus(allBuses));
+    dispatch(setFixedTripExpense(fixedTripExpenses));
+  }
+  useEffect(() => {
+    fetchAllData();
+  }, [])
 
   useEffect(() => {
     const pageParam = searchParams.get('page') || '1'
@@ -203,7 +207,7 @@ export default function TripInfoListingPage() {
             )}
           </div>
           <div className='w-[1px] h-full left-[45.6%] bg-neutral-200 absolute hidden md:block'></div>
-          <Separator className='md:hidden'/>
+          <Separator className='md:hidden' />
           <div className="relative">
             <div className="space-y-2">
               <Heading title={`Closing Voucher`} description="" />

@@ -1,17 +1,15 @@
 import React from 'react'
 
-type DriverCommissionT = {
-    isPercentage?: boolean,
-    driverCommission: number
+type StandCommissionT = {
+    standCommission: number
 }
 
-const DriverCommission = ({ isPercentage, driverCommission }: DriverCommissionT) => {
-    console.log(driverCommission);
+const StandCommission = ({standCommission }: StandCommissionT) => {
     
-    const commission = !isPercentage ? driverCommission : driverCommission + "%"
+    const commission =standCommission > 0 ? standCommission : standCommission + "%"
     return (
         <div>{commission}</div>
     )
 }
 
-export default DriverCommission
+export default StandCommission

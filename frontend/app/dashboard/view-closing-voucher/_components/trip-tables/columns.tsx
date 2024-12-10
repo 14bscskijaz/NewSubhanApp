@@ -36,7 +36,11 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
   },
   {
     accessorKey: 'date',
-    header: 'Date'
+    header: 'Date',
+    cell: ({ row }) =>
+      row.original.date
+        ? new Date(row.original.date).toISOString().split("T")[0]
+        : ''
   },
   {
     id: 'busNumber',

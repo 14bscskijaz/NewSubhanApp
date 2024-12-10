@@ -77,7 +77,7 @@ export default function EditTripDialog({
     event.preventDefault();
     const updatedFormData = {
       ...formData,
-      driverCommission: Number(driverCommission),
+      routeCommission: Number(driverCommission),
       isPercentage
     };
 
@@ -125,14 +125,14 @@ export default function EditTripDialog({
             </div>
 
             {/* Reusable Input Fields */}
-            <InputField
+            {/* <InputField
               id="routeCommission"
               label="Route Commission"
               type="number"
               value={formData.routeCommission.toString() || ''}
               onChange={handleInputChange}
               placeholder="Enter route commission"
-            />
+            /> */}
             <InputField
               id="rewardCommission"
               label="Reward Commission"
@@ -174,17 +174,17 @@ export default function EditTripDialog({
               placeholder="Enter refreshment amount"
             />
              <div className="grid gap-2">
-              <Label htmlFor="driverCommission" className="text-gradient">
-                Driver Commission
+              <Label htmlFor="standCommission" className="text-gradient">
+                Stand Commission
               </Label>
               <div className="flex items-center gap-2">
                 <Input
-                  id="driverCommission"
+                  id="standCommission"
                   type="number"
                   placeholder={
                     isPercentage
-                      ? 'Enter Driver Commission (max 100)'
-                      : 'Enter Driver Commission'
+                      ? 'Enter Stand Commission (max 100)'
+                      : 'Enter Stand Commission'
                   }
                   value={driverCommission}
                   onChange={(e) => handleDriverCommissionChange(e.target.value)}
@@ -192,7 +192,7 @@ export default function EditTripDialog({
                 <Select
                   onValueChange={(value) => {
                     setIsPercentage(value === 'true');
-                    setDriverCommission(''); // Reset commission when type changes
+                    setDriverCommission('');
                   }}
                   defaultValue={isPercentage.toString()}
                 >

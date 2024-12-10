@@ -14,8 +14,9 @@ import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
 import { TicketPriceRaw, allTicketsRaw, setTicketRaw } from '@/lib/slices/pricing-slices';
 import { getAllTicketPrices } from '@/app/actions/pricing.action';
 import { getAllRoutes } from '@/app/actions/route.action';
-import { Expense } from '@/lib/slices/expenses-slices';
-import { allSavedExpenses } from '@/lib/slices/saved-expenses';
+import { Expense, setExpenses } from '@/lib/slices/expenses-slices';
+import { allSavedExpenses, setSavedExpenses } from '@/lib/slices/saved-expenses';
+import { getAllExpenses } from '@/app/actions/expenses.action';
 
 type TTripListingPage = {};
 
@@ -30,17 +31,17 @@ export default function TripListingPage({ }: TTripListingPage) {
   const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch();
 
-  // const fetchFixedTripExpense = async () => {
-  //   const fetchFixedExpense = await getAllFixedTripExpenses();
-  //   const routes = await getAllRoutes()
-  //   dispatch(setFixedTripExpense(fetchFixedExpense));
-  //   dispatch(setRoute(routes));
-  //   const tickets = await getAllTicketPrices()
-  //   dispatch(setTicketRaw(tickets));
-  // };
+  const fetchFixedTripExpense = async () => {
+    const fetchFixedExpense = await getAllExpenses();
+    const routes = await getAllRoutes()
+    dispatch(setSavedExpenses(fetchFixedExpense));
+    dispatch(setRoute(routes));
+    const tickets = await getAllTicketPrices()
+    dispatch(setTicketRaw(tickets));
+  };
 
   useEffect(() => {
-    // fetchFixedTripExpense()
+    fetchFixedTripExpense()
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';
@@ -50,7 +51,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     setSearch(searchParam);
     setSource(countParam);
     setPageLimit(Number(limitParam));
-  }, [searchParams,dispatch]);
+  }, [searchParams, dispatch]);
 
   const uniqueExpenses = Array.from(
     new Map(savedExpenses.map((expense) => [expense.id, expense])).values()
@@ -66,11 +67,11 @@ export default function TripListingPage({ }: TTripListingPage) {
       // expense.refreshment.toString().includes(search.toLowerCase())
       : true;
 
-    return matchesSearch ;
+    return matchesSearch;
   });
 
-  console.log(filteredExpense,"filteredExpense");
-  
+  // console.log(filteredExpense, "filteredExpense");
+
   const totalTripExpense = filteredExpense.length;
 
   const startIndex = (page - 1) * pageLimit;

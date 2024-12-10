@@ -37,11 +37,21 @@ export default function EditTripDialog({
 }: EditTripDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({ ...trip });
-  const [driverCommission, setDriverCommission] = useState('');
+  const [driverCommission, setDriverCommission] = useState<any>();
   const [isPercentage, setIsPercentage] = useState(true);
 
   useEffect(() => {
     setFormData({ ...trip });
+  
+    // Set the driverCommission and isPercentage based on routeCommission value
+    const commissionValue = trip.routeCommission || 0;
+    if (commissionValue < 1) {
+      setDriverCommission((commissionValue * 100).toString()); // Convert to percentage
+      setIsPercentage(true);
+    } else {
+      setDriverCommission(commissionValue.toString()); // Show as absolute value
+      setIsPercentage(false);
+    }
   }, [trip]);
 
   const routes = useSelector<RootState, Route[]>(allRoutes);
@@ -75,9 +85,10 @@ export default function EditTripDialog({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const filterRouteCommission = isPercentage ? Number(driverCommission) / 100 : Number(driverCommission)
     const updatedFormData = {
       ...formData,
-      routeCommission: Number(driverCommission),
+      routeCommission: filterRouteCommission,
       isPercentage
     };
 
@@ -173,7 +184,7 @@ export default function EditTripDialog({
               onChange={handleInputChange}
               placeholder="Enter refreshment amount"
             />
-             <div className="grid gap-2">
+            <div className="grid gap-2">
               <Label htmlFor="standCommission" className="text-gradient">
                 Stand Commission
               </Label>

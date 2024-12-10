@@ -3,7 +3,7 @@
     public class FixedTripExpense
     {
         public int Id { get; set; } // Primary key, auto-incremented
-        public int RouteCommission { get; set; }
+        public double RouteCommission { get; set; }
         public int RewardCommission { get; set; }
         public int Steward { get; set; }
         public int Counter { get; set; } // Route-wise salary for counter employee

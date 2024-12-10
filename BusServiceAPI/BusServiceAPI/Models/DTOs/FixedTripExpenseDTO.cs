@@ -4,7 +4,7 @@
     {
         public int Id { get; set; } // Serial
         public int RouteId { get; set; } // FK to Route
-        public int RouteCommission { get; set; } // Int
+        public double RouteCommission { get; set; } // Int
         public int RewardCommission { get; set; } // Int
         public int Steward { get; set; } // Int
         public int Counter { get; set; } // Int

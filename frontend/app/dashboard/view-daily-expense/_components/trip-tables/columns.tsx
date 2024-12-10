@@ -44,7 +44,7 @@ export const columns: ColumnDef<Expense>[] = [
     header: 'Gross Revenue',
     cell: (
       { row } // Parent component usage
-    ) => <Revenue voucherId={Number(row.original.voucherId)} />
+    ) => <Revenue voucherId={Number(row.original.id)} />
   },
   {
     id: 'expense',

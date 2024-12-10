@@ -202,7 +202,7 @@ export const navItems: NavItem[] = [
 
     items: [
       {
-        title: 'Addd Daily Closing',
+        title: 'Add Daily Closing',
         url: '/dashboard/Expenses',
         icon: 'bus'
       },

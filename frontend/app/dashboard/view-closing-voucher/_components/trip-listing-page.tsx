@@ -19,6 +19,8 @@ import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slice
 import { getAllExpenses } from '@/app/actions/expenses.action';
 import { setExpenses } from '@/lib/slices/expenses-slices';
 import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
+import { getAllBuses } from '@/app/actions/bus.action';
+import { setBus } from '@/lib/slices/bus-slices';
 
 type TTripListingPage = {};
 
@@ -37,10 +39,11 @@ export default function TripListingPage({ }: TTripListingPage) {
   const fetchFixedTripExpense = async () => {
     const fetchBusClosingExpense = await getAllBusClosingVouchers();
     const routes = await getAllRoutes()
-    console.log(fetchBusClosingExpense,"fetchBusClosingExpense");
-    
+    const buses = await getAllBuses()
+
     dispatch(setBusClosingVoucher(fetchBusClosingExpense));
     dispatch(setRoute(routes));
+    dispatch(setBus(buses));
     const tickets = await getAllTicketPrices()
     dispatch(setTicketRaw(tickets));
   };
@@ -56,7 +59,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     setSearch(searchParam);
     setSource(countParam);
     setPageLimit(Number(limitParam));
-  }, [searchParams,dispatch]);
+  }, [searchParams, dispatch]);
 
   const filteredVouchers = vouchers.filter((voucher) => {
     const matchesSearch = search
@@ -68,13 +71,13 @@ export default function TripListingPage({ }: TTripListingPage) {
       voucher.dieselLitres?.toString().includes(search.toLowerCase())
       : true;
 
-      // const totalR = expenses.reduce((sum, expense) => {
-      //   const foundVoucher = busClosingVouchers.find(v => v.id === expense.voucherId);
-      //   if (foundVoucher) {
-      //     return sum + (foundVoucher.revenue || 0);
-      //   }
-      //   return sum;
-      // }, 0);
+    // const totalR = expenses.reduce((sum, expense) => {
+    //   const foundVoucher = busClosingVouchers.find(v => v.id === expense.voucherId);
+    //   if (foundVoucher) {
+    //     return sum + (foundVoucher.revenue || 0);
+    //   }
+    //   return sum;
+    // }, 0);
     // const matchesCount = source
     //   ? trip.routeCommission.toString() === source.toLowerCase() ||
     //   trip.rewardCommission.toString() === source.toLowerCase() ||
@@ -84,7 +87,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     //   trip.refreshment.toString() === source.toLowerCase()
     //   : true;
 
-    return matchesSearch ;
+    return matchesSearch;
   });
 
   const totalTripExpense = filteredVouchers.length;

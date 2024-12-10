@@ -7,6 +7,9 @@ import VoucherNumber from './filtersData/VoucherNumber';
 import Revenue from './filtersData/Revenue';
 import Routes from './filtersData/Route';
 import SerialNo from './SerialNo';
+import Expenses from '@/app/dashboard/view-closing-voucher/_components/trip-tables/Expense';
+import NetIncome from '../NetIncome';
+
 
 export const columns: ColumnDef<Expense>[] = [
   {
@@ -15,41 +18,56 @@ export const columns: ColumnDef<Expense>[] = [
     cell: ({ row }) => <SerialNo rowIndex = {row.index}/>
   },
   {
-    id: 'busNumber',
-    header: 'Bus Number',
-    cell: (
-      { row } // Parent component usage
-    ) => <BusNumber busId={Number(row.original.busId)} />
+    accessorKey: 'date',
+    header: 'Date',
+    cell: ({ row }) =>
+      row.original.date
+        ? new Date(row.original.date).toISOString().split("T")[0]
+        : ''
   },
-  {
-    id: 'voucherNumber',
-    header: 'Voucher Number',
-    cell: (
-      { row } // Parent component usage
-    ) => <VoucherNumber voucherId={Number(row.original.voucherId)} />
-  },
+  // {
+  //   id: 'busNumber',
+  //   header: 'Bus Number',
+  //   cell: (
+  //     { row } // Parent component usage
+  //   ) => <BusNumber busId={Number(row.original.busId)} />
+  // },
+  // {
+  //   id: 'voucherNumber',
+  //   header: 'Voucher Number',
+  //   cell: (
+  //     { row } // Parent component usage
+  //   ) => <VoucherNumber voucherId={Number(row.original.voucherId)} />
+  // },
   {
     id: 'revenue',
-    header: 'Revenue',
+    header: 'Gross Revenue',
     cell: (
       { row } // Parent component usage
     ) => <Revenue voucherId={Number(row.original.voucherId)} />
   },
   {
-    id: 'route',
-    header: 'Route',
+    id: 'expense',
+    header: 'TotalExpense',
+    cell: (
+      { row }
+    ) => <Expenses voucherId={Number(row.original.id)} />
+  },
+  {
+    id: 'net-income',
+    header: 'Net Income',
     cell: (
       { row } // Parent component usage
-    ) => <Routes routeId={Number(row.original.routeId)} />
+    ) => <NetIncome voucherId={Number(row.original.id)} />
   },
-  {
-    accessorKey: 'description',
-    header: 'Description'
-  },
-  {
-    accessorKey: 'amount',
-    header: 'Amount'
-  },
+  // {
+  //   accessorKey: 'description',
+  //   header: 'Description'
+  // },
+  // {
+  //   accessorKey: 'amount',
+  //   header: 'Amount'
+  // },
   // {
   //   id: 'actions',
   //   header: 'Actions',

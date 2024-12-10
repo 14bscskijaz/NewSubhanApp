@@ -147,33 +147,71 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [] 
   },
+  // {
+  //   title: 'Bus Closing',
+  //   url: '/dashboard/bus-closing',
+  //   icon: 'bus',
+  //   isActive: false,
+  //   items: [] 
+  // },
+  // {
+  //   title: 'Daily Closing',
+  //   url: '/dashboard/Expenses',
+  //   icon: 'bus',
+  //   isActive: false,
+  //   items: [] 
+  // },
+  // {
+  //   title: 'View Closing Vouchers',
+  //   url: '/dashboard/view-closing-voucher',
+  //   icon: 'bus',
+  //   isActive: false,
+  //   items: [] 
+  // },
+  // {
+  //   title: 'View Daily Closing',
+  //   url: '/dashboard/view-daily-expense',
+  //   icon: 'bus',
+  //   isActive: false,
+  //   items: [] 
+  // },
   {
     title: 'Bus Closing',
-    url: '/dashboard/bus-closing',
+    url: '#',
     icon: 'bus',
-    isActive: false,
-    items: [] 
+    isActive: true,
+
+    items: [
+      {
+        title: 'Add Closing Vouchers',
+        url: '/dashboard/bus-closing',
+        icon: 'bus'
+      },
+      {
+        title: 'View Closing Vouchers',
+        url: '/dashboard/view-closing-voucher',
+        icon: 'login'
+      }
+    ]
   },
   {
     title: 'Daily Closing',
-    url: '/dashboard/Expenses',
-    icon: 'bus',
-    isActive: false,
-    items: [] 
-  },
-  {
-    title: 'View Closing Vouchers',
-    url: '/dashboard/view-closing-voucher',
-    icon: 'bus',
-    isActive: false,
-    items: [] 
-  },
-  {
-    title: 'View Daily Closing',
-    url: '/dashboard/view-daily-expense',
-    icon: 'bus',
-    isActive: false,
-    items: [] 
+    url: '#',
+    icon: 'routeOff',
+    isActive: true,
+
+    items: [
+      {
+        title: 'Addd Daily Closing',
+        url: '/dashboard/Expenses',
+        icon: 'bus'
+      },
+      {
+        title: 'View Daily Closing',
+        url: '/dashboard/view-daily-expense',
+        icon: 'login'
+      }
+    ]
   },
   {
     title: 'Expense Rates',
@@ -194,6 +232,7 @@ export const navItems: NavItem[] = [
       }
     ]
   },
+  
   // {
   //   title: 'Kanban',
   //   url: '/dashboard/kanban',

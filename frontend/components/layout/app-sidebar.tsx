@@ -148,7 +148,7 @@ export default function AppSidebar({
             <SearchInput />
           </div> */}
           <div className="flex items-center gap-2 px-4">
-            <UserNav />
+            {/* <UserNav /> */}
             <ThemeToggle />
           </div>
         </header>

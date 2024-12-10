@@ -19,7 +19,7 @@ export default function InputField({ id, value, onChange, placeholder, label }: 
         id={id}
         value={value}
         onChange={onChange}
-        className="w-[300px] p-2 rounded-md border"
+        className="max-w-[550px] p-2 rounded-md border"
         placeholder={placeholder}
       />
     </div>

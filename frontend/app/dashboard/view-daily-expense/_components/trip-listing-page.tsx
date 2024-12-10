@@ -17,6 +17,8 @@ import { getAllRoutes } from '@/app/actions/route.action';
 import { Expense, setExpenses } from '@/lib/slices/expenses-slices';
 import { allSavedExpenses, setSavedExpenses } from '@/lib/slices/saved-expenses';
 import { getAllExpenses } from '@/app/actions/expenses.action';
+import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
+import { setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 
 type TTripListingPage = {};
 
@@ -34,6 +36,8 @@ export default function TripListingPage({ }: TTripListingPage) {
   const fetchFixedTripExpense = async () => {
     const fetchFixedExpense = await getAllExpenses();
     const routes = await getAllRoutes()
+    const vouchers = await getAllBusClosingVouchers();
+    dispatch(setBusClosingVoucher(vouchers))
     dispatch(setSavedExpenses(fetchFixedExpense));
     dispatch(setRoute(routes));
     const tickets = await getAllTicketPrices()

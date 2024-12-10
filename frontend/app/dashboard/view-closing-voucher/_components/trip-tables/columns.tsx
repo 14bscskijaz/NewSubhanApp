@@ -16,24 +16,7 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
     header: 'S.No',
     cell: ({ row }) => row.index + 1
   },
-  // {
-  //   accessorKey: 'routeId',
-  //   header: 'Route ID',
-  // },
-  {
-    id: 'source-destination',
-    header: 'Route',
-    cell: (
-      { row } // Parent component usage
-    ) => <SourceDestination routeId={Number(row.original.routeId)} />
-  },
-  {
-    id: 'source-station-destination-station',
-    header: 'Station',
-    cell: ({ row }) => (
-      <SourceStationDestinationStation routeId={row?.original?.routeId || 1} />
-    )
-  },
+
   {
     accessorKey: 'date',
     header: 'Date',
@@ -43,6 +26,10 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
         : ''
   },
   {
+    accessorKey: 'voucherNumber',
+    header: 'VoucherNumber',
+  },
+  {
     id: 'busNumber',
     header: 'Bus Number',
     cell: (
@@ -50,7 +37,22 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
     ) => <BusNumber busId={Number(row.original.busId)} />
   },
   {
-    id: 'revenue',
+    id: 'source-destination',
+    header: 'Route',
+    cell: (
+      { row } // Parent component usage
+    ) => <SourceDestination routeId={Number(row.original.routeId)} />
+  },
+  // {
+  //   id: 'source-station-destination-station',
+  //   header: 'Station',
+  //   cell: ({ row }) => (
+  //     <SourceStationDestinationStation routeId={row?.original?.routeId || 1} />
+  //   )
+  // },
+  
+  {
+    id: 'actual-revenue',
     header: 'Revenue',
     cell: (
       { row }
@@ -60,12 +62,12 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
     id: 'expense',
     header: 'Expense',
     cell: (
-      { row } 
+      { row }
     ) => <Expense voucherId={Number(row.original.id)} />
   },
   {
     accessorKey: 'revenue',
-    header: 'Net Revenue'
+    header: 'Gross Revenue'
   },
   // {
   //   accessorKey: 'dcParchi',

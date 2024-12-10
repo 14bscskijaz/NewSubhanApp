@@ -21,6 +21,7 @@ import { useSidebar } from '../sidebar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
 import { Button } from '../button';
 import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
+import { usePathname } from 'next/navigation';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,6 +36,9 @@ export function DataTable<TData, TValue>({
   totalItems,
   pageSizeOptions = [2, 3, 4, 5, 10]
 }: DataTableProps<TData, TValue>) {
+  const path = usePathname();
+  const hiddenPaths = ['/dashboard/bus-closing', '/dashboard/Expenses'];
+
   const { open } = useSidebar();
   const [currentPage, setCurrentPage] = useQueryState(
     'page',
@@ -97,9 +101,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -145,13 +149,16 @@ export function DataTable<TData, TValue>({
               <NewExpensesDialog />
             </TableCell>
           </TableRow> */}
-          
+
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
       <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">
         <div className="flex w-full items-center justify-between">
-          <div className="flex-1 text-sm text-muted-foreground">
+          <div
+            className={`flex-1 text-sm text-muted-foreground ${hiddenPaths.includes(path) ? 'hidden' : ''
+              }`}
+          >
             {totalItems > 0 ? (
               <>
                 Showing{' '}

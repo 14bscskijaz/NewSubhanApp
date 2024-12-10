@@ -144,10 +144,21 @@ export default function TripInfoListingPage() {
             onChange={(e) => setVoucherNumber(e.target.value)}
             placeholder="Enter Voucher Number"
           />
-
+          <SelectField
+            id="route"
+            label="Route"
+            value={selectedRoute}
+            onChange={setSelectedRoute}
+            placeholder="Select Route"
+            options={filterTicketRoutes.map((route) => ({
+              value: route.id.toString(),
+              label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+            }))}
+            className=""
+          />
           <SelectField
             id="driver"
-            label="Driver"
+            label="Select Driver"
             value={driverId}
             onChange={setDriverId}
             placeholder="Select Driver"
@@ -160,7 +171,7 @@ export default function TripInfoListingPage() {
           />
           <SelectField
             id="conductor"
-            label="Conductor"
+            label="Select Conductor"
             value={conductorId}
             onChange={setConductorId}
             placeholder="Select Conductor"
@@ -169,18 +180,7 @@ export default function TripInfoListingPage() {
               label: `${conductor.firstName} ${conductor.lastName}`,
             }))}
           />
-          <SelectField
-            id="route"
-            label="Select Route"
-            value={selectedRoute}
-            onChange={setSelectedRoute}
-            placeholder="Select Route"
-            options={filterTicketRoutes.map((route) => ({
-              value: route.id.toString(),
-              label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
-            }))}
-            className=""
-          />
+
         </div>
 
         <div className="grid md:grid-cols-2 grid-cols-1 gap-4 relative"

@@ -95,7 +95,7 @@ export default function NewRouteDialog({
     )?.ticketPrice;
 
     let ticketEarnings = 0;
-    if (standardTicketPrice !== undefined && luxuryTicketPrice !== undefined) {
+    if (standardTicketPrice !== undefined || luxuryTicketPrice !== undefined) {
       const fullCount = Number(updatedData.fullTicketCount) || 0;
       const halfCount = Number(updatedData.halfTicketCount) || 0;
       const luxuryCount = Number(updatedData.fullTicketBusinessCount) || 0;
@@ -103,8 +103,8 @@ export default function NewRouteDialog({
         fullCount,
         halfCount,
         luxuryCount,
-        standardTicketPrice,
-        luxuryTicketPrice
+        standardTicketPrice ?? 0,
+        luxuryTicketPrice ?? 0
       );
       ticketEarnings = revenue;
     }

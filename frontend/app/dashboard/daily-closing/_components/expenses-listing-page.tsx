@@ -280,13 +280,13 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
             <h2>Summary</h2>
             <table>
+            <tr>
+              <th>Total Revenue</th>
+              <td>${totalRevenue}</td>
+            </tr>
               <tr>
                 <th>Total Expenses</th>
                 <td>${TotalExpense}</td>
-              </tr>
-              <tr>
-                <th>Total Revenue</th>
-                <td>${totalRevenue}</td>
               </tr>
               <tr>
                 <th>Net Income</th>
@@ -326,6 +326,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
       toast({
         title: "Success",
+        variant:"default",
         description: "Expenses submitted successfully!",
         duration: 3000,
       });
@@ -336,6 +337,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
     } catch (error) {
       toast({
         title: "Error",
+        variant:"destructive",
         description: "Failed to submit expenses. Please try again.",
         duration: 3000,
       });

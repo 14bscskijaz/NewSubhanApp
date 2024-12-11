@@ -21,12 +21,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Buses, addBus, setBus } from "@/lib/slices/bus-slices";
+import { useToast } from "@/hooks/use-toast";
+import { Buses, addBus, allBuses, setBus } from "@/lib/slices/bus-slices";
+import { RootState } from "@/lib/store";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function NewBusDialog() {
+  const buses = useSelector<RootState, Buses[]>(allBuses)
   const [open, setOpen] = useState(false);
   const [busNumber, setBusNumber] = useState("");
   const [busType, setBusType] = useState("");
@@ -34,11 +37,22 @@ export default function NewBusDialog() {
   const [description, setDescription] = useState("");
   const [busStatus, setBusStatus] = useState("");
 
+  const { toast } = useToast()
+
   const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    const isBusExist = buses.find(bus => bus.busNumber.toLowerCase().trim() === busNumber.toLowerCase().trim())
+    if (isBusExist) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "Bus Number Already Exist",
+        duration: 1000,
+      });
+      return;
+    }
     const newBus: Omit<Buses, "id"> = {
       busNumber,
       busType,
@@ -48,13 +62,25 @@ export default function NewBusDialog() {
     };
 
     try {
-      const createdBus = await createBus(newBus);
+      await createBus(newBus);
       const allBusesData = await getAllBuses();
       dispatch(setBus(allBusesData))
+      toast({
+        title: "Success",
+        variant:"default",
+        description: "New Bus Created successfully!",
+        duration: 1000,
+      });
       // dispatch(addBus(newBus));
       setOpen(false);
       resetForm();
     } catch (error: any) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: error.message,
+        duration: 1000,
+      });
       console.error("Failed to create the bus:", error.message);
     }
   };

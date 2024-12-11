@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices'
 import { Employee, allEmployees, setEmployee } from '@/lib/slices/employe-slices'
-import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices'
+import { TicketPriceRaw, allTicketsRaw, setTicketRaw } from '@/lib/slices/pricing-slices'
 import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices'
 import { TripInformation, allTripsInformation } from '@/lib/slices/trip-information'
 import { RootState } from '@/lib/store'
@@ -25,6 +25,8 @@ import RouteTable from './trip-info-tables'
 import VoucherForm from './voucher-form'
 import { getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action'
 import { setFixedTripExpense } from '@/lib/slices/fixed-trip-expense'
+import busClosing, { BusClosing, addBusClosing, allBusClosings } from '@/lib/slices/bus-closing'
+import { getAllTicketPrices } from '@/app/actions/pricing.action'
 
 export default function TripInfoListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
@@ -32,19 +34,22 @@ export default function TripInfoListingPage() {
   const employees = useSelector<RootState, Employee[]>(allEmployees);
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
+  const busClosing = useSelector<RootState, BusClosing[]>(allBusClosings)
 
-  const [voucherNumber, setVoucherNumber] = useState<string>('');
-  const [conductorId, setConductorId] = useState<string>('');
-  const [driverId, setDriverId] = useState<string>('')
+  const [voucherNumber, setVoucherNumber] = useState<string>(busClosing ? busClosing[0]?.voucherNumber : '');
+  const [conductorId, setConductorId] = useState<string | undefined>(busClosing ? busClosing[0]?.conductorId : '');
+  const [driverId, setDriverId] = useState<string>(busClosing ? busClosing[0]?.driverId : '')
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [pageLimit, setPageLimit] = useState(5)
-  const [busId, setBusId] = useState<string>('')
+  const [busId, setBusId] = useState<string>(busClosing ? busClosing[0]?.busId : '')
   const [isVoucherShow, setIsVoucherShow] = useState(false)
   const [tripRevenue, setTripRevenue] = useState<string>('')
   const [totalExpense, setTotalExpense] = useState<string>('')
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedRoute, setSelectedRoute] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    busClosing && busClosing[0]?.date ? new Date(busClosing[0].date) : new Date()
+  );
+  const [selectedRoute, setSelectedRoute] = useState<string>(busClosing ? busClosing[0]?.routeId : '');
 
   const searchParams = useSearchParams()
 
@@ -54,8 +59,10 @@ export default function TripInfoListingPage() {
     const allBuses = await getAllBuses();
     const allEmployees = await getAllEmployees();
     const allRoutes = await getAllRoutes();
+    const tickets = await getAllTicketPrices();
     const fixedTripExpenses = await getAllFixedTripExpenses();
     dispatch(setRoute(allRoutes));
+    dispatch(setTicketRaw(tickets));
     dispatch(setEmployee(allEmployees));
     dispatch(setBus(allBuses));
     dispatch(setFixedTripExpense(fixedTripExpenses));
@@ -82,6 +89,22 @@ export default function TripInfoListingPage() {
     setTripRevenue(totalRevenue.toFixed(2))
   }, [tripsInformation])
 
+  useEffect(() => {
+    if (voucherNumber && conductorId && driverId && busId && selectedDate && selectedRoute) {
+
+      const updatedBusClosing: BusClosing = {
+        voucherNumber,
+        conductorId,
+        driverId,
+        busId,
+        date: selectedDate.toISOString(),
+        routeId: selectedRoute,
+      };
+
+      // Dispatch the updated data to Redux
+      dispatch(addBusClosing(updatedBusClosing));
+    }
+  }, [voucherNumber, conductorId, driverId, busId, selectedDate, selectedRoute, dispatch]);
 
 
   // Filter routes that exist in ticketsRaw
@@ -195,6 +218,7 @@ export default function TripInfoListingPage() {
                   driverId={driverId}
                   date={selectedDate?.toISOString()}
                   routeId={selectedRoute}
+                // conductorId={conductorId}
                 />
               </div>
               <Separator />
@@ -236,6 +260,8 @@ export default function TripInfoListingPage() {
                 setVoucherNumber={setVoucherNumber}
                 date={selectedDate?.toISOString()}
                 conductorId={conductorId}
+                setConductorId={setConductorId}
+                setSelectedRoute={setSelectedRoute}
               />
             )}
           </div>

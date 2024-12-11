@@ -30,6 +30,7 @@ import { addSavedTripInformation } from '@/lib/slices/trip-information-saved';
 import { BusClosingVoucher, addBusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
 import { Buses, allBuses } from '@/lib/slices/bus-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
+import { setBusClosing } from '@/lib/slices/bus-closing';
 
 interface BusClosingVoucherFormProps {
   driverId: string;
@@ -44,7 +45,9 @@ interface BusClosingVoucherFormProps {
   TotalExpense: string;
   date: string | undefined;
   routeId: string;
-  conductorId: string;
+  conductorId?: string;
+  setSelectedRoute: Dispatch<SetStateAction<string>>
+  setConductorId: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
@@ -60,7 +63,9 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   setDriverId,
   setVoucherNumber,
   routeId,
-  conductorId
+  conductorId,
+  setSelectedRoute,
+  setConductorId
 }) => {
   const { toast } = useToast();
   const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(
@@ -128,7 +133,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
     setExpenses(totalExpense);
     setTotalExpense(totalExpense.toString());
-    console.log('Set total expense:', totalExpense);
+    // console.log('Set total expense:', totalExpense);
 
     const calculatedRevenue = Number(tripRevenue) - Number(totalExpense);
 
@@ -156,6 +161,12 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   const printPDF = (data: any) => {
     const filterBus = buses.find(bus => Number(bus.id) === Number(data.busId));
     const filterRoute = routes.find(route => route.id === data.routeId);
+    const RouteMap = new Map(
+      routes.map(({ id, sourceAdda, destinationAdda, destinationCity, sourceCity }) => [
+        id,
+        { sourceAdda, sourceCity, destinationAdda, destinationCity },
+      ])
+    );
     const filterDriver = employees.find(employee => Number(employee.id) === Number(data.driverId));
     const filterConductor = employees.find(employee => Number(employee.id) === Number(data.conductorId));
 
@@ -170,6 +181,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
               padding: 0;
               background-color: #f9f9f9;
               color: #333;
+              font-size: 12px;
             }
             h1, h2 {
               text-align: left;
@@ -177,17 +189,25 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
               color: #2a5934;
             }
             table {
-              width: 90%;
+              width: 98%;
               margin: 20px auto;
               border-collapse: collapse;
               background-color: #fff;
+              font-size: 12px;
             }
             th, td {
               border: 1px solid #ddd;
-              padding: 12px;
+              padding: 12px 4px;
               text-align: left;
             }
             th {
+              background-color: #e8f5e9;
+              color: #2a5934;
+              text-transform: capitalize;
+              letter-spacing: 1px;
+            }
+            .th-heading {
+              font-weight:700;
               background-color: #e8f5e9;
               color: #2a5934;
               text-transform: capitalize;
@@ -199,18 +219,73 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             tr:hover {
               background-color: #f1f1f1;
             }
+            .grid-data{
+              display: grid;
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .report-grid{
+              display: grid;
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+              gap:18px;
+            }
+            .voucher{
+              grid-column: span 2 / span 2;
+            }
+            .flex-right{
+              margin-right:9px;
+              display:flex;
+              justify-content:end;
+            }
+            .text-color{
+              color:#2a5934;
+            }
+            .margin-top{
+              margin-top:14px;
+            }
           </style>
         </head>
         <body>
-          <h1>Bus Closing Voucher and Trip Information</h1>
-          <p><strong>Date:</strong> ${date ? new Date(date).toLocaleDateString() : 'All Dates'}</p>
-          <h2>Bus Closing Voucher Details</h2>
+          <h1 class="margin-top">Bus Closing Voucher and Trip Information</h1>
+          <div class="grid-data">
+            <p><strong>Date : </strong> ${date ? new Date(date).toLocaleDateString() : 'All Dates'}</p>
+            <p><strong>Bus : </strong> ${filterBus?.busNumber || '-'}</p>
+            <p><strong>Voucher Number : </strong> ${data.voucherNumber || '-'}</p>
+            <p><strong>Route : </strong> ${filterRoute?.sourceCity + " - " + filterRoute?.destinationCity || '-'}</p>
+            <p><strong>Driver : </strong> ${filterDriver ? `${filterDriver.firstName} ${filterDriver.lastName}` : '-'}</p>
+            <p><strong>Conductor : </strong> ${filterConductor ? `${filterConductor.firstName} ${filterConductor.lastName}` : '-'}</p>
+          </div>
+          <div class="report-grid">         
+          <div class="voucher">
+          <h2>Trip Infomation</h2>
           <table>
-            <tr><th>Voucher Number</th><td>${data.voucherNumber || '-'}</td></tr>
-            <tr><th>Bus Number</th><td>${filterBus?.busNumber || '-'}</td></tr>
-            <tr><th>Route</th><td>${filterRoute?.sourceCity + " - " + filterRoute?.destinationCity || '-'}</td></tr>
-            <tr><th>Driver</th><td>${filterDriver ? `${filterDriver.firstName} ${filterDriver.lastName}` : '-'}</td></tr>
-            <tr><th>Conductor</th><td>${filterConductor ? `${filterConductor.firstName} ${filterConductor.lastName}` : '-'}</td></tr>
+          <thead>
+          <tr>
+          <th>Route</th>
+          <th>Passenger Count</th>
+          <th>Actual Revenue</th>
+          </tr>
+          </thead>
+            ${tripsInformation.map(trip => {
+            const {
+              sourceAdda = 'N/A',
+              destinationAdda = 'N/A',
+            } = RouteMap.get(Number(trip?.routeId)) || {};
+            return `
+              <tbody>
+              <td>${sourceAdda + "-" + destinationAdda}</td>
+              <td>${trip.passengerCount || '-'}</td>
+              <td>${trip.actualRevenue || '-'}</td>
+              </tbody>
+            `}).join('')}
+          </table>
+          <div class="flex-right">
+          <strong class="text-color">Total Revenue : </strong> ${tripRevenue}
+          </div>
+          </div>
+          <div>
+          <h2>Closing Voucher</h2>
+          <table>
+            <tr><th>Type</th><td class="th-heading">Amount</td></tr>
             <tr><th>Commission</th><td>${data.commission || '-'}</td></tr>
             <tr><th>Diesel Litres</th><td>${data.dieselLitres || '-'}</td></tr>
             <tr><th>Miscellaneous</th><td>${data.miscellaneous || '-'}</td></tr>
@@ -225,20 +300,23 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             <tr><th>Diesel</th><td>${data.diesel || '-'}</td></tr>
             <tr><th>Revenue</th><td>${data.revenue || '-'}</td></tr>
           </table>
-  
-          <h2>Trip Information</h2>
+          <h2>Summary</h2>
           <table>
-            ${tripsInformation.map(trip => `
-              <tr><th>Passenger Count</th><td>${trip.passengerCount || '-'}</td></tr>
-              <tr><th>Full Ticket Business Count</th><td>${trip.fullTicketBusinessCount || '-'}</td></tr>
-              <tr><th>Full Ticket Count</th><td>${trip.fullTicketCount || '-'}</td></tr>
-              <tr><th>Half Ticket Count</th><td>${trip.halfTicketCount || '-'}</td></tr>
-              <tr><th>Free Ticket Count</th><td>${trip.freeTicketCount || '-'}</td></tr>
-              <tr><th>Actual Revenue</th><td>${trip.actualRevenue || '-'}</td></tr>
-              <tr><th>Miscellaneous Amount</th><td>${trip.miscellaneousAmount || '-'}</td></tr>
-              <tr><th>Revenue Difference Explanation</th><td>${trip.revenueDiffExplanation || '-'}</td></tr>
-            `).join('')}
-          </table>
+          <tr>
+            <th>Total Revenue</th>
+            <td>${tripRevenue}</td>
+          </tr>
+          <tr>
+            <th>Total Expenses</th>
+            <td>${TotalExpense}</td>
+          </tr>
+          <tr>
+            <th>Net Income</th>
+            <td>${Number(tripRevenue) - Number(TotalExpense)}</td>
+          </tr>
+        </table>
+          </div>
+          </div>
         </body>
       </html>
     `;
@@ -301,6 +379,12 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       );
 
       dispatch(setTripInformation([]));
+      dispatch(setBusClosing([]));
+      setDriverId("");
+      setBusId("");
+      setConductorId("");
+      setSelectedRoute("");
+      setVoucherNumber("")
       methods.reset();
       setIsVoucherShow(false);
 
@@ -351,7 +435,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             'generator',
             'miscellaneous',
           ].map((field) => (
-            <div key={field}>
+            <div key={field} >
               <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
               <Input id={field} type="number" {...methods.register(field as any)} min={0} />
             </div>

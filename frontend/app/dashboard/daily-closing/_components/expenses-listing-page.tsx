@@ -28,6 +28,7 @@ type TExpensesListingPage = {};
 
 export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const busClosingVouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
+  const [loading, setLoading] = useState(false);
   const expenses = useSelector<RootState, Expense[]>(allExpenses);
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const routes = useSelector<RootState, Route[]>(allRoutes);
@@ -314,39 +315,35 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   };
 
 
-
-
   const handleSubmitExpenses = async () => {
+    setLoading(true);
     try {
-      // Use map to return an array of promises
       const expensePromises = expenses.map(async (expense) => {
         await createExpense(expense);
       });
-  
-      // Wait until all promises are resolved
+
       await Promise.all(expensePromises);
-  
-      // Show success toast after all operations are complete
+
       toast({
         title: "Success",
         description: "Expenses submitted successfully!",
         duration: 3000,
       });
-  
-      // Wait before printing expenses
+
       setTimeout(() => {
         printExpenses();
       }, 1000);
     } catch (error) {
-      // Handle errors if any expense creation fails
       toast({
         title: "Error",
         description: "Failed to submit expenses. Please try again.",
         duration: 3000,
       });
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
@@ -379,12 +376,19 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
             </div>
             <Separator />
             <RouteTable data={generalExpensesPaginated} totalData={generalExpenses.length} />
-            <div className='flex justify-end mt-4'>
-              <Button className='' onClick={handleSubmitExpenses}>Submit Expense</Button>
-            </div>
+
           </div>
         </div>
-
+        <div className='flex justify-end mt-4'>
+          <Button
+            onClick={handleSubmitExpenses}
+            disabled={loading} 
+            className={`${loading ? 'cursor-not-allowed opacity-50' : ''
+              }`}
+          >
+            {loading ? 'Submitting...' : 'Submit'}
+          </Button>
+        </div>
         {/* Pass the totalRevenue and expenses count to the NetExpenses component */}
         <NetExpenses
           TotalExpense={TotalExpense.toString()}

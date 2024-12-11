@@ -35,7 +35,7 @@ export default function NewExpensesDialog() {
     event.preventDefault();  
   
     const newExpense: Omit<Expense, 'id'> = {
-      date:new Date().toUTCString(),
+      date:new Date().toISOString(),
       description,
       amount: Number(amount),
       busId: busId !== "" ? Number(busId) : undefined,  

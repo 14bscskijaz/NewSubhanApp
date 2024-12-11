@@ -1,5 +1,5 @@
 'use client';
-import NewExpensesDialog from '@/app/dashboard/Expenses/_components/new-expesnses-dialogue';
+import NewExpensesDialog from '@/app/dashboard/daily-closing/_components/new-expesnses-dialogue';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -30,7 +30,7 @@ interface DataTableProps<TData, TValue> {
   pageSizeOptions?: number[];
 }
 
-export function DataTableBusExpense<TData, TValue>({
+export function DataTableExpense<TData, TValue>({
   columns,
   data,
   totalItems,
@@ -38,19 +38,19 @@ export function DataTableBusExpense<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const { open } = useSidebar();
   const [currentPage, setCurrentPage] = useQueryState(
-    'page',
+    'generalPage',
     parseAsInteger.withOptions({ shallow: false }).withDefault(1)
   );
   const [pageSize, setPageSize] = useQueryState(
-    'limit',
+    'generalLimit',
     parseAsInteger
       .withOptions({ shallow: false, history: 'push' })
-      .withDefault(5) // Default to 5 rows per page
+      .withDefault(5)
   );
 
   const paginationState = {
     pageIndex: currentPage - 1,
-    pageSize: pageSize // Ensure this matches the default value above
+    pageSize: pageSize
   };
 
   const pageCount = Math.ceil(totalItems / pageSize);
@@ -137,6 +137,16 @@ export function DataTableBusExpense<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
+
+          {/* Add NewExpenseDialog after the last row with a separator */}
+          {/* <TableRow>
+          </TableRow> */}
+          <TableRow>
+            <TableCell colSpan={columns.length} className="text-left">
+              <NewExpensesDialog />
+            </TableCell>
+          </TableRow>
+          
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

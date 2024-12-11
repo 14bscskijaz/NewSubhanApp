@@ -18,34 +18,34 @@ interface RouteState {
 // Update the initialState to match the new schema
 const initialState: RouteState = {
   routes: [
-    {
-      id: 1,
-      sourceCity: 'Karachi',
-      sourceAdda: 'Karachi Station A',
-      destinationCity: 'Lahore',
-      destinationAdda: 'Lahore Station B'
-    },
-    {
-      id: 2,
-      sourceCity: 'Islamabad',
-      sourceAdda: 'Islamabad Station C',
-      destinationCity: 'Murree',
-      destinationAdda: 'Murree Station D'
-    },
-    {
-      id: 3,
-      sourceCity: 'Faisalabad',
-      sourceAdda: 'Railway Station',
-      destinationCity: 'Islamabad',
-      destinationAdda: 'G-9'
-    },
-    {
-      id: 4,
-      sourceCity: 'Islamabad',
-      sourceAdda: 'G-9',
-      destinationCity: 'Faisalabad',
-      destinationAdda: 'Railway Station'
-    }
+    // {
+    //   id: 1,
+    //   sourceCity: 'Karachi',
+    //   sourceAdda: 'Karachi Station A',
+    //   destinationCity: 'Lahore',
+    //   destinationAdda: 'Lahore Station B'
+    // },
+    // {
+    //   id: 2,
+    //   sourceCity: 'Islamabad',
+    //   sourceAdda: 'Islamabad Station C',
+    //   destinationCity: 'Murree',
+    //   destinationAdda: 'Murree Station D'
+    // },
+    // {
+    //   id: 3,
+    //   sourceCity: 'Faisalabad',
+    //   sourceAdda: 'Railway Station',
+    //   destinationCity: 'Islamabad',
+    //   destinationAdda: 'G-9'
+    // },
+    // {
+    //   id: 4,
+    //   sourceCity: 'Islamabad',
+    //   sourceAdda: 'G-9',
+    //   destinationCity: 'Faisalabad',
+    //   destinationAdda: 'Railway Station'
+    // }
   ]
 };
 

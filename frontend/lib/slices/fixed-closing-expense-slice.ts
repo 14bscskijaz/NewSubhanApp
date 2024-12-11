@@ -20,42 +20,42 @@ interface ClosingExpenseState {
 
 const initialState: ClosingExpenseState = {
   closingExpenses: [
-    {
-      id: 1,
-      routeId: 3,
-      driverCommission: 500,
-      cOilExpense: 300,
-      tollTax: 100,
-      halfSafai: 50,
-      fullSafai: 0,
-      refreshmentRate: 75,
-      dcPerchi: 200,
-      alliedMorde: 120
-    },
-    {
-      id: 2,
-      routeId: 3,
-      driverCommission: 600,
-      cOilExpense: 350,
-      tollTax: 120,
-      halfSafai: 60,
-      fullSafai: 0,
-      refreshmentRate: 80,
-      dcPerchi: 250,
-      alliedMorde: 150
-    },
-    {
-      id: 3,
-      routeId: 3,
-      driverCommission: 700,
-      cOilExpense: 400,
-      tollTax: 150,
-      halfSafai: 70,
-      fullSafai: 1,
-      refreshmentRate: 90,
-      dcPerchi: 300,
-      alliedMorde: 200
-    }
+    // {
+    //   id: 1,
+    //   routeId: 3,
+    //   driverCommission: 500,
+    //   cOilExpense: 300,
+    //   tollTax: 100,
+    //   halfSafai: 50,
+    //   fullSafai: 0,
+    //   refreshmentRate: 75,
+    //   dcPerchi: 200,
+    //   alliedMorde: 120
+    // },
+    // {
+    //   id: 2,
+    //   routeId: 3,
+    //   driverCommission: 600,
+    //   cOilExpense: 350,
+    //   tollTax: 120,
+    //   halfSafai: 60,
+    //   fullSafai: 0,
+    //   refreshmentRate: 80,
+    //   dcPerchi: 250,
+    //   alliedMorde: 150
+    // },
+    // {
+    //   id: 3,
+    //   routeId: 3,
+    //   driverCommission: 700,
+    //   cOilExpense: 400,
+    //   tollTax: 150,
+    //   halfSafai: 70,
+    //   fullSafai: 1,
+    //   refreshmentRate: 90,
+    //   dcPerchi: 300,
+    //   alliedMorde: 200
+    // }
   ]
 };
 

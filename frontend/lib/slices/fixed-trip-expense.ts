@@ -23,42 +23,42 @@ interface FixedTripExpenseState {
 // Initialize the state with sample data
 const initialState: FixedTripExpenseState = {
   fixedTripExpenses: [
-    {
-      id: 1,
-      routeId: 1,
-      routeCommission: 200,
-      rewardCommission: 150,
-      steward: 50,
-      counter: 100,
-      dcParchi: 0,
-      refreshment: 75,
-      driverCommission:5,
-      isPercentage:true
-    },
-    {
-      id: 2,
-      routeId: 2,
-      routeCommission: 250,
-      rewardCommission: 175,
-      steward: 60,
-      counter: 110,
-      dcParchi: 0,
-      refreshment: 80,
-      driverCommission:5,
-      isPercentage:true
-    },
-    {
-      id: 3,
-      routeId: 3,
-      routeCommission: 300,
-      rewardCommission: 200,
-      steward: 70,
-      counter: 120,
-      dcParchi: 50,
-      refreshment: 90,
-      driverCommission:5,
-      isPercentage:true
-    }
+    // {
+    //   id: 1,
+    //   routeId: 1,
+    //   routeCommission: 200,
+    //   rewardCommission: 150,
+    //   steward: 50,
+    //   counter: 100,
+    //   dcParchi: 0,
+    //   refreshment: 75,
+    //   driverCommission:5,
+    //   isPercentage:true
+    // },
+    // {
+    //   id: 2,
+    //   routeId: 2,
+    //   routeCommission: 250,
+    //   rewardCommission: 175,
+    //   steward: 60,
+    //   counter: 110,
+    //   dcParchi: 0,
+    //   refreshment: 80,
+    //   driverCommission:5,
+    //   isPercentage:true
+    // },
+    // {
+    //   id: 3,
+    //   routeId: 3,
+    //   routeCommission: 300,
+    //   rewardCommission: 200,
+    //   steward: 70,
+    //   counter: 120,
+    //   dcParchi: 50,
+    //   refreshment: 90,
+    //   driverCommission:5,
+    //   isPercentage:true
+    // }
   ]
 };
 

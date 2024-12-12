@@ -27,6 +27,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { createFixedBusClosingExpense, getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action';
+import { useToast } from '@/hooks/use-toast';
 
 export default function NewExpenseDialog() {
   const [open, setOpen] = useState(false);
@@ -39,6 +40,7 @@ export default function NewExpenseDialog() {
   const [refreshmentRate, setRefreshmentRate] = useState<number | ''>('');
   const [dcParchi, setDcParchi] = useState<number | ''>('');
   const [alliedMorde, setAlliedMorde] = useState<number | ''>('');
+  const { toast } = useToast();
 
   const dispatch = useDispatch();
 
@@ -54,33 +56,51 @@ export default function NewExpenseDialog() {
     setRouteId(Number(selectedRouteId));
   };
 
-  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    try {
 
-    // Check if routeId is valid before submitting
-    if (routeId === null || routeId === 0) {
-      alert('Please select a valid route.');
-      return;
+      event.preventDefault();
+      // Check if routeId is valid before submitting
+      if (routeId === null || routeId === 0) {
+        alert('Please select a valid route.');
+        return;
+      }
+
+      const newExpense: Omit<ClosingExpense, "id"> = {
+        routeId: Number(routeId) ?? 0,
+        driverCommission: Number(driverCommission),
+        cOilExpense: Number(cOilExpense),
+        tollTax: Number(tollTax),
+        halfSafai: Number(halfSafai),
+        fullSafai: Number(fullSafai),
+        refreshmentRate: Number(refreshmentRate),
+        dcPerchi: Number(dcParchi),
+        alliedMorde: Number(alliedMorde)
+      };
+
+      await createFixedBusClosingExpense(newExpense)
+      const closingExpenses = await getAllFixedBusClosingExpenses();
+      dispatch(setClosingExpense(closingExpenses))
+      toast({
+        title: "Success",
+        description: "Fixed Route Close Expense Added successfully",
+        variant: "default",
+        duration: 1000
+      })
+      // dispatch(addClosingExpense(newExpense))
+      setOpen(false);
+      resetForm();
+    } catch (error: any) {
+      console.error(error.message);
+
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
     }
 
-    const newExpense:Omit<ClosingExpense,"id"> = {
-      routeId: Number(routeId)??0,
-      driverCommission: Number(driverCommission),
-      cOilExpense: Number(cOilExpense),
-      tollTax: Number(tollTax),
-      halfSafai: Number(halfSafai),
-      fullSafai: Number(fullSafai),
-      refreshmentRate: Number(refreshmentRate),
-      dcPerchi: Number(dcParchi),
-      alliedMorde: Number(alliedMorde)
-    };
-
-    await createFixedBusClosingExpense(newExpense)
-    const closingExpenses = await getAllFixedBusClosingExpenses();
-    dispatch(setClosingExpense(closingExpenses))
-    // dispatch(addClosingExpense(newExpense))
-    setOpen(false);
-    resetForm();
   };
 
   const resetForm = () => {

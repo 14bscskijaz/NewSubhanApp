@@ -25,6 +25,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Employee, addEmployee, setEmployee } from "@/lib/slices/employe-slices";
 import { createEmployee, getAllEmployees } from "@/app/actions/employee.action";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NewEmployeeDialog() {
   const [open, setOpen] = useState(false);
@@ -38,6 +39,7 @@ export default function NewEmployeeDialog() {
   const [employeeStatus, setEmployeeStatus] = useState("");
   const [dob, setDob] = useState<string>("");
   const [notes, setNotes] = useState("");
+  const { toast } = useToast();
 
   const dispatch = useDispatch();
 
@@ -62,40 +64,56 @@ export default function NewEmployeeDialog() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    try {
 
-    const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
-    const mobileRegex = /^\d{4}-\d{7}$/;
+      event.preventDefault();
 
-    if (!cnicRegex.test(cnic)) {
-      alert("Please enter a valid CNIC in the format xxxxx-xxxxxxx-x.");
-      return;
+      const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
+      const mobileRegex = /^\d{4}-\d{7}$/;
+
+      if (!cnicRegex.test(cnic)) {
+        alert("Please enter a valid CNIC in the format xxxxx-xxxxxxx-x.");
+        return;
+      }
+
+      if (!mobileRegex.test(mobileNumber)) {
+        alert("Please enter a valid mobile number in the format xxxx-xxxxxxx.");
+        return;
+      }
+
+      const newEmployee: Omit<Employee, "id"> = {
+        cnic,
+        firstName,
+        lastName,
+        employeeType,
+        address,
+        mobileNumber,
+        hireDate: hireDate ? new Date(hireDate) : null,
+        employeeStatus,
+        dob: dob ? new Date(dob) : null,
+        notes,
+      };
+
+      await createEmployee(newEmployee);
+      const getAllEmployee = await getAllEmployees();
+      dispatch(setEmployee(getAllEmployee));
+      // dispatch(addEmployee(newEmployee));
+      toast({
+        title: "Success",
+        description: "Employee created successfully",
+        variant: "default",
+        duration: 1000
+      })
+      setOpen(false);
+      resetForm();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
     }
-
-    if (!mobileRegex.test(mobileNumber)) {
-      alert("Please enter a valid mobile number in the format xxxx-xxxxxxx.");
-      return;
-    }
-
-    const newEmployee: Omit<Employee, "id"> = {
-      cnic,
-      firstName,
-      lastName,
-      employeeType,
-      address,
-      mobileNumber,
-      hireDate: hireDate ? new Date(hireDate) : null,
-      employeeStatus,
-      dob: dob ? new Date(dob) : null,
-      notes,
-    };
-
-    await createEmployee(newEmployee);
-    const getAllEmployee = await getAllEmployees();
-    dispatch(setEmployee(getAllEmployee));
-    // dispatch(addEmployee(newEmployee));
-    setOpen(false);
-    resetForm();
   };
 
   const resetForm = () => {

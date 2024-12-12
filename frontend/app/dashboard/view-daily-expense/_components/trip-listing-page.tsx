@@ -19,6 +19,7 @@ import { allSavedExpenses, setSavedExpenses } from '@/lib/slices/saved-expenses'
 import { getAllExpenses } from '@/app/actions/expenses.action';
 import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
 import { setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
+import { useToast } from '@/hooks/use-toast';
 
 type TTripListingPage = {};
 
@@ -32,16 +33,29 @@ export default function TripListingPage({ }: TTripListingPage) {
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch();
+  const { toast } = useToast();
 
   const fetchFixedTripExpense = async () => {
-    const fetchFixedExpense = await getAllExpenses();
-    const routes = await getAllRoutes()
-    const vouchers = await getAllBusClosingVouchers();
-    dispatch(setBusClosingVoucher(vouchers))
-    dispatch(setSavedExpenses(fetchFixedExpense));
-    dispatch(setRoute(routes));
-    const tickets = await getAllTicketPrices()
-    dispatch(setTicketRaw(tickets));
+    try {
+      const fetchFixedExpense = await getAllExpenses();
+      const routes = await getAllRoutes()
+      const vouchers = await getAllBusClosingVouchers();
+      dispatch(setBusClosingVoucher(vouchers))
+      dispatch(setSavedExpenses(fetchFixedExpense));
+      dispatch(setRoute(routes));
+      const tickets = await getAllTicketPrices()
+      dispatch(setTicketRaw(tickets));
+
+    } catch (error: any) {
+      console.error(error.message);
+
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
+    }
   };
 
   useEffect(() => {

@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditPricingDialog from '../edit-pricing-dialogue';
 import { TicketPriceDisplay } from '../pricing-listing-page';
+import { useToast } from '@/hooks/use-toast';
 
 interface CellActionProps {
   // data: TicketPrice;
@@ -23,23 +24,52 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const {toast} = useToast();
 
   const onConfirm = async () => {
     setLoading(true);
     try {
       await deleteTicketPrice(data.id);
       dispatch(removeTicketRaw(data.id));
+      toast({
+        title:"Success",
+        description:"Ticket Price Deleted successfully",
+        variant:"default",
+        duration:1000
+      })
       setOpen(false);
-    } catch (error) {
+    } catch (error:any) {
       console.error('Failed to delete route:', error);
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
     } finally {
       setLoading(false);
     }
   };
   const handleUpdate = async (updatedPrice: TicketPriceRaw) => {
-    
-    await updateTicketPrice(data.id, updatedPrice)
-    dispatch(updateTicketRaw(updatedPrice));
+    try {
+      await updateTicketPrice(data.id, updatedPrice)
+      dispatch(updateTicketRaw(updatedPrice));
+      toast({
+        title:"Success",
+        description:"Ticket Price Updated successfully",
+        variant:"default",
+        duration:1000
+      })
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
   };
 
   return (

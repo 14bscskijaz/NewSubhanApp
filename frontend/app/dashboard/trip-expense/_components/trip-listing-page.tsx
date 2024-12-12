@@ -14,6 +14,7 @@ import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
 import { TicketPriceRaw, allTicketsRaw, setTicketRaw } from '@/lib/slices/pricing-slices';
 import { getAllTicketPrices } from '@/app/actions/pricing.action';
 import { getAllRoutes } from '@/app/actions/route.action';
+import { useToast } from '@/hooks/use-toast';
 
 type TTripListingPage = {};
 
@@ -27,14 +28,27 @@ export default function TripListingPage({ }: TTripListingPage) {
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch();
+  const {toast} = useToast();
 
   const fetchFixedTripExpense = async () => {
-    const fetchFixedExpense = await getAllFixedTripExpenses();
-    const routes = await getAllRoutes();
-    dispatch(setFixedTripExpense(fetchFixedExpense));
-    dispatch(setRoute(routes));
-    const tickets = await getAllTicketPrices();
-    dispatch(setTicketRaw(tickets));
+    try {
+      const fetchFixedExpense = await getAllFixedTripExpenses();
+      const routes = await getAllRoutes();
+      dispatch(setFixedTripExpense(fetchFixedExpense));
+      dispatch(setRoute(routes));
+      const tickets = await getAllTicketPrices();
+      dispatch(setTicketRaw(tickets));
+      
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
   };
 
   useEffect(() => {

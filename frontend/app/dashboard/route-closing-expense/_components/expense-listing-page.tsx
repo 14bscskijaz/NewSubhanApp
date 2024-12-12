@@ -16,6 +16,7 @@ import NewExpenseDialog from './new-expense-dialogue';
 import ClosingExpenseTable from './route-closing-tables';
 import { getAllRoutes } from '@/app/actions/route.action';
 import { setRoute } from '@/lib/slices/route-slices';
+import { useToast } from '@/hooks/use-toast';
 
 type TExpenseListingPage = {};
 
@@ -28,14 +29,27 @@ export default function ClosingExpenseListingPage({ }: TExpenseListingPage) {
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
+  const {toast} = useToast();
 
   const dispatch = useDispatch();
 
   const fetchFixedBusClosing = async () => {
-    const routes = await getAllRoutes();
-    const fixedBusClosing = await getAllFixedBusClosingExpenses()
-    dispatch(setRoute(routes));
-    dispatch(setClosingExpense(fixedBusClosing))
+    try {
+      const routes = await getAllRoutes();
+      const fixedBusClosing = await getAllFixedBusClosingExpenses()
+      dispatch(setRoute(routes));
+      dispatch(setClosingExpense(fixedBusClosing))
+      
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
 
   }
 

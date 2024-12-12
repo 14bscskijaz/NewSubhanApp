@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditRouteDialog from '../edit-trip-info-dialogue';
 import { deleteTrip } from '@/app/actions/trip.action';
+import { useToast } from '@/hooks/use-toast';
 
 interface CellActionProps {
   data: TripInformation;
@@ -19,12 +20,19 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const {toast} = useToast();
 
   const onConfirm = async () => {
     setLoading(true);
     try {
       // await deleteTrip(data.id);
       dispatch(removeTripInformation(data.id));
+      toast({
+        title:"Success",
+        description:"Trip Info Deleted successfully",
+        variant:"default",
+        duration:1000
+      })
       setOpen(false);
     } catch (error) {
       console.error('Failed to delete route:', error);
@@ -34,7 +42,24 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const handleUpdate = async(updatedTripInformation: TripInformation) => {
-    dispatch(updateTripInformation(updatedTripInformation));
+    try {
+      dispatch(updateTripInformation(updatedTripInformation));
+      toast({
+        title:"Success",
+        description:"Trip Info Updated successfully",
+        variant:"default",
+        duration:1000
+      })
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
   };
 
   return (

@@ -19,6 +19,7 @@ import { RootState } from "@/lib/store"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createTicketPrice, getAllTicketPrices } from "@/app/actions/pricing.action"
 import SelectField from "@/components/ui/SelectField"
+import { useToast } from "@/hooks/use-toast"
 
 export default function NewPricingDialog() {
   const routes = useSelector<RootState, Route[]>(allRoutes)
@@ -26,27 +27,46 @@ export default function NewPricingDialog() {
   const [routeId, setRouteId] = useState<number | "">("")
   const [ticketPrice, setTicketPrice] = useState<number | "">("")
   const [busType, setBusType] = useState("")
+  const {toast} = useToast();
 
   const dispatch = useDispatch()
 
   const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    const newTicket: Omit<TicketPriceRaw,"id"> = {
-      routeId: Number(routeId),
-      ticketPrice: Number(ticketPrice),
-      busType,
+    try {
+      event.preventDefault()
+  
+      const newTicket: Omit<TicketPriceRaw,"id"> = {
+        routeId: Number(routeId),
+        ticketPrice: Number(ticketPrice),
+        busType,
+      }
+      console.log(newTicket,"Tice");
+      
+      await createTicketPrice(newTicket)
+      console.log("Data submmit");
+      
+      const allTicketData = await getAllTicketPrices()
+      dispatch(setTicketRaw(allTicketData))
+      // dispatch(addTicketRaw(newTicket))
+      toast({
+        title:"Success",
+        description:"New Ticket Price Added successfully",
+        variant:"default",
+        duration:1000
+      })
+      setOpen(false)
+      resetForm()
+      
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
     }
-    console.log(newTicket,"Tice");
-    
-    await createTicketPrice(newTicket)
-    console.log("Data submmit");
-    
-    const allTicketData = await getAllTicketPrices()
-    dispatch(setTicketRaw(allTicketData))
-    // dispatch(addTicketRaw(newTicket))
-    setOpen(false)
-    resetForm()
   }
 
   const resetForm = () => {

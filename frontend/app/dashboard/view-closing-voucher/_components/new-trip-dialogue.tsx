@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 import { FixedTripExpense, addFixedTripExpense, setFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
@@ -37,6 +38,7 @@ export default function NewTripDialog() {
   const [counter, setCounter] = useState<number | ''>('');
   const [dcParchi, setDcParchi] = useState<number | ''>('');
   const [refreshment, setRefreshment] = useState<number | ''>('');
+  const {toast} = useToast();
 
   const dispatch = useDispatch();
 
@@ -54,24 +56,37 @@ export default function NewTripDialog() {
   };
 
   const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const newTrip:Omit<FixedTripExpense,"id"> = {
-      routeId: Number(routeId) ?? 0,
-      routeCommission: Number(routeCommission),
-      rewardCommission: Number(rewardCommission),
-      steward: Number(steward),
-      counter: Number(counter),
-      dcParchi: Number(dcParchi),
-      refreshment: Number(refreshment),
-      driverCommission:1
-    };
-    // await createFixedTripExpense(newTrip);
-    // const fixedExpenses = await getAllFixedTripExpenses()
-    // dispatch(setFixedTripExpense(fixedExpenses));
-    dispatch(addFixedTripExpense(newTrip));
-    setOpen(false);
-    resetForm();
+    try {
+      
+      event.preventDefault();
+  
+      const newTrip:Omit<FixedTripExpense,"id"> = {
+        routeId: Number(routeId) ?? 0,
+        routeCommission: Number(routeCommission),
+        rewardCommission: Number(rewardCommission),
+        steward: Number(steward),
+        counter: Number(counter),
+        dcParchi: Number(dcParchi),
+        refreshment: Number(refreshment),
+        driverCommission:1
+      };
+      // await createFixedTripExpense(newTrip);
+      // const fixedExpenses = await getAllFixedTripExpenses()
+      // dispatch(setFixedTripExpense(fixedExpenses));
+      dispatch(addFixedTripExpense(newTrip));
+      
+      setOpen(false);
+      resetForm();
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
   };
 
   const resetForm = () => {

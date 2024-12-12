@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BusTable from './bus-tables';
 import NewEmployeeDialog from './new-bus-dialogue';
+import { useToast } from '@/hooks/use-toast';
 
 type TBusListingPage = {};
 
@@ -20,12 +21,22 @@ export default function BusListingPage({ }: TBusListingPage) {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState(''); // Change gender to status
   const [pageLimit, setPageLimit] = useState(5);
+  const {toast} = useToast();
 
   const dispatch = useDispatch();
 
   const fetchEmoployee = async () => {
-    const allBusesData = await getAllBuses();
-    dispatch(setBus(allBusesData))
+    try {
+      const allBusesData = await getAllBuses();
+      dispatch(setBus(allBusesData))
+    } catch (error:any) {
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
   }
 
   useEffect(() => {

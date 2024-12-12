@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 import {
   FixedTripExpense,
   allFixedTripExpenses
@@ -61,6 +62,7 @@ export default function NewRouteDialog({
     destinationStation: '',
     date: date
   });
+  const {toast} = useToast();
 
   const dispatch = useDispatch();
   // const ticketPrice = useSelector<RootState, number | undefined>((state) =>
@@ -207,28 +209,41 @@ export default function NewRouteDialog({
   
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    try {
+      
+      event.preventDefault();
+      
+      const newTripData: Omit<TripInformation, 'id'> = {
+        routeClosingVoucherId: tripData.routeClosingVoucherId,
+        routeId: tripData.routeId,
+        passengerCount: tripData.passengerCount,
+        fullTicketBusinessCount: tripData.fullTicketBusinessCount,
+        fullTicketCount: tripData.fullTicketCount,
+        halfTicketCount: tripData.halfTicketCount,
+        freeTicketCount: tripData.freeTicketCount,
+        miscellaneousAmount: tripData.miscellaneousAmount,
+        actualRevenue: tripData.actualRevenue,
+        revenueDiffExplanation: tripData.revenueDiffExplanation,
+        date: date
+      };
+  
+  
+      // await createTrip(newTripData)
+      // dispatch(addBusClosing(newRoute));
+      dispatch(addTripInformation(newTripData));
 
-    const newTripData: Omit<TripInformation, 'id'> = {
-      routeClosingVoucherId: tripData.routeClosingVoucherId,
-      routeId: tripData.routeId,
-      passengerCount: tripData.passengerCount,
-      fullTicketBusinessCount: tripData.fullTicketBusinessCount,
-      fullTicketCount: tripData.fullTicketCount,
-      halfTicketCount: tripData.halfTicketCount,
-      freeTicketCount: tripData.freeTicketCount,
-      miscellaneousAmount: tripData.miscellaneousAmount,
-      actualRevenue: tripData.actualRevenue,
-      revenueDiffExplanation: tripData.revenueDiffExplanation,
-      date: date
-    };
-
-
-    // await createTrip(newTripData)
-    // dispatch(addBusClosing(newRoute));
-    dispatch(addTripInformation(newTripData));
-    setOpen(false);
-    resetForm();
+      setOpen(false);
+      resetForm();
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
   };
 
 

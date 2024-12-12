@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Route, addRoute, setRoute } from "@/lib/slices/route-slices";
 import { createRoute, getAllRoutes } from "@/app/actions/route.action";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NewRouteDialog() {
   const [open, setOpen] = useState(false);
@@ -24,24 +25,43 @@ export default function NewRouteDialog() {
   const [sourceStation, setSourceStation] = useState("");
   const [destination, setDestination] = useState("");
   const [destinationStation, setDestinationStation] = useState("");
+  const {toast} = useToast();
 
   const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const newRoute: Omit<Route, "id"> = {
-      sourceCity: source,
-      sourceAdda: sourceStation,
-      destinationCity: destination,
-      destinationAdda: destinationStation,
-    };
-    await createRoute(newRoute)
-    const getRoutes = await getAllRoutes()
-    dispatch(setRoute(getRoutes));
-    // dispatch(addRoute(newRoute));
-    setOpen(false);
-    resetForm();
+    try {
+      event.preventDefault();
+  
+      const newRoute: Omit<Route, "id"> = {
+        sourceCity: source,
+        sourceAdda: sourceStation,
+        destinationCity: destination,
+        destinationAdda: destinationStation,
+      };
+      await createRoute(newRoute)
+      const getRoutes = await getAllRoutes()
+      dispatch(setRoute(getRoutes));
+      // dispatch(addRoute(newRoute));
+      toast({
+        title:"Success",
+        description:"Bus Deleted successfully",
+        variant:"default",
+        duration:1000
+      })
+      setOpen(false);
+      resetForm();
+      
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
   };
 
   const resetForm = () => {

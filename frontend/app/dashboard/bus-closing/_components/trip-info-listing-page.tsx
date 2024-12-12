@@ -27,6 +27,7 @@ import { getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action'
 import { setFixedTripExpense } from '@/lib/slices/fixed-trip-expense'
 import busClosing, { BusClosing, addBusClosing, allBusClosings } from '@/lib/slices/bus-closing'
 import { getAllTicketPrices } from '@/app/actions/pricing.action'
+import { useToast } from '@/hooks/use-toast'
 
 export default function TripInfoListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
@@ -50,22 +51,35 @@ export default function TripInfoListingPage() {
     busClosing && busClosing[0]?.date ? new Date(busClosing[0].date) : new Date()
   );
   const [selectedRoute, setSelectedRoute] = useState<string>(busClosing ? busClosing[0]?.routeId : '');
+  const {toast} = useToast();
 
   const searchParams = useSearchParams()
 
   const dispatch = useDispatch();
 
   const fetchAllData = async () => {
-    const allBuses = await getAllBuses();
-    const allEmployees = await getAllEmployees();
-    const allRoutes = await getAllRoutes();
-    const tickets = await getAllTicketPrices();
-    const fixedTripExpenses = await getAllFixedTripExpenses();
-    dispatch(setRoute(allRoutes));
-    dispatch(setTicketRaw(tickets));
-    dispatch(setEmployee(allEmployees));
-    dispatch(setBus(allBuses));
-    dispatch(setFixedTripExpense(fixedTripExpenses));
+    try {
+      const allBuses = await getAllBuses();
+      const allEmployees = await getAllEmployees();
+      const allRoutes = await getAllRoutes();
+      const tickets = await getAllTicketPrices();
+      const fixedTripExpenses = await getAllFixedTripExpenses();
+      dispatch(setRoute(allRoutes));
+      dispatch(setTicketRaw(tickets));
+      dispatch(setEmployee(allEmployees));
+      dispatch(setBus(allBuses));
+      dispatch(setFixedTripExpense(fixedTripExpenses));
+
+    } catch (error: any) {
+      console.error(error.message);
+
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
+    }
   }
   useEffect(() => {
     fetchAllData();

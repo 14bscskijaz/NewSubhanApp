@@ -10,23 +10,34 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EmployeeTable from './employee-tables';
 import NewEmployeeDialog from './new-employee-dialogue';
+import { useToast } from '@/hooks/use-toast';
 
 type TEmployeeListingPage = {};
 
-export default function EmployeeListingPage({}: TEmployeeListingPage) {
+export default function EmployeeListingPage({ }: TEmployeeListingPage) {
   const employees = useSelector<RootState, Employee[]>(allEmployees);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
+  const { toast } = useToast();
 
   const dispatch = useDispatch();
 
-  const fetchEmoployee = async() =>{
-    const allEmployeeData = await getAllEmployees()
-    dispatch(setEmployee(allEmployeeData))
-    
+  const fetchEmoployee = async () => {
+    try {
+      const allEmployeeData = await getAllEmployees()
+      dispatch(setEmployee(allEmployeeData))
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
+    }
+
   }
 
   useEffect(() => {
@@ -51,7 +62,7 @@ export default function EmployeeListingPage({}: TEmployeeListingPage) {
 
     const matchesStatus =
       status ?
-        employee.employeeStatus.toLowerCase() === status.toLowerCase() : 
+        employee.employeeStatus.toLowerCase() === status.toLowerCase() :
         true;
 
     return matchesSearch && matchesStatus;

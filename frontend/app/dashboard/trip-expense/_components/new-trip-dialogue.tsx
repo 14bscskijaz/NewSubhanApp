@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 import { FixedTripExpense, addFixedTripExpense, setFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
@@ -38,6 +39,7 @@ export default function NewTripDialog() {
   const [refreshment, setRefreshment] = useState<number | ''>('');
   // const [driverCommission, setDriverCommission] = useState<string>('');
   const [isPercentage, setIsPercentage] = useState<boolean>(true);
+  const {toast} = useToast();
 
   const dispatch = useDispatch();
 
@@ -55,25 +57,43 @@ export default function NewTripDialog() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const filterRouteCommission = isPercentage?Number(routeCommission)/100:Number(routeCommission)
-    const newTrip: Omit<FixedTripExpense, "id"> = {
-      routeId: Number(routeId) ?? 0,
-      routeCommission: filterRouteCommission,
-      rewardCommission: Number(rewardCommission),
-      steward: Number(steward),
-      counter: Number(counter),
-      dcParchi: Number(dcParchi),
-      refreshment: Number(refreshment),
-      // driverCommission: Number(driverCommission),
-      // isPercentage 
-    };
-    await createFixedTripExpense(newTrip);
-    const fixedExpenses = await getAllFixedTripExpenses()
-    dispatch(setFixedTripExpense(fixedExpenses));
-    // dispatch(addFixedTripExpense(newTrip));
-    setOpen(false);
-    resetForm();
+    try {
+      
+      event.preventDefault();
+      const filterRouteCommission = isPercentage?Number(routeCommission)/100:Number(routeCommission)
+      const newTrip: Omit<FixedTripExpense, "id"> = {
+        routeId: Number(routeId) ?? 0,
+        routeCommission: filterRouteCommission,
+        rewardCommission: Number(rewardCommission),
+        steward: Number(steward),
+        counter: Number(counter),
+        dcParchi: Number(dcParchi),
+        refreshment: Number(refreshment),
+        // driverCommission: Number(driverCommission),
+        // isPercentage 
+      };
+      await createFixedTripExpense(newTrip);
+      const fixedExpenses = await getAllFixedTripExpenses()
+      dispatch(setFixedTripExpense(fixedExpenses));
+      // dispatch(addFixedTripExpense(newTrip));
+      toast({
+        title:"Success",
+        description:"New Fixed Trip Expense Added successfully",
+        variant:"default",
+        duration:1000
+      })
+      setOpen(false);
+      resetForm();
+    } catch (error:any) {
+      console.error(error.message);
+      
+      toast({
+        title:"Error",
+        description:error.message,
+        variant:"destructive",
+        duration:1000
+      })
+    }
   };
 
   const resetForm = () => {

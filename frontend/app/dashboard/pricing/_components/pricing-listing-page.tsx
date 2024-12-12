@@ -12,6 +12,7 @@ import NewPricingDialog from './new-pricing-dialogue';
 import RouteTable from './route-tables';
 import { getAllTicketPrices } from '@/app/actions/pricing.action';
 import { getAllRoutes } from '@/app/actions/route.action';
+import { useToast } from '@/hooks/use-toast';
 
 type TPricingListingPage = {};
 
@@ -34,14 +35,27 @@ export default function PricingListingPage({ }: TPricingListingPage) {
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
+  const { toast } = useToast();
 
   const dispatch = useDispatch();
   const fetchTicket = async () => {
-    const routes = await getAllRoutes()
-    const allTicketData = await getAllTicketPrices()
-    // console.log(allTicketData, "allTicketData");
-    dispatch(setTicketRaw(allTicketData))
-    dispatch(setRoute(routes))
+    try {
+      const routes = await getAllRoutes()
+      const allTicketData = await getAllTicketPrices()
+      // console.log(allTicketData, "allTicketData");
+      dispatch(setTicketRaw(allTicketData))
+      dispatch(setRoute(routes))
+
+    } catch (error: any) {
+      console.error(error.message);
+
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
+    }
 
   }
 
@@ -58,42 +72,42 @@ export default function PricingListingPage({ }: TPricingListingPage) {
     setPageLimit(Number(limitParam));
   }, [searchParams]);
 
-const uniqueTicketsRaw = ticketsRaw.filter(
-  (ticket, index, self) =>
-    index === self.findIndex(
-      (t) =>
-        t.id === ticket.id ||
-        (t.routeId === ticket.routeId && t.busType === ticket.busType)
-    )
-);
+  const uniqueTicketsRaw = ticketsRaw.filter(
+    (ticket, index, self) =>
+      index === self.findIndex(
+        (t) =>
+          t.id === ticket.id ||
+          (t.routeId === ticket.routeId && t.busType === ticket.busType)
+      )
+  );
 
-// Map the unique tickets to display format
-const displayTickets = uniqueTicketsRaw.map((ticket) => {
-  const route = routes.find((route) => route.id === ticket.routeId);
-  if (route) {
-    return {
-      id: ticket.id,
-      source: route.sourceCity,
-      sourceStation: route.sourceAdda,
-      destination: route.destinationCity,
-      destinationStation: route.destinationAdda,
-      ticketPrice: ticket.ticketPrice,
-      busType: ticket.busType,
-      routeId: ticket.routeId,
-    };
-  } else {
-    return {
-      id: ticket.id,
-      source: 'Unknown',
-      sourceStation: 'Unknown',
-      destination: 'Unknown',
-      destinationStation: 'Unknown',
-      ticketPrice: ticket.ticketPrice,
-      busType: ticket.busType,
-      routeId: ticket.routeId,
-    };
-  }
-});
+  // Map the unique tickets to display format
+  const displayTickets = uniqueTicketsRaw.map((ticket) => {
+    const route = routes.find((route) => route.id === ticket.routeId);
+    if (route) {
+      return {
+        id: ticket.id,
+        source: route.sourceCity,
+        sourceStation: route.sourceAdda,
+        destination: route.destinationCity,
+        destinationStation: route.destinationAdda,
+        ticketPrice: ticket.ticketPrice,
+        busType: ticket.busType,
+        routeId: ticket.routeId,
+      };
+    } else {
+      return {
+        id: ticket.id,
+        source: 'Unknown',
+        sourceStation: 'Unknown',
+        destination: 'Unknown',
+        destinationStation: 'Unknown',
+        ticketPrice: ticket.ticketPrice,
+        busType: ticket.busType,
+        routeId: ticket.routeId,
+      };
+    }
+  });
 
 
   // Filtering based on search parameters

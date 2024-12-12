@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
 import { Expense, addExpense, allExpenses } from "@/lib/slices/expenses-slices"
 import { RootState } from "@/lib/store"; // Adjust the path as needed
 import { Plus } from "lucide-react"
@@ -23,8 +24,9 @@ export default function NewExpensesDialog() {
   const [tab, setTab] = useState<"bus" | "general">("general")
   const [description, setDescription] = useState("")
   const [amount, setAmount] = useState<number | "">("")
-  const [busId, setBusId] = useState<string|number>("")  
-  
+  const [busId, setBusId] = useState<string | number>("")
+  const { toast } = useToast();
+
   const dispatch = useDispatch()
 
   // Get buses from Redux state
@@ -32,23 +34,34 @@ export default function NewExpensesDialog() {
 
   // Handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();  
-  
-    const newExpense: Omit<Expense, 'id'> = {
-      date:new Date().toISOString(),
-      description,
-      amount: Number(amount),
-      busId: busId !== "" ? Number(busId) : undefined,  
-      type: tab, 
-    };
-  
-    dispatch(addExpense(newExpense));
-    setOpen(false);
-    
-    resetForm();
-    console.log(expenses,"expenses");
+    try {
+
+      event.preventDefault();
+
+      const newExpense: Omit<Expense, 'id'> = {
+        date: new Date().toISOString(),
+        description,
+        amount: Number(amount),
+        busId: busId !== "" ? Number(busId) : undefined,
+        type: tab,
+      };
+
+      dispatch(addExpense(newExpense));
+      setOpen(false);
+
+      resetForm();
+    } catch (error: any) {
+      console.error(error.message);
+
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
+    }
   }
-  
+
   // Reset form values
   const resetForm = () => {
     setDescription("")
@@ -73,20 +86,18 @@ export default function NewExpensesDialog() {
           </DialogHeader>
 
           {/* Tabs */}
-         {/* Custom Tab Buttons */}
-         <div className="flex space-x-4 my-4">
+          {/* Custom Tab Buttons */}
+          <div className="flex space-x-4 my-4">
             <div
-              className={`cursor-pointer px-4 py-2 rounded-lg text-center transition-all ${
-                tab === "bus" ? "bg-gradient-btn text-white" : "bg-gray-200 text-gray-600"
-              } hover:bg-gradient-btn hover:opacity-60 hover:text-white`}
+              className={`cursor-pointer px-4 py-2 rounded-lg text-center transition-all ${tab === "bus" ? "bg-gradient-btn text-white" : "bg-gray-200 text-gray-600"
+                } hover:bg-gradient-btn hover:opacity-60 hover:text-white`}
               onClick={() => setTab("bus")}
             >
               Bus
             </div>
             <div
-              className={`cursor-pointer px-4 py-2 rounded-lg text-center transition-all ${
-                tab === "general" ? "bg-gradient-btn text-white" : "bg-gray-200 text-gray-600"
-              } hover:bg-gradient-btn hover:opacity-60 hover:text-white`}
+              className={`cursor-pointer px-4 py-2 rounded-lg text-center transition-all ${tab === "general" ? "bg-gradient-btn text-white" : "bg-gray-200 text-gray-600"
+                } hover:bg-gradient-btn hover:opacity-60 hover:text-white`}
               onClick={() => setTab("general")}
             >
               General
@@ -98,18 +109,18 @@ export default function NewExpensesDialog() {
             {tab === "bus" && (
               <>
                 <div className="grid gap-2">
-                <SelectField
-                  id="busNumber"
-                  value={busId}
-                  onChange={(value) => setBusId(Number(value))}
-                  placeholder="Select Bus"
-                  options={buses.map((bus) => ({
-                    value: bus.id,
-                    label: bus.busNumber,
-                  }))}
-                  label="Bus Number"
-                  className="flex-col !space-x-0 gap-y-2 !items-start"
-                />
+                  <SelectField
+                    id="busNumber"
+                    value={busId}
+                    onChange={(value) => setBusId(Number(value))}
+                    placeholder="Select Bus"
+                    options={buses.map((bus) => ({
+                      value: bus.id,
+                      label: bus.busNumber,
+                    }))}
+                    label="Bus Number"
+                    className="flex-col !space-x-0 gap-y-2 !items-start"
+                  />
                 </div>
 
                 <div className="grid gap-2">

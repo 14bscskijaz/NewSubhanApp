@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditBusDialog from '../edit-bus-dialogue';
+import { useToast } from '@/hooks/use-toast';
 
 interface CellActionProps {
   data: Buses;
@@ -17,23 +18,53 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const { toast } = useToast();
 
   const onConfirm = async () => {
     setLoading(true);
     try {
       await deleteBus(data.id)
       dispatch(removeBus(data.id));
+      toast({
+        title: "Success",
+        description: "Bus Deleted successfully",
+        variant: "default",
+        duration: 1000
+      })
       setOpen(false);
-    } catch (error) {
-      console.error("Failed to delete employee:", error);
+    } catch (error: any) {
+      console.error("Failed to delete Bus:", error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdate = async(updatedBus: Buses,id:number) => {
-    await updateBuses(id,updatedBus)
-    dispatch(updateBus(updatedBus));
+  const handleUpdate = async (updatedBus: Buses, id: number) => {
+    try {
+      await updateBuses(id, updatedBus)
+      toast({
+        title: "Success",
+        description: "Bus Updated successfully",
+        variant: "default",
+        duration: 1000
+      })
+      dispatch(updateBus(updatedBus));
+    } catch (error: any) {
+      console.error("Failed to Update bus:", error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
+    }
+
   };
 
 

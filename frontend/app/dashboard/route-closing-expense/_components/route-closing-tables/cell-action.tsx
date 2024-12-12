@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditClosingExpenseDialog from '../edit-expense-dialogue';
+import { useToast } from '@/hooks/use-toast';
 
 interface CellActionProps {
   data: ClosingExpense;
@@ -21,23 +22,53 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const { toast } = useToast();
 
   const onConfirm = async () => {
     setLoading(true);
     try {
       await deleteFixedBusClosingExpense(data.id);
       dispatch(removeClosingExpense(data.id));
+      toast({
+        title: "Success",
+        description: "Fixed Route Close Expense Deleted successfully",
+        variant: "default",
+        duration: 1000
+      })
       setOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to delete closing expense:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
     } finally {
       setLoading(false);
     }
   };
 
   const handleUpdate = async (updatedClosingExpense: ClosingExpense) => {
-    await updateFixedBusClosingExpense(data.id, updatedClosingExpense);
-    dispatch(updateClosingExpense(updatedClosingExpense));
+    try {
+      await updateFixedBusClosingExpense(data.id, updatedClosingExpense);
+      dispatch(updateClosingExpense(updatedClosingExpense));
+      toast({
+        title: "Success",
+        description: "Fixed Route Close Expense Updated successfully",
+        variant: "default",
+        duration: 1000
+      })
+    } catch (error: any) {
+      console.error(error.message);
+
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
+    }
   };
 
   return (

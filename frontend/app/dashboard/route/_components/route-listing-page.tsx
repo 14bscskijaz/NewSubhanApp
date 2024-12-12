@@ -5,26 +5,38 @@ import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
 import { RootState } from '@/lib/store';
-import { useSearchParams } from 'next/navigation'; 
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NewRouteDialog from './new-route-dialogue';
 import RouteTable from './route-tables';
+import { useToast } from '@/hooks/use-toast';
 
 type TRouteListingPage = {};
 
-export default function RouteListingPage({}: TRouteListingPage) {
+export default function RouteListingPage({ }: TRouteListingPage) {
   const routes = useSelector<RootState, Route[]>(allRoutes);
-  const searchParams = useSearchParams(); 
+  const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [source, setSource] = useState(''); 
+  const [source, setSource] = useState('');
   const [pageLimit, setPageLimit] = useState(5);
   const dispatch = useDispatch()
+  const { toast } = useToast();
 
-  const fetchRoutes = async() =>{
-    const getRoutes = await getAllRoutes()
-    dispatch(setRoute(getRoutes));
+  const fetchRoutes = async () => {
+    try {
+      const getRoutes = await getAllRoutes()
+      dispatch(setRoute(getRoutes));
+
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000
+      })
+    }
     // console.log(getRoutes,"getRoutes");
   }
 
@@ -38,7 +50,7 @@ export default function RouteListingPage({}: TRouteListingPage) {
 
     setPage(Number(pageParam));
     setSearch(searchParam);
-    setSource(sourceParam); 
+    setSource(sourceParam);
     setPageLimit(Number(limitParam));
   }, [searchParams]);
 
@@ -46,15 +58,15 @@ export default function RouteListingPage({}: TRouteListingPage) {
     const matchesSearch =
       search ?
         route.destinationCity.toLowerCase().includes(search.toLowerCase()) ||
-        route.sourceCity.toLowerCase().includes(search.toLowerCase())  :
+        route.sourceCity.toLowerCase().includes(search.toLowerCase()) :
         true;
 
     const matchesStatus =
       source ?
-        route.sourceCity.toLowerCase() === source.toLowerCase() : 
+        route.sourceCity.toLowerCase() === source.toLowerCase() :
         true;
 
-    return matchesSearch && matchesStatus; 
+    return matchesSearch && matchesStatus;
   });
 
   const totalUsers = filteredRoutes.length;

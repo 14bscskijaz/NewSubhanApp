@@ -1,5 +1,6 @@
 'use client';
 
+import SelectField from '@/components/ui/SelectField';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -62,7 +63,7 @@ export default function EditRouteDialog({
       )?.destinationAdda ?? ''
   });
 
-  const performRevenueCalculationMaths = (
+  const calcTicketEarnings = (
     fullCount: number,
     halfCount: number,
     luxuryCount: number,
@@ -77,46 +78,52 @@ export default function EditRouteDialog({
   };
 
   const calculateRevenue = (updatedData: Omit<TripInformationInput, 'id'>) => {
-    console.log('Route ID in calculate revenuw: ', updatedData.routeId);
     // Get the ticket price for standard and luxury buses tickets
     const standardTicketPrice = tickets.find(
-      (ticket) =>
+      (ticket: { routeId: { toString: () => string | undefined; }; busType: string; }) =>
         ticket.routeId.toString() === updatedData.routeId &&
         ticket.busType === 'Standard'
     )?.ticketPrice;
     const luxuryTicketPrice = tickets.find(
-      (ticket) =>
+      (ticket: { routeId: { toString: () => string | undefined; }; busType: string; }) =>
         ticket.routeId.toString() === updatedData.routeId &&
-        ticket.busType === 'Luxury'
+        ticket.busType === 'Business'
     )?.ticketPrice;
 
     let ticketEarnings = 0;
-    if (standardTicketPrice !== undefined && luxuryTicketPrice !== undefined) {
+    if (standardTicketPrice !== undefined || luxuryTicketPrice !== undefined) {
       const fullCount = Number(updatedData.fullTicketCount) || 0;
       const halfCount = Number(updatedData.halfTicketCount) || 0;
       const luxuryCount = Number(updatedData.fullTicketBusinessCount) || 0;
-      const revenue = performRevenueCalculationMaths(
+      const revenue = calcTicketEarnings(
         fullCount,
         halfCount,
         luxuryCount,
-        standardTicketPrice,
-        luxuryTicketPrice
+        standardTicketPrice ?? 0,
+        luxuryTicketPrice ?? 0
       );
       ticketEarnings = revenue;
     }
 
-    // Subtract the fixed trip expenses from the ticket earnings(
+    // Subtract the fixed trip expenses from the ticket earnings. Possibly can be undefined
     const expenseForThisRouteId = fixedTripExpenses.find(
-      (expense) => expense.routeId === Number(updatedData.routeId)
+      (expense: { routeId: number; }) => expense.routeId === Number(updatedData.routeId)
     );
 
     let remaining = ticketEarnings;
-    remaining -= expenseForThisRouteId?.routeCommission ?? 0;
     remaining -= expenseForThisRouteId?.rewardCommission ?? 0;
     remaining -= expenseForThisRouteId?.steward ?? 0;
     remaining -= expenseForThisRouteId?.counter ?? 0;
     remaining -= expenseForThisRouteId?.dcParchi ?? 0;
     remaining -= expenseForThisRouteId?.refreshment ?? 0;
+
+    // Calculate Stand Commission (routeCommission variable in code)
+    if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
+      remaining -= expenseForThisRouteId.routeCommission;
+    } else if (expenseForThisRouteId && expenseForThisRouteId.routeCommission < 1) {
+      const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings;
+      remaining -= standCommissionValue;
+    } 
 
     // Add or subtract the miscellaneous amount
     if (updatedData.miscellaneousAmount) {
@@ -220,11 +227,29 @@ export default function EditRouteDialog({
   };
 
   const getSourceStations = () => {
-    return [...new Set(routes.map((route) => route.sourceAdda))];
+    const uniqueSourceStations = new Map();
+    routes.forEach((route: { sourceAdda: any; sourceCity: any; }) => {
+      if (!uniqueSourceStations.has(route.sourceAdda)) {
+        uniqueSourceStations.set(route.sourceAdda, {
+          value: route.sourceAdda,
+          label: `${route.sourceAdda} (${route.sourceCity})`
+        });
+      }
+    });
+    return Array.from(uniqueSourceStations.values());
   };
 
   const getDestinationStations = () => {
-    return [...new Set(routes.map((route) => route.destinationAdda))];
+    const uniqueDestinationStations = new Map();
+    routes.forEach((route: { destinationAdda: any; destinationCity: any; }) => {
+      if (!uniqueDestinationStations.has(route.destinationAdda)) {
+        uniqueDestinationStations.set(route.destinationAdda, {
+          value: route.destinationAdda,
+          label: `${route.destinationAdda} (${route.destinationCity})`
+        });
+      }
+    });
+    return Array.from(uniqueDestinationStations.values());
   };
 
   return (
@@ -247,60 +272,28 @@ export default function EditRouteDialog({
           </DialogHeader>
           <div className="grid gap-8 py-4 md:grid-cols-2">
             {/* Source Station Dropdown */}
-            <div className="grid gap-2">
-              <Label htmlFor="sourceStation">
-                Source <span className="text-gradient">Station</span>
-              </Label>
-              <Select
-                value={tripData.sourceStation}
-                onValueChange={(value) =>
-                  handleSelectChange('sourceStation', value)
-                }
-              >
-                <SelectTrigger>
-                  <span>
-                    {tripData.sourceStation || 'Select Source Station'}
-                  </span>
-                </SelectTrigger>
-                <SelectContent>
-                  {getSourceStations().map((station, index) => (
-                    <SelectItem key={index} value={station}>
-                      {station}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <SelectField
+              id="sourceStation"
+              value={tripData.sourceStation}
+              onChange={(value) => handleSelectChange("sourceStation", value)}
+              placeholder="Select Source Station"
+              options={getSourceStations()}
+              label="Source Station"
+              className="flex-col !space-x-0 gap-y-2 !items-start"
+            />
 
-            {/* Destination Station Dropdown */}
-            <div className="grid gap-2">
-              <Label htmlFor="destinationStation">
-                Destination <span className="text-gradient">Station</span>
-              </Label>
-              <Select
-                value={tripData.destinationStation}
-                onValueChange={(value) =>
-                  handleSelectChange('destinationStation', value)
-                }
-              >
-                <SelectTrigger>
-                  <span>
-                    {tripData.destinationStation ||
-                      'Select Destination Station'}
-                  </span>
-                </SelectTrigger>
-                <SelectContent>
-                  {getDestinationStations().map((station, index) => (
-                    <SelectItem key={index} value={station}>
-                      {station}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <SelectField
+              id="destinationStation"
+              value={tripData.destinationStation}
+              onChange={(value) => handleSelectChange("destinationStation", value)}
+              placeholder="Select Destination Station"
+              options={getDestinationStations()}
+              label="Destination Station"
+              className="flex-col !space-x-0 gap-y-2 !items-start"
+            />
 
             {/* Other Fields */}
-            <div className="grid gap-2">
+            {/* <div className="grid gap-2">
               <Label htmlFor="routeClosingVoucherId">
                 Voucher <span className="text-gradient">ID</span>
               </Label>
@@ -311,7 +304,7 @@ export default function EditRouteDialog({
                 onChange={handleInputChange}
                 placeholder="Enter Voucher ID"
               />
-            </div>
+            </div> */}
             <div className="grid gap-2">
               <Label htmlFor="passengerCount">
                 Passenger <span className="text-gradient">Count</span>

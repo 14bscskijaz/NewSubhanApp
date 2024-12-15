@@ -1,14 +1,11 @@
 // columns.tsx
 'use client';
-import { FixedTripExpense } from '@/lib/slices/fixed-trip-expense';
-import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
-import SourceDestination from './SourceDestination';
-import SourceStationDestinationStation from './SourceStationDestinationStation';
-import BusNumber from './BusNumber';
 import { BusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
-import Revenue from './Revenue';
+import { ColumnDef } from '@tanstack/react-table';
+import BusNumber from './BusNumber';
 import Expense from './Expense';
+import Revenue from './Revenue';
+import SourceDestination from './SourceDestination';
 
 export const columns: ColumnDef<BusClosingVoucher>[] = [
   {
@@ -50,14 +47,11 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
   //     <SourceStationDestinationStation routeId={row?.original?.routeId || 1} />
   //   )
   // },
-  
   {
-    id: 'actual-revenue',
-    header: 'Revenue',
-    cell: (
-      { row }
-    ) => <Revenue voucherId={Number(row.original.id)} />
+    accessorKey: 'revenue',
+    header: 'Revenue'
   },
+
   {
     id: 'expense',
     header: 'Expense',
@@ -66,8 +60,11 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
     ) => <Expense voucherId={Number(row.original.id)} />
   },
   {
-    accessorKey: 'revenue',
-    header: 'Gross Revenue'
+    id: 'actual-revenue',
+    header: 'Gross Revenue',
+    cell: (
+      { row }
+    ) => <Revenue voucherId={Number(row.original.id)} />
   },
   // {
   //   accessorKey: 'dcParchi',

@@ -15,6 +15,7 @@ import fixedClosingExpenseSlice from './slices/fixed-closing-expense-slice';
 import expensesSlices from './slices/expenses-slices';
 import tripInformationSaved from './slices/trip-information-saved';
 import savedExpenses from './slices/saved-expenses';
+import busReportSlice from './slices/Report/bus-report-slice';
 
 // const persistConfig = {
 //   key: 'root',
@@ -36,7 +37,8 @@ const rootReducer = combineReducers({
   busClosingVouchers: busClosingVoucherSlice,
   expenses: expensesSlices,
   savedTripsInformation: tripInformationSaved,
-  savedExpense: savedExpenses
+  savedExpense: savedExpenses,
+  busReport: busReportSlice
 });
 
 // const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -63,10 +65,11 @@ export type RootState = {
   tripsInformation: ReturnType<typeof tripInformationSlice>;
   busClosingVouchers: ReturnType<typeof busClosingVoucherSlice>;
   closingExpenses: ReturnType<typeof fixedClosingExpenseSlice>;
-  expenses:ReturnType<typeof expensesSlices>
-  savedTripsInformation:ReturnType<typeof tripInformationSaved>
-  savedExpense:ReturnType<typeof savedExpenses>
-  
+  expenses: ReturnType<typeof expensesSlices>
+  savedTripsInformation: ReturnType<typeof tripInformationSaved>
+  savedExpense: ReturnType<typeof savedExpenses>
+  busReport: ReturnType<typeof busReportSlice>
+
 };
 export type AppDispatch = typeof store.dispatch;
 

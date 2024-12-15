@@ -29,21 +29,25 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function NewBusDialog() {
-  const buses = useSelector<RootState, Buses[]>(allBuses)
+  const buses = useSelector<RootState, Buses[]>(allBuses);
   const [open, setOpen] = useState(false);
   const [busNumber, setBusNumber] = useState("");
   const [busType, setBusType] = useState("");
+  const [brand, setBrand] = useState(""); // New field for Brand Name
   const [busOwner, setBusOwner] = useState("");
   const [description, setDescription] = useState("");
   const [busStatus, setBusStatus] = useState("");
 
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const isBusExist = buses.find(bus => bus.busNumber.toLowerCase().trim() === busNumber.toLowerCase().trim())
+    const isBusExist = buses.find(
+      (bus) =>
+        bus.busNumber.toLowerCase().trim() === busNumber.toLowerCase().trim()
+    );
     if (isBusExist) {
       toast({
         title: "Error",
@@ -56,6 +60,7 @@ export default function NewBusDialog() {
     const newBus: Omit<Buses, "id"> = {
       busNumber,
       busType,
+      brand,
       busOwner,
       description,
       busStatus,
@@ -64,14 +69,13 @@ export default function NewBusDialog() {
     try {
       await createBus(newBus);
       const allBusesData = await getAllBuses();
-      dispatch(setBus(allBusesData))
+      dispatch(setBus(allBusesData));
       toast({
         title: "Success",
-        variant:"default",
+        variant: "default",
         description: "New Bus Created successfully!",
         duration: 1000,
       });
-      // dispatch(addBus(newBus));
       setOpen(false);
       resetForm();
     } catch (error: any) {
@@ -88,6 +92,7 @@ export default function NewBusDialog() {
   const resetForm = () => {
     setBusNumber("");
     setBusType("");
+    setBrand(""); // Reset brand
     setBusOwner("");
     setDescription("");
     setBusStatus("");
@@ -103,14 +108,19 @@ export default function NewBusDialog() {
       <DialogContent className="sm:max-w-[940px] max-h-[570px] overflow-y-auto custom-scrollbar">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add New <span className="text-gradient">Bus</span></DialogTitle>
+            <DialogTitle>
+              Add New <span className="text-gradient">Bus</span>
+            </DialogTitle>
             <DialogDescription>
-              Enter the details of the new bus here. Click save when you are done.
+              Enter the details of the new bus here. Click save when you are
+              done.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-12 py-8 md:grid-cols-2">
             <div className="grid gap-2">
-              <Label htmlFor="busNumber" className="text-gradient">Bus Number</Label>
+              <Label htmlFor="busNumber" className="text-gradient">
+                Bus Number
+              </Label>
               <Input
                 id="busNumber"
                 placeholder="Enter Bus Number"
@@ -120,7 +130,9 @@ export default function NewBusDialog() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="busType">Bus <span className="text-gradient">Type</span></Label>
+              <Label htmlFor="busType">
+                Bus <span className="text-gradient">Type</span>
+              </Label>
               <Select onValueChange={setBusType}>
                 <SelectTrigger id="busType">
                   <SelectValue placeholder="Select Bus Type" />
@@ -131,8 +143,23 @@ export default function NewBusDialog() {
                 </SelectContent>
               </Select>
             </div>
+            {/* New Brand Name Field */}
             <div className="grid gap-2">
-              <Label htmlFor="busOwner">Bus <span className="text-gradient">Owner</span></Label>
+              <Label htmlFor="brand" className="text-gradient">
+                Brand
+              </Label>
+              <Input
+                id="brand"
+                placeholder="Enter Brand"
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                maxLength={50}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="busOwner">
+                Bus <span className="text-gradient">Owner</span>
+              </Label>
               <Input
                 id="busOwner"
                 placeholder="Enter Bus Owner"
@@ -142,7 +169,9 @@ export default function NewBusDialog() {
               />
             </div>
             <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="description" className="text-gradient">Description</Label>
+              <Label htmlFor="description" className="text-gradient">
+                Description
+              </Label>
               <Textarea
                 id="description"
                 rows={3}
@@ -153,14 +182,18 @@ export default function NewBusDialog() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="busStatus">Bus <span className="text-gradient">Status</span></Label>
+              <Label htmlFor="busStatus">
+                Bus <span className="text-gradient">Status</span>
+              </Label>
               <Select onValueChange={setBusStatus}>
                 <SelectTrigger id="busStatus">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Under Maintenance">Under Maintenance</SelectItem>
+                  <SelectItem value="Under Maintenance">
+                    Under Maintenance
+                  </SelectItem>
                   <SelectItem value="Out of Service">Out of Service</SelectItem>
                   <SelectItem value="Retired">Retired</SelectItem>
                 </SelectContent>

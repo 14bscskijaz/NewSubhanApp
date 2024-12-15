@@ -13,6 +13,9 @@ export type TripInformation = {
   actualRevenue: string; // Auto
   miscellaneousAmount: string;
   revenueDiffExplanation: string;
+  loadExpense: string,
+  rewardCommission: string,
+  refreshmentExpense: string,
   date?: string
 };
 
@@ -21,6 +24,8 @@ export type TripInformationInput = TripInformation & {
   // we use these to identify the routeId
   sourceStation: string;
   destinationStation: string;
+  
+
 };
 
 // Define state interface

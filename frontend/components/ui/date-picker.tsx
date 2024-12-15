@@ -20,11 +20,12 @@ type DatePickerProps = {
 
 export function DatePicker({ selected, onChange, className }: DatePickerProps) {
   const handleDateSelect = (newDate: Date | undefined) => {
-    // console.log(newDate,"newDate");
-    
-    onChange(newDate);  // Call parent's onChange to sync the date
+    onChange(newDate);  // Pass the selected date to parent component
   };
-  
+
+  // Handle invalid date or undefined case
+  const formattedDate = selected && !isNaN(selected.getTime()) ? format(selected, "PPP") : "Pick a date";
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -37,7 +38,7 @@ export function DatePicker({ selected, onChange, className }: DatePickerProps) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {selected ? format(selected, "PPP") : <span>Pick a date</span>}
+          {formattedDate}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
@@ -49,5 +50,5 @@ export function DatePicker({ selected, onChange, className }: DatePickerProps) {
         />
       </PopoverContent>
     </Popover>
-  )
+  );
 }

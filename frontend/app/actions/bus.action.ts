@@ -1,12 +1,21 @@
+'use server'
 import { Buses } from '@/lib/slices/bus-slices';
 import axios from 'axios';
 
 const API_BASE_URL = "https://localhost:7169/api/Bus";
 
+// Create an Axios instance with custom SSL settings
+const axiosInstance = axios.create({
+    baseURL: API_BASE_URL,
+    httpsAgent: new (require('https').Agent)({
+        rejectUnauthorized: false,
+    }),
+});
+
 export async function getAllBuses(): Promise<Buses[]> {
     try {
         // Make the request with axios
-        const response = await axios.get(API_BASE_URL);
+        const response = await axiosInstance.get(API_BASE_URL);
 
         // Extract the data from the response
         const data = await response.data;
@@ -22,7 +31,7 @@ export async function getAllBuses(): Promise<Buses[]> {
 export async function createBus(busData: Omit<Buses, "id">) {
     try {
         // Make the POST request to the API endpoint with the bus data
-        const response = await axios.post(API_BASE_URL, busData);
+        const response = await axiosInstance.post(API_BASE_URL, busData);
 
         return response.data;
     } catch (error: any) {
@@ -36,7 +45,7 @@ export async function createBus(busData: Omit<Buses, "id">) {
 export async function deleteBus(busId: number): Promise<void> {
     try {
         // Make the DELETE request to the API endpoint
-        await axios.delete(`${API_BASE_URL}/${busId}`);
+        await axiosInstance.delete(`${API_BASE_URL}/${busId}`);
 
         // No need to return anything, as the response is usually empty for DELETE
         console.log(`Bus with ID ${busId} deleted successfully.`);
@@ -53,7 +62,7 @@ export async function deleteBus(busId: number): Promise<void> {
 export async function updateBuses(busId: number, busData: Omit<Buses, "id">): Promise<Buses> {
     try {
         // Make the PUT request to the API endpoint with the updated bus data
-        const response = await axios.put(`${API_BASE_URL}/${busId}`, busData, {
+        const response = await axiosInstance.put(`${API_BASE_URL}/${busId}`, busData, {
             headers: {
                 'Content-Type': 'application/json',
             },

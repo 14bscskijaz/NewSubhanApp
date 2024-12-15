@@ -24,7 +24,7 @@ import { Buses } from "@/lib/slices/bus-slices";
 
 type EditBusDialogProps = {
   bus: Buses;
-  onUpdate: (updatedBus: Buses,id:number) => void;
+  onUpdate: (updatedBus: Buses, id: number) => void;
 };
 
 export default function EditBusDialog({
@@ -34,6 +34,7 @@ export default function EditBusDialog({
   const [open, setOpen] = useState(false);
   const [busNumber, setBusNumber] = useState(bus.busNumber);
   const [busType, setBusType] = useState(bus.busType);
+  const [brand, setBrand] = useState(bus.brand); // New brand field
   const [busOwner, setBusOwner] = useState(bus.busOwner);
   const [description, setDescription] = useState(bus.description);
   const [busStatus, setBusStatus] = useState(bus.busStatus);
@@ -42,6 +43,7 @@ export default function EditBusDialog({
     // Reset form when the bus prop changes
     setBusNumber(bus.busNumber);
     setBusType(bus.busType);
+    setBrand(bus.brand); 
     setBusOwner(bus.busOwner);
     setDescription(bus.description);
     setBusStatus(bus.busStatus);
@@ -54,14 +56,13 @@ export default function EditBusDialog({
       id: bus.id,
       busNumber: busNumber,
       busType: busType,
+      brand: brand, 
       busOwner: busOwner,
       description,
       busStatus: busStatus,
     };
-    console.log(updatedBus,"updatedBus");
-    
 
-    onUpdate(updatedBus,bus.id);
+    onUpdate(updatedBus, bus.id);
     setOpen(false);
   };
 
@@ -101,6 +102,15 @@ export default function EditBusDialog({
                   <SelectItem value="Business">Business</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="brand" className="text-gradient">Brand</Label>
+              <Input
+                id="brand"
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+                placeholder="Enter brand"
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="busOwner">Bus <span className="text-gradient">Owner</span></Label>

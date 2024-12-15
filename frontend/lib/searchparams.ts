@@ -2,6 +2,7 @@ import {
   createSearchParamsCache,
   createSerializer,
   parseAsInteger,
+  parseAsIsoDateTime,
   parseAsString
 } from 'nuqs/server';
 
@@ -11,7 +12,10 @@ export const searchParams = {
   status:parseAsString,
   q: parseAsString,
   gender: parseAsString,
-  categories: parseAsString
+  busNumber: parseAsString,
+  route: parseAsString,
+  categories: parseAsString,
+  date: parseAsString,
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

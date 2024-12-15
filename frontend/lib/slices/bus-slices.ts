@@ -9,7 +9,9 @@ export type Buses = {
   busOwner: string;
   description: string;
   busStatus: string;
+  brand: string;
 };
+
 
 interface BusState {
   buses: Buses[];
@@ -56,7 +58,7 @@ const busSlice = createSlice({
     updateBus: (state, action: PayloadAction<Buses>) => {
       const index = state.buses.findIndex(bus => bus.id === action.payload.id);
       if (index !== -1) {
-          state.buses[index] = action.payload;
+        state.buses[index] = action.payload;
       }
     },
   },

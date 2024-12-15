@@ -1,12 +1,20 @@
+'use server'
 import { TripInformation } from "@/lib/slices/trip-information";
 import axios from "axios";
 
 const API_BASE_URL = "https://localhost:7169/api/Trip";
 
+const axiosInstance = axios.create({
+    baseURL: API_BASE_URL,
+    httpsAgent: new (require('https').Agent)({
+        rejectUnauthorized: false,
+    }),
+});
+
 // Get all trips
 export async function getAllTrips(): Promise<TripInformation[]> {
     try {
-        const response = await axios.get(API_BASE_URL);
+        const response = await axiosInstance.get(API_BASE_URL);
         return response.data;
     } catch (error) {
         console.error("Error fetching trips:", error);
@@ -17,7 +25,7 @@ export async function getAllTrips(): Promise<TripInformation[]> {
 // Get a single trip by ID
 export async function getTripById(id: number): Promise<TripInformation> {
     try {
-        const response = await axios.get(`${API_BASE_URL}/${id}`);
+        const response = await axiosInstance.get(`${API_BASE_URL}/${id}`);
         return response.data;
     } catch (error) {
         console.error(`Error fetching trip with id ${id}:`, error);
@@ -28,7 +36,7 @@ export async function getTripById(id: number): Promise<TripInformation> {
 // Create a new trip
 export async function createTrip(trip: Omit<TripInformation, 'id'>): Promise<Omit<TripInformation, 'id'>> {
     try {
-        const response = await axios.post(API_BASE_URL, trip);
+        const response = await axiosInstance.post(API_BASE_URL, trip);
         return response.data;
     } catch (error) {
         console.error("Error creating trip:", error);
@@ -39,7 +47,7 @@ export async function createTrip(trip: Omit<TripInformation, 'id'>): Promise<Omi
 // Update an existing trip
 export async function updateTrip(id: number, updatedTrip: Partial<TripInformation>): Promise<TripInformation> {
     try {
-        const response = await axios.put(`${API_BASE_URL}/${id}`, updatedTrip);
+        const response = await axiosInstance.put(`${API_BASE_URL}/${id}`, updatedTrip);
         return response.data;
     } catch (error) {
         console.error(`Error updating trip with id ${id}:`, error);
@@ -50,7 +58,7 @@ export async function updateTrip(id: number, updatedTrip: Partial<TripInformatio
 // Delete a trip by ID
 export async function deleteTrip(id: number): Promise<void> {
     try {
-        await axios.delete(`${API_BASE_URL}/${id}`);
+        await axiosInstance.delete(`${API_BASE_URL}/${id}`);
     } catch (error) {
         console.error(`Error deleting trip with id ${id}:`, error);
         throw error;

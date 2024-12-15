@@ -219,7 +219,10 @@ export default function EditRouteDialog({
       freeTicketCount: tripData.freeTicketCount,
       miscellaneousAmount: tripData.miscellaneousAmount,
       actualRevenue: tripData.actualRevenue,
-      revenueDiffExplanation: tripData.revenueDiffExplanation
+      revenueDiffExplanation: tripData.revenueDiffExplanation,
+      loadExpense: tripData.loadExpense,
+      rewardCommission: tripData.rewardCommission,
+      refreshmentExpense: tripData.refreshmentExpense
     };
 
     onUpdate(updatedTripData);
@@ -397,7 +400,7 @@ export default function EditRouteDialog({
 
             <div className="grid gap-2 md:col-span-2">
               <Label htmlFor="revenueDiffExplanation">
-                Revenue Difference{' '}
+              Miscellaneous  Difference{' '}
                 <span className="text-gradient">Explanation</span>
               </Label>
               <Textarea

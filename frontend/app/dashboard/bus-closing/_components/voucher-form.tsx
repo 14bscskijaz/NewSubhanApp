@@ -1,18 +1,19 @@
+import { createBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
+import { createTrip } from '@/app/actions/trip.action';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { setBusClosing } from '@/lib/slices/bus-closing';
+import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
+import { Buses, allBuses } from '@/lib/slices/bus-slices';
 import { Employee, allEmployees } from '@/lib/slices/employe-slices';
 import {
   ClosingExpense,
   allClosingExpenses,
 } from '@/lib/slices/fixed-closing-expense-slice';
+import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
+import { Route, allRoutes } from '@/lib/slices/route-slices';
 import {
   TripInformation,
   allTripsInformation,
@@ -23,14 +24,6 @@ import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'r
 import { FormProvider, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import NetExpenses from './net-expense';
-import { createBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
-import { createTrip } from '@/app/actions/trip.action';
-import { useToast } from '@/hooks/use-toast';
-import { addSavedTripInformation } from '@/lib/slices/trip-information-saved';
-import { BusClosingVoucher, addBusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
-import { Buses, allBuses } from '@/lib/slices/bus-slices';
-import { Route, allRoutes } from '@/lib/slices/route-slices';
-import { setBusClosing } from '@/lib/slices/bus-closing';
 
 interface BusClosingVoucherFormProps {
   driverId: string;
@@ -75,6 +68,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation);
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const routes = useSelector<RootState, Route[]>(allRoutes);
+  const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
   const employees = useSelector<RootState, Employee[]>(allEmployees);
   const dispatch = useDispatch();
 
@@ -167,6 +161,12 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         { sourceAdda, sourceCity, destinationAdda, destinationCity },
       ])
     );
+    const TicketMap = new Map(
+      tickets.map(({ routeId, ticketPrice }) => [
+        routeId,
+        ticketPrice,
+      ])
+    );
     const filterDriver = employees.find(employee => Number(employee.id) === Number(data.driverId));
     const filterConductor = employees.find(employee => Number(employee.id) === Number(data.conductorId));
 
@@ -245,7 +245,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           </style>
         </head>
         <body>
-          <h1 class="margin-top">Bus Closing Voucher and Trip Information</h1>
+          <h1 class="margin-top">Bus Closing Voucher</h1>
           <div class="grid-data">
             <p><strong>Date : </strong> ${date ? new Date(date).toLocaleDateString() : 'All Dates'}</p>
             <p><strong>Bus : </strong> ${filterBus?.busNumber || '-'}</p>
@@ -261,19 +261,21 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           <thead>
           <tr>
           <th>Route</th>
-          <th>Passenger Count</th>
-          <th>Actual Revenue</th>
+          <th>Passengers</th>
+          <th>Ticket Fare</th>
+          <th>Revenue</th>
           </tr>
           </thead>
             ${tripsInformation.map(trip => {
-            const {
-              sourceAdda = 'N/A',
-              destinationAdda = 'N/A',
-            } = RouteMap.get(Number(trip?.routeId)) || {};
-            return `
+      const {
+        sourceAdda = 'N/A',
+        destinationAdda = 'N/A',
+      } = RouteMap.get(Number(trip?.routeId)) || {};
+      return `
               <tbody>
               <td>${sourceAdda + "-" + destinationAdda}</td>
               <td>${trip.passengerCount || '-'}</td>
+              <td>${TicketMap.get(Number(trip?.routeId)) || '-'}</td>
               <td>${trip.actualRevenue || '-'}</td>
               </tbody>
             `}).join('')}
@@ -283,31 +285,33 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           </div>
           </div>
           <div>
-          <h2>Closing Voucher</h2>
+          <h2>Voucher</h2>
           <table>
             <tr><th>Type</th><td class="th-heading">Amount</td></tr>
-            <tr><th>Commission</th><td>${data.commission || '-'}</td></tr>
-            <tr><th>Diesel Litres</th><td>${data.dieselLitres || '-'}</td></tr>
-            <tr><th>Miscellaneous</th><td>${data.miscellaneous || '-'}</td></tr>
-            <tr><th>Generator</th><td>${data.generator || '-'}</td></tr>
-            <tr><th>Repair</th><td>${data.repair || '-'}</td></tr>
-            <tr><th>Refreshment</th><td>${data.refreshment || '-'}</td></tr>
-            <tr><th>City Parchi</th><td>${data.cityParchi || '-'}</td></tr>
-            <tr><th>Alliedmor</th><td>${data.alliedmor || '-'}</td></tr>
-            <tr><th>Cleaning</th><td>${data.cleaning || '-'}</td></tr>
-            <tr><th>Toll</th><td>${data.toll || '-'}</td></tr>
-            <tr><th>Coil Technician</th><td>${data.coilTechnician || '-'}</td></tr>
-            <tr><th>Diesel</th><td>${data.diesel || '-'}</td></tr>
-            <tr><th>Revenue</th><td>${data.revenue || '-'}</td></tr>
+            <tr><td>Commission</td><td>${data.commission || '-'}</td></tr>
+            <tr><td>Diesel Litres</td><td>${data.dieselLitres || '-'}</td></tr>
+            <tr><td>Miscellaneous</td><td>${data.miscellaneous || '-'}</td></tr>
+            <tr><td>Generator</td><td>${data.generator || '-'}</td></tr>
+            <tr><td>Repair</td><td>${data.repair || '-'}</td></tr>
+            <tr><td>Refreshment</td><td>${data.refreshment || '-'}</td></tr>
+            <tr><td>City Parchi</td><td>${data.cityParchi || '-'}</td></tr>
+            <tr><td>Alliedmor</td><td>${data.alliedmor || '-'}</td></tr>
+            <tr><td>Cleaning</td><td>${data.cleaning || '-'}</td></tr>
+            <tr><td>Toll</td><td>${data.toll || '-'}</td></tr>
+            <tr><td>Coil Technician</td><td>${data.coilTechnician || '-'}</td></tr>
+            <tr><td>Diesel</td><td>${data.diesel || '-'}</td></tr>
           </table>
+          <div class="flex-right">
+          <strong class="text-color">Total Expenses : </strong> ${TotalExpense}
+          </div>
           <h2>Summary</h2>
           <table>
           <tr>
-            <th>Total Revenue</th>
+            <td>Total Revenue</td>
             <td>${tripRevenue}</td>
           </tr>
           <tr>
-            <th>Total Expenses</th>
+            <td>Total Expenses</td>
             <td>${TotalExpense}</td>
           </tr>
           <tr>
@@ -408,7 +412,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         duration: 1200
       });
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 

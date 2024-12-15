@@ -1,11 +1,19 @@
+'use server'
 import axios from 'axios';
 import { Employee } from '@/lib/slices/employe-slices';
 
-const baseUrl = 'https://localhost:7169/api';
+const API_BASE_URL = 'https://localhost:7169/api';
+
+const axiosInstance = axios.create({
+    baseURL: API_BASE_URL,
+    httpsAgent: new (require('https').Agent)({
+        rejectUnauthorized: false,
+    }),
+});
 
 export async function getAllEmployees() {
     try {
-        const response = await axios.get(`${baseUrl}/Employees`);
+        const response = await axiosInstance.get(`${API_BASE_URL}/Employees`);
         console.log(response.data, 'Fetched Employees');
         return response.data;
     } catch (error:any) {
@@ -16,7 +24,7 @@ export async function getAllEmployees() {
 
 export async function createEmployee(employeeData: Omit<Employee, "id">) {
     try {
-        const response = await axios.post(`${baseUrl}/Employees`, employeeData);
+        const response = await axiosInstance.post(`${API_BASE_URL}/Employees`, employeeData);
         console.log(response.data, 'Created Employee');
         return response.data;
     } catch (error:any) {
@@ -27,7 +35,7 @@ export async function createEmployee(employeeData: Omit<Employee, "id">) {
 
 export async function updateEmployeeAPI(employeeId: number, updatedData: Record<string, any>) {
     try {
-        const response = await axios.put(`${baseUrl}/Employees/${employeeId}`, updatedData);
+        const response = await axiosInstance.put(`${API_BASE_URL}/Employees/${employeeId}`, updatedData);
         console.log(response.data, 'Updated Employee');
         return response.data;
     } catch (error:any) {
@@ -38,7 +46,7 @@ export async function updateEmployeeAPI(employeeId: number, updatedData: Record<
 
 export async function deleteEmployee(employeeId: number) {
     try {
-        await axios.delete(`${baseUrl}/Employees/${employeeId}`);
+        await axiosInstance.delete(`${API_BASE_URL}/Employees/${employeeId}`);
         console.log(`Employee with ID ${employeeId} deleted successfully.`);
     } catch (error:any) {
         console.error('Error deleting employee:', error.message); 1 

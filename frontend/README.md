@@ -10,3 +10,9 @@
 > After cloning or forking the repository, be cautious when pulling or syncing with the latest changes, as this may result in breaking conflicts.
 
 Cheers! 🥂
+
+
+### Update minor version of a package
+```bash
+npm install package-name@"<3.0.0"
+```

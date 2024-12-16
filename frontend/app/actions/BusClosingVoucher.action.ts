@@ -2,12 +2,13 @@
 import { BusClosingVoucher } from "@/lib/slices/bus-closing-voucher";
 import axios from "axios";
 
-const API_BASE_URL = "https://localhost:7169/api/BusClosingVoucher";
+// const API_BASE_URL = "https://localhost:7169/api/BusClosingVoucher";
+const API_BASE_URL  = process.env.NEXT_PUBLIC_BACKEND_URL + "/BusClosingVoucher";
 
 // Create an Axios instance with custom SSL settings
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
-    httpsAgent: new (require('https').Agent)({
+    httpsAgent: new (require('http').Agent)({
         rejectUnauthorized: false,
     }),
 });

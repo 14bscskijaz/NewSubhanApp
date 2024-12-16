@@ -2,11 +2,12 @@
 import axios from 'axios';
 import { Employee } from '@/lib/slices/employe-slices';
 
-const API_BASE_URL = 'https://localhost:7169/api';
+// const API_BASE_URL = 'http://localhost:7169/api';
+const API_BASE_URL  = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
-    httpsAgent: new (require('https').Agent)({
+    httpsAgent: new (require('http').Agent)({
         rejectUnauthorized: false,
     }),
 });

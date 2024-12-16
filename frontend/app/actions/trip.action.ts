@@ -2,11 +2,12 @@
 import { TripInformation } from "@/lib/slices/trip-information";
 import axios from "axios";
 
-const API_BASE_URL = "https://localhost:7169/api/Trip";
+// const API_BASE_URL = "https://localhost:7169/api/Trip";
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/Trip";
 
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
-    httpsAgent: new (require('https').Agent)({
+    httpsAgent: new (require('http').Agent)({
         rejectUnauthorized: false,
     }),
 });

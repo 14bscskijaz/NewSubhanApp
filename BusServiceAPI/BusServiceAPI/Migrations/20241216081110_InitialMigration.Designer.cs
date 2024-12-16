@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BusServiceAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241203112941_RouteIdinBusClosingVoucher")]
-    partial class RouteIdinBusClosingVoucher
+    [Migration("20241216081110_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -191,6 +191,9 @@ namespace BusServiceAPI.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("BusClosingVoucherId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("BusId")
                         .HasColumnType("integer");
 
@@ -207,6 +210,8 @@ namespace BusServiceAPI.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusClosingVoucherId");
 
                     b.HasIndex("BusId");
 
@@ -275,8 +280,8 @@ namespace BusServiceAPI.Migrations
                     b.Property<int>("RewardCommission")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RouteCommission")
-                        .HasColumnType("integer");
+                    b.Property<double>("RouteCommission")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("RouteId")
                         .HasColumnType("integer");
@@ -328,9 +333,8 @@ namespace BusServiceAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BusType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("BusType")
+                        .HasColumnType("integer");
 
                     b.Property<int>("RouteId")
                         .HasColumnType("integer");
@@ -425,12 +429,18 @@ namespace BusServiceAPI.Migrations
 
             modelBuilder.Entity("BusServiceAPI.Models.Expense", b =>
                 {
+                    b.HasOne("BusServiceAPI.Models.BusClosingVoucher", "BusClosingVoucher")
+                        .WithMany()
+                        .HasForeignKey("BusClosingVoucherId");
+
                     b.HasOne("BusServiceAPI.Models.Bus", "Bus")
                         .WithMany("Expenses")
                         .HasForeignKey("BusId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Bus");
+
+                    b.Navigation("BusClosingVoucher");
                 });
 
             modelBuilder.Entity("BusServiceAPI.Models.FixedBusClosingExpense", b =>

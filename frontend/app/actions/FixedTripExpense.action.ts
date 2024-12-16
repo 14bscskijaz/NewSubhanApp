@@ -2,11 +2,12 @@
 import { FixedTripExpense } from "@/lib/slices/fixed-trip-expense";
 import axios from "axios";
 
-const API_BASE_URL = "https://localhost:7169/api/FixedTripExpense";
+// const API_BASE_URL = "https://localhost:7169/api/FixedTripExpense";
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/FixedTripExpense";
 
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
-    httpsAgent: new (require('https').Agent)({
+    httpsAgent: new (require('http').Agent)({
         rejectUnauthorized: false,
     }),
 });

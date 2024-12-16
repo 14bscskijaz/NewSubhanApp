@@ -13,15 +13,22 @@ dotnet build
 dotnet run
 ```
 
+### Install dotnet-ef
+```bash
+dotnet tool install --global dotnet-ef --version 6
+```
+
 ### Other db related commands
 
 Syncs the database with the models.
 ```bash
 dotnet ef database update
 ```
+
+To create and add migrations:
 dotnet ef migrations add InitialMigration
 
-Risky command, drops the database.
+**Note:** Risky command, drops the database.
 dotnet ef database drop -f
 
 #### Access Swagger docs

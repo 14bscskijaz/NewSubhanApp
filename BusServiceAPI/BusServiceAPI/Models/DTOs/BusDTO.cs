@@ -8,6 +8,7 @@
         public string BusOwner { get; set; } // varchar(55)
         public string Description { get; set; } // varchar(255)
         public string BusStatus { get; set; } // varchar(20)
+        public string BusBrand { get; set; }
     }
 
 }

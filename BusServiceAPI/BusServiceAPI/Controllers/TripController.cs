@@ -32,6 +32,9 @@ namespace BusServiceAPI.Controllers
                   FullTicketCount = t.FullTicketCount,
                   HalfTicketCount = t.HalfTicketCount,
                   FreeTicketCount = t.FreeTicketCount,
+                  RefreshmentExpense = t.RefreshmentExpense,
+                  LoadEarning = t.LoadEarning,
+                  RewardCommission = t.RewardCommission,
                   Revenue = t.Revenue,
                   RevenueDiffExplanation = t.RevenueDiffExplanation,
                   Date = t.Date
@@ -55,6 +58,9 @@ namespace BusServiceAPI.Controllers
                    FullTicketCount = t.FullTicketCount,
                    HalfTicketCount = t.HalfTicketCount,
                    FreeTicketCount = t.FreeTicketCount,
+                   RefreshmentExpense = t.RefreshmentExpense,
+                   LoadEarning = t.LoadEarning,
+                   RewardCommission = t.RewardCommission,
                    Revenue = t.Revenue,
                    RevenueDiffExplanation = t.RevenueDiffExplanation,
                    Date = t.Date
@@ -82,6 +88,9 @@ namespace BusServiceAPI.Controllers
                 FullTicketCount = tripDto.FullTicketCount,
                 HalfTicketCount = tripDto.HalfTicketCount,
                 FreeTicketCount = tripDto.FreeTicketCount,
+                RefreshmentExpense = tripDto.RefreshmentExpense,
+                LoadEarning = tripDto.LoadEarning,
+                RewardCommission = tripDto.RewardCommission,
                 Revenue = tripDto.Revenue,
                 RevenueDiffExplanation = tripDto.RevenueDiffExplanation,
                 Date = tripDto.Date
@@ -99,6 +108,9 @@ namespace BusServiceAPI.Controllers
                 FullTicketCount = trip.FullTicketCount,
                 HalfTicketCount = trip.HalfTicketCount,
                 FreeTicketCount = trip.FreeTicketCount,
+                RefreshmentExpense = trip.RefreshmentExpense,
+                LoadEarning = trip.LoadEarning,
+                RewardCommission = trip.RewardCommission,
                 Revenue = trip.Revenue,
                 RevenueDiffExplanation = trip.RevenueDiffExplanation,
                 Date = trip.Date
@@ -121,6 +133,9 @@ namespace BusServiceAPI.Controllers
             trip.FullTicketCount = tripDto.FullTicketCount;
             trip.HalfTicketCount = tripDto.HalfTicketCount;
             trip.FreeTicketCount = tripDto.FreeTicketCount;
+            trip.RefreshmentExpense = tripDto.RefreshmentExpense;
+            trip.LoadEarning = tripDto.LoadEarning;
+            trip.RewardCommission = tripDto.RewardCommission;
             trip.Revenue = tripDto.Revenue;
             trip.RevenueDiffExplanation = tripDto.RevenueDiffExplanation;
             trip.Date = tripDto.Date;

@@ -3,7 +3,10 @@
     public class FixedBusClosingExpense
     {
         public int Id { get; set; } // Primary key, auto-incremented
+
+        //Less than 1 will ne considered commission percentage more than 1 will be the commision amount
         public int DriverCommission { get; set; }
+        
         public int COilExpense { get; set; } // C-Oil
         public int TollTax { get; set; } // Increase 10% annually
         public int HalfSafai { get; set; }

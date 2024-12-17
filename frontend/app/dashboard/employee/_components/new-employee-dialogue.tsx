@@ -40,8 +40,10 @@ export default function NewEmployeeDialog() {
   const [dob, setDob] = useState<string>("");
   const [notes, setNotes] = useState("");
   const { toast } = useToast();
-
   const dispatch = useDispatch();
+
+  const [validationErrors, setValidationErrors] = useState<any>({});
+  const [loading, setLoading] = useState(false); // Track loading state
 
   // Handle CNIC formatting
   const handleCnicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,23 +65,55 @@ export default function NewEmployeeDialog() {
     setMobileNumber(formattedValue);
   };
 
+  const validateForm = () => {
+    const errors: any = {};
+    const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
+    const mobileRegex = /^\d{4}-\d{7}$/;
+
+    if (!cnicRegex.test(cnic)) {
+      errors.cnic = "Please enter a valid CNIC in the format xxxxx-xxxxxxx-x.";
+    }
+
+    if (!mobileRegex.test(mobileNumber)) {
+      errors.mobileNumber = "Please enter a valid mobile number in the format xxxx-xxxxxxx.";
+    }
+
+    if (!firstName) {
+      errors.firstName = "First name is required.";
+    }
+
+    if (!lastName) {
+      errors.lastName = "Last name is required.";
+    }
+
+    if (!employeeType) {
+      errors.employeeType = "Employee type is required.";
+    }
+
+    if (!hireDate) {
+      errors.hireDate = "Hire date is required.";
+    }
+
+    if (!employeeStatus) {
+      errors.employeeStatus = "Employee status is required.";
+    }
+
+    if (!dob) {
+      errors.dob = "Date of birth is required.";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
-
       event.preventDefault();
 
-      const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
-      const mobileRegex = /^\d{4}-\d{7}$/;
+      const isValid = validateForm();
+      if (!isValid) return;
 
-      if (!cnicRegex.test(cnic)) {
-        alert("Please enter a valid CNIC in the format xxxxx-xxxxxxx-x.");
-        return;
-      }
-
-      if (!mobileRegex.test(mobileNumber)) {
-        alert("Please enter a valid mobile number in the format xxxx-xxxxxxx.");
-        return;
-      }
+      setLoading(true); // Set loading to true before starting submission
 
       const newEmployee: Omit<Employee, "id"> = {
         cnic,
@@ -97,13 +131,12 @@ export default function NewEmployeeDialog() {
       await createEmployee(newEmployee);
       const getAllEmployee = await getAllEmployees();
       dispatch(setEmployee(getAllEmployee));
-      // dispatch(addEmployee(newEmployee));
       toast({
         title: "Success",
         description: "Employee created successfully",
         variant: "default",
-        duration: 1000
-      })
+        duration: 1000,
+      });
       setOpen(false);
       resetForm();
     } catch (error: any) {
@@ -111,8 +144,10 @@ export default function NewEmployeeDialog() {
         title: "Error",
         description: error.message,
         variant: "destructive",
-        duration: 1000
-      })
+        duration: 2000,
+      });
+    } finally {
+      setLoading(false); // Set loading to false after submission
     }
   };
 
@@ -127,6 +162,7 @@ export default function NewEmployeeDialog() {
     setEmployeeStatus("");
     setDob("");
     setNotes("");
+    setValidationErrors({});
   };
 
   return (
@@ -143,8 +179,7 @@ export default function NewEmployeeDialog() {
               Add New <span className="text-gradient">Employee</span>
             </DialogTitle>
             <DialogDescription>
-              Enter the details of the new employee here. Click save when you are
-              done.
+              Enter the details of the new employee here. Click save when you are done.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-12 py-8 md:grid-cols-2">
@@ -155,7 +190,9 @@ export default function NewEmployeeDialog() {
                 placeholder="xxxxx-xxxxxxx-x"
                 value={cnic}
                 onChange={handleCnicChange}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.cnic && <p className="text-red-500 text-sm">{validationErrors.cnic}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="firstName">
@@ -166,7 +203,9 @@ export default function NewEmployeeDialog() {
                 placeholder="Enter first name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.firstName && <p className="text-red-500 text-sm">{validationErrors.firstName}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="lastName">
@@ -177,13 +216,15 @@ export default function NewEmployeeDialog() {
                 placeholder="Enter last name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.lastName && <p className="text-red-500 text-sm">{validationErrors.lastName}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="employeeType">
                 Employee <span className="text-gradient">Type</span>
               </Label>
-              <Select onValueChange={setEmployeeType}>
+              <Select onValueChange={setEmployeeType} disabled={loading}> {/* Disable select on loading */}
                 <SelectTrigger id="employeeType">
                   <SelectValue placeholder="Select employee type" />
                 </SelectTrigger>
@@ -192,6 +233,7 @@ export default function NewEmployeeDialog() {
                   <SelectItem value="Conductor">Conductor</SelectItem>
                 </SelectContent>
               </Select>
+              {validationErrors.employeeType && <p className="text-red-500 text-sm">{validationErrors.employeeType}</p>}
             </div>
             <div className="grid gap-2 md:col-span-2">
               <Label htmlFor="address" className="text-gradient">Address</Label>
@@ -200,6 +242,7 @@ export default function NewEmployeeDialog() {
                 placeholder="Enter address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
+                disabled={loading} // Disable input on loading
               />
             </div>
             <div className="grid gap-2">
@@ -211,7 +254,9 @@ export default function NewEmployeeDialog() {
                 placeholder="xxxx-xxxxxxx"
                 value={mobileNumber}
                 onChange={handleMobileNumberChange}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.mobileNumber && <p className="text-red-500 text-sm">{validationErrors.mobileNumber}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="hireDate">
@@ -222,47 +267,51 @@ export default function NewEmployeeDialog() {
                 type="date"
                 value={hireDate}
                 onChange={(e) => setHireDate(e.target.value)}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.hireDate && <p className="text-red-500 text-sm">{validationErrors.hireDate}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="employeeStatus">
                 Employee <span className="text-gradient">Status</span>
               </Label>
-              <Select onValueChange={setEmployeeStatus}>
+              <Select onValueChange={setEmployeeStatus} disabled={loading}> {/* Disable select on loading */}
                 <SelectTrigger id="employeeStatus">
-                  <SelectValue placeholder="Select status" />
+                  <SelectValue placeholder="Select employee status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="On Leave">On Leave</SelectItem>
-                  <SelectItem value="Terminated">Terminated</SelectItem>
+                  <SelectItem value="Inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
+              {validationErrors.employeeStatus && <p className="text-red-500 text-sm">{validationErrors.employeeStatus}</p>}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="dob">
-                Date of <span className="text-gradient">Birth</span>
-              </Label>
+              <Label htmlFor="dob">Date of <span className="text-gradient">Birth</span></Label>
               <Input
                 id="dob"
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.dob && <p className="text-red-500 text-sm">{validationErrors.dob}</p>}
             </div>
             <div className="grid gap-2 md:col-span-2">
               <Label htmlFor="notes" className="text-gradient">Notes</Label>
               <Textarea
                 id="notes"
-                rows={3}
                 placeholder="Enter any additional notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                disabled={loading} // Disable textarea on loading
               />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save Employee</Button>
+            <Button type="submit" className="" disabled={loading}>
+              {loading ? "Submitting..." : "Submit"} {/* Display submitting text */}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -38,7 +38,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const [generalPage, setGeneralPage] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [pageLimit, setPageLimit] = useState(5);
-  const [pageGeneralLimit, setPageGeneralLimit] = useState(5);
+  const [pageGeneralLimit, setPageGeneralLimit] = useState(20);
   const { toast } = useToast();
 
   const dispatch = useDispatch();
@@ -96,7 +96,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const pageGeneralParam = searchParams.get('generalPage') || '1';
     const limitParam = searchParams.get('limit') || '5';
-    const limitGeneralParam = searchParams.get('generalLimit') || '5';
+    const limitGeneralParam = searchParams.get('generalLimit') || '20';
 
     setGeneralPage(Number(pageGeneralParam));
     setPageGeneralLimit(Number(limitGeneralParam));

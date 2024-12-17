@@ -36,7 +36,7 @@ export function DataTableView<TData, TValue>({
     columns,
     data,
     totalItems,
-    pageSizeOptions = [2, 3, 4, 5, 10],
+    pageSizeOptions = [10, 20, 30, 40],
     totalRevenue,
     totalExpense
 }: DataTableProps<TData, TValue>) {
@@ -52,7 +52,7 @@ export function DataTableView<TData, TValue>({
         'limit',
         parseAsInteger
             .withOptions({ shallow: false, history: 'push' })
-            .withDefault(5)
+            .withDefault(20)
     );
 
     const paginationState = {

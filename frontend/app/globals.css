@@ -224,33 +224,25 @@
 
 /* Custom ScrollBar */
 /* Custom scrollbar with gradient background */
-.custom-scrollbar::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+::-webkit-scrollbar-track {
+  /* background: #000000;  */
+  border-radius: 1px; /* Optional: round edges of the track */
+  padding: 4px; /* This property won't directly work but helps clarify intent */
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #178F74;
-  /* linear-gradient(
-    180deg,
-    rgba(250, 122, 150, 1) 0%,
-    rgba(250, 133, 134, 1) 35%,
-    rgba(250, 143, 128, 1) 63%,
-    rgba(250, 159, 114, 1) 100%
-  ); */
-  border-radius: 8px;
+::-webkit-scrollbar-thumb {
+  width: 8px;
+  height: 8px;
+  background: #178F74; /* Thumb color */
+  border-radius: 4px; 
+  margin: 4px; 
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background:#178F74; 
-  /* linear-gradient(
-    180deg,
-    rgba(250, 122, 150, 1) 0%,
-    rgba(250, 133, 134, 1) 50%,
-    rgba(250, 143, 128, 1) 75%,
-    rgba(250, 159, 114, 1) 100%
-  ); */
+::-webkit-scrollbar-thumb:hover {
+  background: #128562; /* Darker shade for hover effect */
 }

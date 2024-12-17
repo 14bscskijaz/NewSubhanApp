@@ -20,7 +20,7 @@ export default function EmployeeListingPage({ }: TEmployeeListingPage) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(20);
   const { toast } = useToast();
 
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ export default function EmployeeListingPage({ }: TEmployeeListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const statusParam = searchParams.get('status') || '';
-    const limitParam = searchParams.get('limit') || '10';
+    const limitParam = searchParams.get('limit') || '20';
 
     setPage(Number(pageParam));
     setSearch(searchParam);

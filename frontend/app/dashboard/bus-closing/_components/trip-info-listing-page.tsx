@@ -42,7 +42,7 @@ export default function TripInfoListingPage() {
   const [driverId, setDriverId] = useState<string>(busClosing ? busClosing[0]?.driverId : '')
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
-  const [pageLimit, setPageLimit] = useState(5)
+  const [pageLimit, setPageLimit] = useState(20)
   const [busId, setBusId] = useState<string>(busClosing ? busClosing[0]?.busId : '')
   const [isVoucherShow, setIsVoucherShow] = useState(false)
   const [tripRevenue, setTripRevenue] = useState<string>('')
@@ -51,7 +51,7 @@ export default function TripInfoListingPage() {
     busClosing && busClosing[0]?.date ? new Date(busClosing[0].date) : new Date()
   );
   const [selectedRoute, setSelectedRoute] = useState<string>(busClosing ? busClosing[0]?.routeId : '');
-  const {toast} = useToast();
+  const { toast } = useToast();
 
   const searchParams = useSearchParams()
 
@@ -88,7 +88,7 @@ export default function TripInfoListingPage() {
   useEffect(() => {
     const pageParam = searchParams.get('page') || '1'
     const searchParam = searchParams.get('q') || ''
-    const limitParam = searchParams.get('limit') || '5'
+    const limitParam = searchParams.get('limit') || '20'
 
     setPage(Number(pageParam))
     setSearch(searchParam)
@@ -100,11 +100,11 @@ export default function TripInfoListingPage() {
       return total + (Number(route.actualRevenue) || 0)
     }, 0)
 
-    setTripRevenue(totalRevenue.toFixed(2))
+    setTripRevenue(String(totalRevenue))
   }, [tripsInformation])
 
   useEffect(() => {
-    if (voucherNumber && conductorId && driverId && busId && selectedDate && selectedRoute) {
+    if (voucherNumber && driverId && busId && selectedDate && selectedRoute) {
 
       const updatedBusClosing: BusClosing = {
         voucherNumber,
@@ -148,6 +148,10 @@ export default function TripInfoListingPage() {
     startIndex,
     startIndex + pageLimit
   )
+
+  const formatAmount = (amount: string | number) => {
+    return Number(amount).toLocaleString('en-US');
+};
 
   return (
     <PageContainer scrollable>
@@ -240,7 +244,7 @@ export default function TripInfoListingPage() {
             <RouteTable data={paginatedRoutes} totalData={totalUsers} />
             {parseInt(tripRevenue) > 0 && (
               <div className="mt-4 flex md:justify-end justify-start text-lg">
-                <span className="text-gradient font-bold">Total Revenue</span>: {tripRevenue}
+                <span className="text-gradient font-bold">Total Revenue</span>: {formatAmount(tripRevenue)}
               </div>
             )}
           </div>

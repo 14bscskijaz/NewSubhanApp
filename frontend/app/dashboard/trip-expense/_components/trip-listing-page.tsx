@@ -26,7 +26,7 @@ export default function TripListingPage({ }: TTripListingPage) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(20);
   const dispatch = useDispatch();
   const {toast} = useToast();
 
@@ -56,7 +56,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const countParam = searchParams.get('count') || '';
-    const limitParam = searchParams.get('limit') || '5';
+    const limitParam = searchParams.get('limit') || '20';
 
     setPage(Number(pageParam));
     setSearch(searchParam);

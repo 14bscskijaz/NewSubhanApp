@@ -45,6 +45,8 @@ export default function EditEmployeeDialog({
     hireDate: employee.hireDate ? new Date(employee.hireDate) : null,
     dob: employee.dob ? new Date(employee.dob) : null,
   });
+  const [validationErrors, setValidationErrors] = useState<any>({});
+  const [loading, setLoading] = useState(false); // Loading state to track form submission
 
   useEffect(() => {
     setFormData({
@@ -70,10 +72,54 @@ export default function EditEmployeeDialog({
     setFormData((prev) => ({ ...prev, [field]: date }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onUpdate(formData);
-    setOpen(false);
+    setLoading(true); // Set loading state to true
+
+    // Validation
+    const errors: any = {};
+
+    if (!formData.firstName) {
+      errors.firstName = "First name is required";
+    }
+
+    if (!formData.lastName) {
+      errors.lastName = "Last name is required";
+    }
+
+    if (!formData.cnic || formData.cnic.length !== 15) {
+      errors.cnic = "Invalid CNIC format";
+    }
+
+    if (!formData.mobileNumber) {
+      errors.mobileNumber = "Invalid mobile number format";
+    }
+
+    if (!formData.hireDate || !isValidDate(formData.hireDate)) {
+      errors.hireDate = "Invalid hire date";
+    }
+
+    if (!formData.dob || !isValidDate(formData.dob)) {
+      errors.dob = "Invalid date of birth";
+    }
+
+    if (!formData.employeeStatus) {
+      errors.employeeStatus = "Employee status is required";
+    }
+
+    if (!formData.employeeType) {
+      errors.employeeType = "Employee type is required";
+    }
+
+    setValidationErrors(errors);
+
+    // If no errors, proceed with the update
+    if (Object.keys(errors).length === 0) {
+      await onUpdate(formData); // Simulate async operation
+      setOpen(false);
+    }
+
+    setLoading(false); // Reset loading state after submission
   };
 
   const formatCNIC = (value: string) => {
@@ -117,7 +163,9 @@ export default function EditEmployeeDialog({
                 value={formatCNIC(formData.cnic)}
                 onChange={(e) => setFormData({ ...formData, cnic: e.target.value })}
                 placeholder="Enter CNIC"
+                disabled={loading} // Disable input during loading
               />
+              {validationErrors.cnic && <p className="text-red-500 text-sm">{validationErrors.cnic}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="firstName">First <span className="text-gradient">Name</span></Label>
@@ -126,7 +174,9 @@ export default function EditEmployeeDialog({
                 value={formData.firstName}
                 onChange={handleInputChange}
                 placeholder="Enter first name"
+                disabled={loading} // Disable input during loading
               />
+              {validationErrors.firstName && <p className="text-red-500 text-sm">{validationErrors.firstName}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="lastName">Last <span className="text-gradient">Name</span></Label>
@@ -135,13 +185,16 @@ export default function EditEmployeeDialog({
                 value={formData.lastName}
                 onChange={handleInputChange}
                 placeholder="Enter last name"
+                disabled={loading} // Disable input during loading
               />
+              {validationErrors.lastName && <p className="text-red-500 text-sm">{validationErrors.lastName}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="employeeType">Employee <span className="text-gradient">Type</span></Label>
               <Select
                 value={formData.employeeType}
                 onValueChange={(value) => handleSelectChange("employeeType", value)}
+                disabled={loading} // Disable select during loading
               >
                 <SelectTrigger id="employeeType">
                   <SelectValue placeholder="Select employee type" />
@@ -151,6 +204,7 @@ export default function EditEmployeeDialog({
                   <SelectItem value="Conductor">Conductor</SelectItem>
                 </SelectContent>
               </Select>
+              {validationErrors.employeeType && <p className="text-red-500 text-sm">{validationErrors.employeeType}</p>}
             </div>
             <div className="grid gap-2 md:col-span-2">
               <Label htmlFor="address" className="text-gradient">Address</Label>
@@ -159,6 +213,7 @@ export default function EditEmployeeDialog({
                 value={formData.address}
                 onChange={handleInputChange}
                 placeholder="Enter address"
+                disabled={loading} // Disable input during loading
               />
             </div>
             <div className="grid gap-2">
@@ -168,7 +223,9 @@ export default function EditEmployeeDialog({
                 value={formatMobileNumber(formData.mobileNumber)}
                 onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
                 placeholder="Enter mobile number"
+                disabled={loading} // Disable input during loading
               />
+              {validationErrors.mobileNumber && <p className="text-red-500 text-sm">{validationErrors.mobileNumber}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="hireDate">Hire <span className="text-gradient">Date</span></Label>
@@ -177,13 +234,16 @@ export default function EditEmployeeDialog({
                 type="date"
                 value={formatDate(formData.hireDate)}
                 onChange={(e) => handleDateChange("hireDate", e.target.value)}
+                disabled={loading} // Disable input during loading
               />
+              {validationErrors.hireDate && <p className="text-red-500 text-sm">{validationErrors.hireDate}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="employeeStatus">Employee <span className="text-gradient">Status</span></Label>
               <Select
                 value={formData.employeeStatus}
                 onValueChange={(value) => handleSelectChange("employeeStatus", value)}
+                disabled={loading} // Disable select during loading
               >
                 <SelectTrigger id="employeeStatus">
                   <SelectValue placeholder="Select status" />
@@ -194,29 +254,14 @@ export default function EditEmployeeDialog({
                   <SelectItem value="Terminated">Terminated</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="dob">Date of <span className="text-gradient">Birth</span></Label>
-              <Input
-                id="dob"
-                type="date"
-                value={formatDate(formData.dob)}
-                onChange={(e) => handleDateChange("dob", e.target.value)}
-              />
-            </div>
-            <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="notes" className="text-gradient">Notes</Label>
-              <Textarea
-                id="notes"
-                value={formData.notes}
-                onChange={handleInputChange}
-                rows={3}
-                placeholder="Enter any additional notes"
-              />
+              {validationErrors.employeeStatus && <p className="text-red-500 text-sm">{validationErrors.employeeStatus}</p>}
             </div>
           </div>
+
           <DialogFooter>
-            <Button type="submit">Update Employee</Button>
+            <Button type="submit" disabled={loading}> {/* Disable button during loading */}
+              {loading ? "Saving..." : "Save"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

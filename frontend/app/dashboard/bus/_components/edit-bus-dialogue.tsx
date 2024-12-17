@@ -32,38 +32,56 @@ export default function EditBusDialog({
   onUpdate,
 }: EditBusDialogProps) {
   const [open, setOpen] = useState(false);
-  const [busNumber, setBusNumber] = useState(bus.busNumber);
-  const [busType, setBusType] = useState(bus.busType);
-  const [brand, setBrand] = useState(bus.brand); // New brand field
-  const [busOwner, setBusOwner] = useState(bus.busOwner);
-  const [description, setDescription] = useState(bus.description);
-  const [busStatus, setBusStatus] = useState(bus.busStatus);
+  const [busNumber, setBusNumber] = useState(bus.busNumber || "");
+  const [busType, setBusType] = useState(bus.busType || "");
+  const [brand, setBrand] = useState(bus.brand || "");
+  const [busOwner, setBusOwner] = useState(bus.busOwner || "");
+  const [description, setDescription] = useState(bus.description || "");
+  const [busStatus, setBusStatus] = useState(bus.busStatus || "");
+  const [loading, setLoading] = useState(false); // Loading state for form submission
 
+  // Reset form when the bus prop changes
   useEffect(() => {
-    // Reset form when the bus prop changes
-    setBusNumber(bus.busNumber);
-    setBusType(bus.busType);
-    setBrand(bus.brand); 
-    setBusOwner(bus.busOwner);
-    setDescription(bus.description);
-    setBusStatus(bus.busStatus);
+    setBusNumber(bus.busNumber || "");
+    setBusType(bus.busType || "");
+    setBrand(bus.brand || "");
+    setBusOwner(bus.busOwner || "");
+    setDescription(bus.description || "");
+    setBusStatus(bus.busStatus || "");
   }, [bus]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // Basic validation to ensure values are not empty
+    if (
+      !busNumber.trim() ||
+      !busType.trim() ||
+      !brand.trim() ||
+      !busOwner.trim() ||
+      !description.trim() ||
+      !busStatus.trim()
+    ) {
+      return; // Prevent submission if validation fails
+    }
+
+    setLoading(true); // Show loading state
 
     const updatedBus: Buses = {
       id: bus.id,
-      busNumber: busNumber,
-      busType: busType,
-      brand: brand, 
-      busOwner: busOwner,
-      description,
-      busStatus: busStatus,
+      busNumber: busNumber.trim(),
+      busType: busType.trim(),
+      brand: brand.trim(),
+      busOwner: busOwner.trim(),
+      description: description.trim(),
+      busStatus: busStatus.trim(),
     };
 
-    onUpdate(updatedBus, bus.id);
-    setOpen(false);
+    // Simulate API call or update process (e.g., delay)
+    await onUpdate(updatedBus, bus.id);
+
+    setLoading(false); // Hide loading state after submission
+    setOpen(false); // Close the dialog
   };
 
   return (
@@ -89,6 +107,8 @@ export default function EditBusDialog({
                 value={busNumber}
                 onChange={(e) => setBusNumber(e.target.value)}
                 placeholder="Enter bus number"
+                required
+                aria-describedby="busNumber-error"
               />
             </div>
             <div className="grid gap-2">
@@ -110,6 +130,8 @@ export default function EditBusDialog({
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
                 placeholder="Enter brand"
+                required
+                aria-describedby="brand-error"
               />
             </div>
             <div className="grid gap-2">
@@ -119,6 +141,8 @@ export default function EditBusDialog({
                 value={busOwner}
                 onChange={(e) => setBusOwner(e.target.value)}
                 placeholder="Enter bus owner"
+                required
+                aria-describedby="busOwner-error"
               />
             </div>
             <div className="grid gap-2 md:col-span-2">
@@ -129,6 +153,8 @@ export default function EditBusDialog({
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 placeholder="Enter bus description"
+                required
+                aria-describedby="description-error"
               />
             </div>
             <div className="grid gap-2">
@@ -147,7 +173,9 @@ export default function EditBusDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Update Bus</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Updating..." : "Update Bus"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

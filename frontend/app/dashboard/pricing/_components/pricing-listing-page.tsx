@@ -34,7 +34,7 @@ export default function PricingListingPage({ }: TPricingListingPage) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [source, setSource] = useState('');
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(20);
   const { toast } = useToast();
 
   const dispatch = useDispatch();
@@ -64,7 +64,7 @@ export default function PricingListingPage({ }: TPricingListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const sourceParam = searchParams.get('source') || '';
-    const limitParam = searchParams.get('limit') || '5';
+    const limitParam = searchParams.get('limit') || '20';
 
     setPage(Number(pageParam));
     setSearch(searchParam);
@@ -112,10 +112,14 @@ export default function PricingListingPage({ }: TPricingListingPage) {
 
   // Filtering based on search parameters
   const filteredTickets = displayTickets.filter((ticket) => {
-    const matchesSearch = search
-      ? ticket.destination.toLowerCase().includes(search.toLowerCase()) ||
-      ticket.source.toLowerCase().includes(search.toLowerCase())
-      : true;
+    const matchesSearch = search ?
+      ticket.destination.toLowerCase().includes(search.toLowerCase()) ||
+      ticket.destinationStation.toLowerCase().includes(search.toLowerCase()) ||
+      ticket.sourceStation.toLowerCase().includes(search.toLowerCase()) ||
+      ticket.busType.toLowerCase().includes(search.toLowerCase()) ||
+      ticket.ticketPrice.toString().toLowerCase().includes(search.toLowerCase()) ||
+      ticket.source.toLowerCase().includes(search.toLowerCase()) :
+      true;
 
     const matchesStatus = source
       ? ticket.source.toLowerCase() === source.toLowerCase()

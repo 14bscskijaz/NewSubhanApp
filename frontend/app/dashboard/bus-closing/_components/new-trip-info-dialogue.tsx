@@ -123,7 +123,7 @@ export default function NewRouteDialog({
     remaining -= expenseForThisRouteId?.counter ?? 0;
     remaining -= expenseForThisRouteId?.dcParchi ?? 0;
     remaining -= Number(updatedData.refreshmentExpense) || 0;
-    remaining -= Number(updatedData.loadExpense) || 0;
+    remaining += Number(updatedData.loadExpense) || 0;
     remaining -= Number(updatedData.rewardCommission) || 0;
 
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
@@ -280,31 +280,16 @@ export default function NewRouteDialog({
     setIsRewardCommissionCustom(false);
   };
 
-  const getSourceStations = () => {
-    const uniqueSourceStations = new Map();
-    routes.forEach((route) => {
-      if (!uniqueSourceStations.has(route.sourceAdda)) {
-        uniqueSourceStations.set(route.sourceAdda, {
-          value: route.sourceAdda,
-          label: `${route.sourceAdda} (${route.sourceCity})`
-        });
-      }
-    });
-    return Array.from(uniqueSourceStations.values());
-  };
+  const handleRouteChange = (value: string) => {
+    const route = routes.find(route => route.id === Number(value))
+    setTripData((prev) => {
+      const updatedData = { ...prev, sourceStation: route?.sourceAdda || "", destinationStation: route?.destinationAdda || "" }
+      updatedData.routeId = String(route?.id) || "";
+      updatedData.actualRevenue = calculateRevenue(updatedData);
+      return updatedData;
+    })
 
-  const getDestinationStations = () => {
-    const uniqueDestinationStations = new Map();
-    routes.forEach((route) => {
-      if (!uniqueDestinationStations.has(route.destinationAdda)) {
-        uniqueDestinationStations.set(route.destinationAdda, {
-          value: route.destinationAdda,
-          label: `${route.destinationAdda} (${route.destinationCity})`
-        });
-      }
-    });
-    return Array.from(uniqueDestinationStations.values());
-  };
+  }
 
   const calculateRefreshmentExpense = () => {
     if (tripData.routeId && tripData.passengerCount) {
@@ -312,7 +297,7 @@ export default function NewRouteDialog({
         (expense) => expense.routeId === Number(tripData.routeId)
       );
       if (expenseForThisRouteId && expenseForThisRouteId.refreshment) {
-        const calculatedRefreshmentExpense = 
+        const calculatedRefreshmentExpense =
           Number(tripData.passengerCount) * expenseForThisRouteId.refreshment;
         return calculatedRefreshmentExpense;
       }
@@ -372,24 +357,18 @@ export default function NewRouteDialog({
           </DialogHeader>
 
           <div className="grid grid-cols-1 gap-12 py-4 md:grid-cols-2">
+            {/* Route Dropdown */}
             <SelectField
-              id="sourceStation"
-              value={tripData.sourceStation}
-              onChange={(value) => handleSelectChange("sourceStation", value)}
-              placeholder="Select Source Station"
-              options={getSourceStations()}
-              label="Source Station"
-              className="flex-col !space-x-0 gap-y-2 !items-start"
-            />
-
-            <SelectField
-              id="destinationStation"
-              value={tripData.destinationStation}
-              onChange={(value) => handleSelectChange("destinationStation", value)}
-              placeholder="Select Destination Station"
-              options={getDestinationStations()}
-              label="Destination Station"
-              className="flex-col !space-x-0 gap-y-2 !items-start"
+              id="route"
+              label="Select Route"
+              value={tripData?.routeId?.toString()}
+              onChange={handleRouteChange}
+              placeholder="Select Route"
+              options={routes.map((route) => ({
+                value: route.id.toString(),
+                label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+              }))}
+              className="flex-col !items-start !space-x-0"
             />
 
             <div className="grid gap-2">
@@ -480,7 +459,7 @@ export default function NewRouteDialog({
                 value={tripData.rewardCommission}
                 onChange={handleInputChange}
                 min={0}
-                step="0.01"
+                step="1"
               />
             </div>
 
@@ -493,7 +472,7 @@ export default function NewRouteDialog({
                 value={tripData.refreshmentExpense}
                 onChange={handleInputChange}
                 min={0}
-                step="0.01"
+                step="1"
               />
             </div>
 

@@ -37,13 +37,13 @@ export default function RouteTable({
           setSearchQuery={setSearchQuery}
           setPage={setPage}
         />
-        <DataTableFilterBox
+        {/* <DataTableFilterBox
           filterKey="source"
           title="Source"
           options={SOURCE_OPTIONS}
           setFilterValue={setSourceFilter}
           filterValue={sourceFilter}
-        />
+        /> */}
         <DataTableResetFilter
           isFilterActive={isAnyFilterActive}
           onReset={resetFilters}

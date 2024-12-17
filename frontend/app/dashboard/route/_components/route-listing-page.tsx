@@ -58,6 +58,8 @@ export default function RouteListingPage({ }: TRouteListingPage) {
     const matchesSearch =
       search ?
         route.destinationCity.toLowerCase().includes(search.toLowerCase()) ||
+        route.destinationAdda.toLowerCase().includes(search.toLowerCase()) ||
+        route.sourceAdda.toLowerCase().includes(search.toLowerCase()) ||
         route.sourceCity.toLowerCase().includes(search.toLowerCase()) :
         true;
 

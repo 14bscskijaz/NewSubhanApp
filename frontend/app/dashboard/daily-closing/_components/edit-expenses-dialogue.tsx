@@ -28,6 +28,11 @@ export default function EditPricingDialog({
     amount: expense.amount
   });
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    description: '',
+    amount: ''
+  });
 
   useEffect(() => {
     setFormData({
@@ -46,18 +51,45 @@ export default function EditPricingDialog({
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const validateForm = (): boolean => {
+    let valid = true;
+    const newErrors = { description: '', amount: '' };
+
+    // Validate description
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
+      valid = false;
+    }
+
+    // Validate amount
+    if (!formData.amount || formData.amount <= 0) {
+      newErrors.amount = 'Amount must be a positive number';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-   
+    if (!validateForm()) return;
+
+    setLoading(true);
+
     const updatedFormData: Expense = {
       ...expense, 
       description: formData.description,
       amount: formData.amount 
     };
 
-    onUpdate(updatedFormData); // Pass the updated expense data
-    setOpen(false);
+    // Simulate an API call or async operation
+    setTimeout(() => {
+      onUpdate(updatedFormData); // Pass the updated expense data
+      setOpen(false);
+      setLoading(false);
+    }, 1000);
   };
 
   return (
@@ -85,6 +117,9 @@ export default function EditPricingDialog({
                 onChange={handleInputChange}
                 placeholder="Enter description"
               />
+              {errors.description && (
+                <p className="text-red-500 text-sm">{errors.description}</p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="amount">Amount</Label>
@@ -95,10 +130,15 @@ export default function EditPricingDialog({
                 onChange={handleInputChange}
                 placeholder="Enter amount"
               />
+              {errors.amount && (
+                <p className="text-red-500 text-sm">{errors.amount}</p>
+              )}
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Update Expense</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Updating...' : 'Update Expense'}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

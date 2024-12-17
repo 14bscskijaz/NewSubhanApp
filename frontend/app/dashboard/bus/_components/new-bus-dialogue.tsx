@@ -38,12 +38,48 @@ export default function NewBusDialog() {
   const [description, setDescription] = useState("");
   const [busStatus, setBusStatus] = useState("");
 
+  const [loading, setLoading] = useState(false); // Loading state
+  const [validationErrors, setValidationErrors] = useState({
+    busNumber: "",
+    busType: "",
+    brand: "",
+    busOwner: "",
+    description: "",
+    busStatus: "",
+  });
+
   const { toast } = useToast();
 
   const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // Reset errors before validation
+    setValidationErrors({
+      busNumber: "",
+      busType: "",
+      brand: "",
+      busOwner: "",
+      description: "",
+      busStatus: "",
+    });
+
+    // Validate the form fields
+    const errors: any = {};
+
+    if (!busNumber.trim()) errors.busNumber = "Bus Number is required.";
+    if (!busType.trim()) errors.busType = "Bus Type is required.";
+    if (!brand.trim()) errors.brand = "Brand is required.";
+    if (!busOwner.trim()) errors.busOwner = "Bus Owner is required.";
+    if (!description.trim()) errors.description = "Description is required.";
+    if (!busStatus.trim()) errors.busStatus = "Bus Status is required.";
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
     const isBusExist = buses.find(
       (bus) =>
         bus.busNumber.toLowerCase().trim() === busNumber.toLowerCase().trim()
@@ -57,6 +93,7 @@ export default function NewBusDialog() {
       });
       return;
     }
+
     const newBus: Omit<Buses, "id"> = {
       busNumber,
       busType,
@@ -67,6 +104,7 @@ export default function NewBusDialog() {
     };
 
     try {
+      setLoading(true); // Start loading
       await createBus(newBus);
       const allBusesData = await getAllBuses();
       dispatch(setBus(allBusesData));
@@ -86,6 +124,8 @@ export default function NewBusDialog() {
         duration: 1000,
       });
       console.error("Failed to create the bus:", error.message);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -127,13 +167,17 @@ export default function NewBusDialog() {
                 value={busNumber}
                 onChange={(e) => setBusNumber(e.target.value)}
                 maxLength={9}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.busNumber && (
+                <p className="text-red-500 text-sm">{validationErrors.busNumber}</p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="busType">
                 Bus <span className="text-gradient">Type</span>
               </Label>
-              <Select onValueChange={setBusType}>
+              <Select onValueChange={setBusType} disabled={loading}> {/* Disable select on loading */}
                 <SelectTrigger id="busType">
                   <SelectValue placeholder="Select Bus Type" />
                 </SelectTrigger>
@@ -142,6 +186,9 @@ export default function NewBusDialog() {
                   <SelectItem value="Business">Business</SelectItem>
                 </SelectContent>
               </Select>
+              {validationErrors.busType && (
+                <p className="text-red-500 text-sm">{validationErrors.busType}</p>
+              )}
             </div>
             {/* New Brand Name Field */}
             <div className="grid gap-2">
@@ -154,7 +201,11 @@ export default function NewBusDialog() {
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
                 maxLength={50}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.brand && (
+                <p className="text-red-500 text-sm">{validationErrors.brand}</p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="busOwner">
@@ -166,7 +217,11 @@ export default function NewBusDialog() {
                 value={busOwner}
                 onChange={(e) => setBusOwner(e.target.value)}
                 maxLength={55}
+                disabled={loading} // Disable input on loading
               />
+              {validationErrors.busOwner && (
+                <p className="text-red-500 text-sm">{validationErrors.busOwner}</p>
+              )}
             </div>
             <div className="grid gap-2 md:col-span-2">
               <Label htmlFor="description" className="text-gradient">
@@ -179,13 +234,17 @@ export default function NewBusDialog() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength={255}
+                disabled={loading} // Disable textarea on loading
               />
+              {validationErrors.description && (
+                <p className="text-red-500 text-sm">{validationErrors.description}</p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="busStatus">
                 Bus <span className="text-gradient">Status</span>
               </Label>
-              <Select onValueChange={setBusStatus}>
+              <Select onValueChange={setBusStatus} disabled={loading}> {/* Disable select on loading */}
                 <SelectTrigger id="busStatus">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
@@ -198,10 +257,15 @@ export default function NewBusDialog() {
                   <SelectItem value="Retired">Retired</SelectItem>
                 </SelectContent>
               </Select>
+              {validationErrors.busStatus && (
+                <p className="text-red-500 text-sm">{validationErrors.busStatus}</p>
+              )}
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save Bus</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Submitting..." : "Save Bus"} {/* Display submitting text */}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -26,18 +26,41 @@ export default function NewExpensesDialog() {
   const [amount, setAmount] = useState<number | "">("")
   const [busId, setBusId] = useState<string | number>("")
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);  // Loading state
 
   const dispatch = useDispatch()
 
   // Get buses from Redux state
   const buses = useSelector((state: RootState) => state.buses.buses)
 
-  // Handle form submission
+  // Handle form submission with validation and loading state
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Form validation
+    if (!description.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Description is required.",
+        variant: "destructive",
+        duration: 1000
+      });
+      return;
+    }
+
+    if (!amount || amount <= 0) {
+      toast({
+        title: "Validation Error",
+        description: "Amount must be a positive number.",
+        variant: "destructive",
+        duration: 1000
+      });
+      return;
+    }
+
+    setIsLoading(true);  // Start loading
+
     try {
-
-      event.preventDefault();
-
       const newExpense: Omit<Expense, 'id'> = {
         date: new Date().toISOString(),
         description,
@@ -50,6 +73,12 @@ export default function NewExpensesDialog() {
       setOpen(false);
 
       resetForm();
+      toast({
+        title: "Success",
+        description: "Expense added successfully.",
+        variant: "default",
+        duration: 1000
+      });
     } catch (error: any) {
       console.error(error.message);
 
@@ -58,7 +87,9 @@ export default function NewExpensesDialog() {
         description: error.message,
         variant: "destructive",
         duration: 1000
-      })
+      });
+    } finally {
+      setIsLoading(false);  // End loading
     }
   }
 
@@ -86,7 +117,6 @@ export default function NewExpensesDialog() {
           </DialogHeader>
 
           {/* Tabs */}
-          {/* Custom Tab Buttons */}
           <div className="flex space-x-4 my-4">
             <div
               className={`cursor-pointer px-4 py-2 rounded-lg text-center transition-all ${tab === "bus" ? "bg-gradient-btn text-white" : "bg-gray-200 text-gray-600"
@@ -141,6 +171,7 @@ export default function NewExpensesDialog() {
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value === "" ? "" : parseFloat(e.target.value))}
+                    min={0}
                   />
                 </div>
               </>
@@ -167,6 +198,7 @@ export default function NewExpensesDialog() {
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value === "" ? "" : parseFloat(e.target.value))}
+                    min={0}
                   />
                 </div>
               </>
@@ -174,7 +206,9 @@ export default function NewExpensesDialog() {
           </div>
 
           <DialogFooter>
-            <Button type="submit">Save Expense</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Expense"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

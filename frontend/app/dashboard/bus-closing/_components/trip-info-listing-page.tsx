@@ -97,7 +97,7 @@ export default function TripInfoListingPage() {
 
   useEffect(() => {
     const totalRevenue = tripsInformation.reduce((total, route) => {
-      return total + (Number(route.actualRevenue) || 0)
+      return total + (Number(route.revenue) || 0)
     }, 0)
 
     setTripRevenue(String(totalRevenue))

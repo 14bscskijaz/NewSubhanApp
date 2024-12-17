@@ -232,25 +232,25 @@ export const navItems: NavItem[] = [
       }
     ]
   },
-  // {
-  //   title: 'Reports',
-  //   url: '#',
-  //   icon: 'billing',
-  //   isActive: true,
+  {
+    title: 'Reports',
+    url: '#',
+    icon: 'billing',
+    isActive: true,
 
-  //   items: [
-  //     {
-  //       title: 'Bus Reports',
-  //       url: '/dashboard/bus-report',
-  //       icon: 'userPen'
-  //     },
-  //     {
-  //       title: 'Route Report',
-  //       url: '/dashboard/route-closing-expense',
-  //       icon: 'login'
-  //     }
-  //   ]
-  // },
+    items: [
+      {
+        title: 'Route Report',
+        url: '/dashboard/route-report',
+        icon: 'login'
+      },
+      // {
+      //   title: 'Bus Reports',
+      //   url: '/dashboard/bus-report',
+      //   icon: 'userPen'
+      // }
+    ]
+  },
   
   // {
   //   title: 'Kanban',

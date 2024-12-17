@@ -17,7 +17,7 @@ export const columns: ColumnDef<TripInformation>[] = [
     header: 'Passengers'
   },
   {
-    accessorKey: 'actualRevenue',
+    accessorKey: 'revenue',
     header: 'Revenue'
   },
 

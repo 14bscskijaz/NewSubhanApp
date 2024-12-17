@@ -16,6 +16,7 @@ export const searchParams = {
   route: parseAsString,
   categories: parseAsString,
   date: parseAsString,
+  dateRange: parseAsString,
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

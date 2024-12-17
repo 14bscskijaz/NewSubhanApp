@@ -10,9 +10,13 @@ export type SavedTripInformation = {
   fullTicketCount: string;
   halfTicketCount: string;
   freeTicketCount: string;
-  actualRevenue: string; // Auto
+  revenue: string; // Auto
   miscellaneousAmount: string;
   revenueDiffExplanation: string;
+  loadExpense: string,
+  rewardCommission: string,
+  refreshmentExpense: string,
+  date?: string
 };
 
 export type SavedTripInformationInput = SavedTripInformation & {
@@ -109,6 +113,12 @@ const savedTripInformationSlice = createSlice({
 
       state.savedTripsInformation.push(newTripInformation);
     },
+    setSavedTripInformation: (
+      state,
+      action: PayloadAction<Omit<SavedTripInformation[], 'id'>>
+    ) => {
+      state.savedTripsInformation = action.payload
+    },
 
     // Action to remove a bus closing by ID
     removeSavedTripInformation: (state, action: PayloadAction<number>) => {
@@ -133,7 +143,8 @@ const savedTripInformationSlice = createSlice({
 export const {
   addSavedTripInformation,
   removeSavedTripInformation,
-  updateSavedTripInformation
+  updateSavedTripInformation,
+  setSavedTripInformation
 } = savedTripInformationSlice.actions;
 export default savedTripInformationSlice.reducer;
 

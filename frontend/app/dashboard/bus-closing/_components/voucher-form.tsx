@@ -276,7 +276,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
               <td>${sourceAdda + "-" + destinationAdda}</td>
               <td>${trip.passengerCount || '-'}</td>
               <td>${TicketMap.get(Number(trip?.routeId)) || '-'}</td>
-              <td>${trip.actualRevenue || '-'}</td>
+              <td>${trip.revenue || '-'}</td>
               </tbody>
             `}).join('')}
           </table>

@@ -152,7 +152,7 @@ export default function EditRouteDialog({
 
         // Recalculate revenue with the new ticket price
         console.log('updated Data route id: ', updatedData.routeId);
-        updatedData.actualRevenue = calculateRevenue(updatedData);
+        updatedData.revenue = calculateRevenue(updatedData);
       }
 
       return updatedData;
@@ -184,9 +184,9 @@ export default function EditRouteDialog({
       };
 
       // If the changed field is a numeric field, set actual revenue to empty string, else remain same.
-      newData.actualRevenue = numericFields.includes(id)
+      newData.revenue = numericFields.includes(id)
         ? ''
-        : newData.actualRevenue;
+        : newData.revenue;
 
       const fullCount = Number(newData.fullTicketCount) || 0;
       const halfCount = Number(newData.halfTicketCount) || 0;
@@ -199,7 +199,7 @@ export default function EditRouteDialog({
       );
       console.log('new Data full ticket routeID:', newData.routeId);
       // Calculate the revenue if we have a ticket price
-      newData.actualRevenue = calculateRevenue(newData);
+      newData.revenue = calculateRevenue(newData);
 
       return newData;
     });
@@ -218,7 +218,7 @@ export default function EditRouteDialog({
       halfTicketCount: tripData.halfTicketCount,
       freeTicketCount: tripData.freeTicketCount,
       miscellaneousAmount: tripData.miscellaneousAmount,
-      actualRevenue: tripData.actualRevenue,
+      revenue: tripData.revenue,
       revenueDiffExplanation: tripData.revenueDiffExplanation,
       loadExpense: tripData.loadExpense,
       rewardCommission: tripData.rewardCommission,
@@ -393,7 +393,7 @@ export default function EditRouteDialog({
                 id="actualRevenue"
                 type="number"
                 placeholder="Actual revenue"
-                value={tripData.actualRevenue}
+                value={tripData.revenue}
                 onChange={handleInputChange}
               />
             </div>

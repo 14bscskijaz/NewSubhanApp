@@ -56,7 +56,7 @@ export default function NewRouteDialog({
     halfTicketCount: '',
     freeTicketCount: '',
     miscellaneousAmount: '',
-    actualRevenue: '',
+    revenue: '',
     revenueDiffExplanation: '',
     sourceStation: '',
     destinationStation: '',
@@ -156,7 +156,7 @@ export default function NewRouteDialog({
             (id === 'destinationStation' ? stationName : prev.destinationStation)
         )?.id;
         updatedData.routeId = newRouteId ? String(newRouteId) : '';
-        updatedData.actualRevenue = calculateRevenue(updatedData);
+        updatedData.revenue = calculateRevenue(updatedData);
       }
 
       return updatedData;
@@ -214,7 +214,7 @@ export default function NewRouteDialog({
         fullCount + halfCount + freeCount + luxuryCount
       );
 
-      newData.actualRevenue = calculateRevenue(newData);
+      newData.revenue = calculateRevenue(newData);
 
       return newData;
     });
@@ -233,7 +233,7 @@ export default function NewRouteDialog({
         halfTicketCount: tripData.halfTicketCount,
         freeTicketCount: tripData.freeTicketCount,
         miscellaneousAmount: tripData.miscellaneousAmount,
-        actualRevenue: tripData.actualRevenue,
+        revenue: tripData.revenue,
         revenueDiffExplanation: tripData.revenueDiffExplanation,
         refreshmentExpense: tripData.refreshmentExpense,
         loadExpense: tripData.loadExpense,
@@ -267,7 +267,7 @@ export default function NewRouteDialog({
       halfTicketCount: '',
       freeTicketCount: '',
       miscellaneousAmount: '',
-      actualRevenue: '',
+      revenue: '',
       revenueDiffExplanation: '',
       sourceStation: '',
       destinationStation: '',
@@ -285,7 +285,7 @@ export default function NewRouteDialog({
     setTripData((prev) => {
       const updatedData = { ...prev, sourceStation: route?.sourceAdda || "", destinationStation: route?.destinationAdda || "" }
       updatedData.routeId = String(route?.id) || "";
-      updatedData.actualRevenue = calculateRevenue(updatedData);
+      updatedData.revenue = calculateRevenue(updatedData);
       return updatedData;
     })
 
@@ -493,7 +493,7 @@ export default function NewRouteDialog({
                 id="actualRevenue"
                 type="number"
                 placeholder="Actual revenue"
-                value={tripData.actualRevenue}
+                value={tripData.revenue}
                 onChange={handleInputChange}
               />
             </div>

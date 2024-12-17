@@ -10,7 +10,7 @@ export type TripInformation = {
   fullTicketCount: string;
   halfTicketCount: string;
   freeTicketCount: string;
-  actualRevenue: string; // Auto
+  revenue: string; // Auto
   miscellaneousAmount: string;
   revenueDiffExplanation: string;
   loadExpense: string,

@@ -28,7 +28,8 @@ namespace BusServiceAPI.Controllers
                     BusType = b.BusType.ToString() ,
                     BusOwner = b.BusOwner,
                     Description = b.Description,
-                    BusStatus = b.BusStatus
+                    BusStatus = b.BusStatus,
+                    BusBrand = b.BusBrand,
                 }).ToList();
 
             return Ok(buses);
@@ -45,6 +46,7 @@ namespace BusServiceAPI.Controllers
                     BusType = b.BusType.ToString() ,
                     BusOwner = b.BusOwner,
                     Description = b.Description,
+                    BusBrand = b.BusBrand,
                     BusStatus = b.BusStatus
                 })
                 .FirstOrDefault(b => b.Id == id);
@@ -64,6 +66,7 @@ namespace BusServiceAPI.Controllers
                 BusType = (BusTypeEnum)Enum.Parse(typeof(BusTypeEnum), busDto.BusType),
                 BusOwner = busDto.BusOwner,
                 Description = busDto.Description,
+                BusBrand = busDto.BusBrand,
                 BusStatus = busDto.BusStatus
             };
 
@@ -77,6 +80,7 @@ namespace BusServiceAPI.Controllers
                 BusType = bus.BusType.ToString(),
                 BusOwner = bus.BusOwner,
                 Description = bus.Description,
+                BusBrand = bus.BusBrand,
                 BusStatus = bus.BusStatus
             };
 
@@ -93,6 +97,7 @@ namespace BusServiceAPI.Controllers
             bus.BusType = (BusTypeEnum)Enum.Parse(typeof(BusTypeEnum), busDto.BusType);
             bus.BusOwner = busDto.BusOwner;
             bus.Description = busDto.Description;
+            bus.BusBrand = busDto.BusBrand;
             bus.BusStatus = busDto.BusStatus;
 
             _context.SaveChanges();

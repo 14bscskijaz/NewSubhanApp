@@ -55,11 +55,11 @@ export default function EditRouteDialog({
     ...tripInformation,
     sourceStation:
       routes.find(
-        (route) => route.id === parseInt(tripInformation.routeId as string)
+        (route) => route.id === parseInt(tripInformation.routeId?.toString() as string)
       )?.sourceAdda ?? '',
     destinationStation:
       routes.find(
-        (route) => route.id === parseInt(tripInformation.routeId as string)
+        (route) => route.id === parseInt(tripInformation.routeId?.toString() as string)
       )?.destinationAdda ?? ''
   });
 
@@ -80,12 +80,12 @@ export default function EditRouteDialog({
   const calculateRevenue = (updatedData: Omit<TripInformationInput, 'id'>) => {
     // Get the ticket price for standard and luxury buses tickets
     const standardTicketPrice = tickets.find(
-      (ticket: { routeId: { toString: () => string | undefined; }; busType: string; }) =>
+      (ticket: { routeId: { toString: () => string | null; }; busType: string; }) =>
         ticket.routeId.toString() === updatedData.routeId &&
         ticket.busType === 'Standard'
     )?.ticketPrice;
     const luxuryTicketPrice = tickets.find(
-      (ticket: { routeId: { toString: () => string | undefined; }; busType: string; }) =>
+      (ticket: { routeId: { toString: () => string | null; }; busType: string; }) =>
         ticket.routeId.toString() === updatedData.routeId &&
         ticket.busType === 'Business'
     )?.ticketPrice;
@@ -123,13 +123,13 @@ export default function EditRouteDialog({
     } else if (expenseForThisRouteId && expenseForThisRouteId.routeCommission < 1) {
       const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings;
       remaining -= standCommissionValue;
-    } 
+    }
 
     // Add or subtract the miscellaneous amount
     if (updatedData.miscellaneousAmount) {
       remaining += Number(updatedData.miscellaneousAmount);
     }
-    return String(remaining);
+    return Number(remaining);
   };
 
   const handleSelectChange = (
@@ -144,11 +144,11 @@ export default function EditRouteDialog({
         const newRouteId = routes.find(
           (route) =>
             route.sourceAdda ===
-              (id === 'sourceStation' ? value : prev.sourceStation) &&
+            (id === 'sourceStation' ? value : prev.sourceStation) &&
             route.destinationAdda ===
-              (id === 'destinationStation' ? value : prev.destinationStation)
+            (id === 'destinationStation' ? value : prev.destinationStation)
         )?.id;
-        updatedData.routeId = newRouteId ? String(newRouteId) : '';
+        updatedData.routeId = newRouteId ? Number(newRouteId) : null;
 
         // Recalculate revenue with the new ticket price
         console.log('updated Data route id: ', updatedData.routeId);
@@ -185,7 +185,7 @@ export default function EditRouteDialog({
 
       // If the changed field is a numeric field, set actual revenue to empty string, else remain same.
       newData.revenue = numericFields.includes(id)
-        ? ''
+        ? null
         : newData.revenue;
 
       const fullCount = Number(newData.fullTicketCount) || 0;
@@ -194,7 +194,7 @@ export default function EditRouteDialog({
       const luxuryCount = Number(newData.fullTicketBusinessCount) || 0;
 
       // Calculate the passenger count
-      newData.passengerCount = String(
+      newData.passengerCount = Number(
         fullCount + halfCount + freeCount + luxuryCount
       );
       console.log('new Data full ticket routeID:', newData.routeId);
@@ -210,11 +210,11 @@ export default function EditRouteDialog({
 
     const updatedTripData: TripInformation = {
       id: tripData.id,
-      routeClosingVoucherId: tripData.routeClosingVoucherId,
-      routeId: tripData.routeId,
-      passengerCount: tripData.passengerCount,
-      fullTicketBusinessCount: tripData.fullTicketBusinessCount,
-      fullTicketCount: tripData.fullTicketCount,
+      routeClosingVoucherId: Number(tripData.routeClosingVoucherId),
+      routeId: Number(tripData.routeId),
+      passengerCount: Number(tripData.passengerCount),
+      fullTicketBusinessCount: Number(tripData.fullTicketBusinessCount),
+      fullTicketCount: Number(tripData.fullTicketCount),
       halfTicketCount: tripData.halfTicketCount,
       freeTicketCount: tripData.freeTicketCount,
       miscellaneousAmount: tripData.miscellaneousAmount,
@@ -315,7 +315,7 @@ export default function EditRouteDialog({
               <Input
                 id="passengerCount"
                 type="number"
-                value={tripData.passengerCount}
+                value={tripData.passengerCount?.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter Passenger Count"
                 disabled
@@ -332,7 +332,7 @@ export default function EditRouteDialog({
                 id="fullTicketBusinessCount"
                 type="number"
                 placeholder="Enter full ticket count"
-                value={tripData.fullTicketBusinessCount}
+                value={tripData.fullTicketBusinessCount?.toString()}
                 onChange={handleInputChange}
               />
             </div>
@@ -344,7 +344,7 @@ export default function EditRouteDialog({
               <Input
                 id="fullTicketCount"
                 type="number"
-                value={tripData.fullTicketCount}
+                value={tripData.fullTicketCount?.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter Full Ticket Count"
               />
@@ -356,7 +356,7 @@ export default function EditRouteDialog({
               <Input
                 id="halfTicketCount"
                 type="number"
-                value={tripData.halfTicketCount}
+                value={tripData.halfTicketCount?.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter Half Ticket Count"
               />
@@ -368,7 +368,7 @@ export default function EditRouteDialog({
               <Input
                 id="freeTicketCount"
                 type="number"
-                value={tripData.freeTicketCount}
+                value={tripData.freeTicketCount?.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter Free Ticket Count"
               />
@@ -381,7 +381,7 @@ export default function EditRouteDialog({
                 id="miscellaneousAmount"
                 type="number"
                 placeholder="Calculated revenue"
-                value={tripData.miscellaneousAmount}
+                value={tripData.miscellaneousAmount?.toString()}
                 onChange={handleInputChange}
               />
             </div>
@@ -393,14 +393,14 @@ export default function EditRouteDialog({
                 id="actualRevenue"
                 type="number"
                 placeholder="Actual revenue"
-                value={tripData.revenue}
+                value={tripData?.revenue?.toString()}
                 onChange={handleInputChange}
               />
             </div>
 
             <div className="grid gap-2 md:col-span-2">
               <Label htmlFor="revenueDiffExplanation">
-              Miscellaneous  Difference{' '}
+                Miscellaneous  Difference{' '}
                 <span className="text-gradient">Explanation</span>
               </Label>
               <Textarea

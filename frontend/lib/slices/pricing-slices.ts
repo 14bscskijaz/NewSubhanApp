@@ -1,14 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-// Define the Route type with busType
-export type TicketPrice = {
-  id: number;
-  source: string;
-  destination: string;
-  ticketPrice: number;
-  busType: string;
-};
 export type TicketPriceInput = {
   id: number;
   ticketPrice: number;

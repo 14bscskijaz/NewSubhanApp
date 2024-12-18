@@ -48,21 +48,21 @@ export default function NewRouteDialog({
   );
   const [open, setOpen] = useState(false);
   const [tripData, setTripData] = useState<Omit<TripInformationInput, 'id'>>({
-    routeClosingVoucherId: '',
-    routeId: '',
-    passengerCount: '',
-    fullTicketBusinessCount: '',
-    fullTicketCount: '',
-    halfTicketCount: '',
-    freeTicketCount: '',
-    miscellaneousAmount: '',
-    revenue: '',
-    revenueDiffExplanation: '',
-    sourceStation: '',
-    destinationStation: '',
-    loadEarning: '',
-    rewardCommission: '',
-    refreshmentExpense: '',
+    routeClosingVoucherId: null,
+    routeId: null,
+    passengerCount: null,
+    fullTicketBusinessCount: null,
+    fullTicketCount: null,
+    halfTicketCount: null,
+    freeTicketCount: null,
+    miscellaneousAmount: null,
+    revenue: null,
+    revenueDiffExplanation: "",
+    sourceStation: "",
+    destinationStation: "",
+    loadEarning: null,
+    rewardCommission: null,
+    refreshmentExpense: null,
     date: date
   });
   const [isRefreshmentExpenseCustom, setIsRefreshmentExpenseCustom] = useState(false);
@@ -89,12 +89,12 @@ export default function NewRouteDialog({
   const calculateRevenue = (updatedData: Omit<TripInformationInput, 'id'>) => {
     const standardTicketPrice = tickets.find(
       (ticket) =>
-        ticket.routeId.toString() === updatedData.routeId &&
+        ticket.routeId === updatedData.routeId &&
         ticket.busType === 'Standard'
     )?.ticketPrice;
     const luxuryTicketPrice = tickets.find(
       (ticket) =>
-        ticket.routeId.toString() === updatedData.routeId &&
+        ticket.routeId === updatedData.routeId &&
         ticket.busType === 'Business'
     )?.ticketPrice;
 
@@ -136,7 +136,7 @@ export default function NewRouteDialog({
     if (updatedData.miscellaneousAmount) {
       remaining += Number(updatedData.miscellaneousAmount);
     }
-    return String(remaining);
+    return Number(remaining);
   };
 
   const handleSelectChange = (
@@ -155,7 +155,7 @@ export default function NewRouteDialog({
             route.destinationAdda ===
             (id === 'destinationStation' ? stationName : prev.destinationStation)
         )?.id;
-        updatedData.routeId = newRouteId ? String(newRouteId) : '';
+        updatedData.routeId = newRouteId ? Number(newRouteId) : null;
         updatedData.revenue = calculateRevenue(updatedData);
       }
 
@@ -210,7 +210,7 @@ export default function NewRouteDialog({
       const freeCount = Number(newData.freeTicketCount) || 0;
       const luxuryCount = Number(newData.fullTicketBusinessCount) || 0;
 
-      newData.passengerCount = String(
+      newData.passengerCount = Number(
         fullCount + halfCount + freeCount + luxuryCount
       );
 
@@ -259,21 +259,21 @@ export default function NewRouteDialog({
 
   const resetForm = () => {
     setTripData({
-      routeClosingVoucherId: '',
-      routeId: '',
-      passengerCount: '',
-      fullTicketBusinessCount: '',
-      fullTicketCount: '',
-      halfTicketCount: '',
-      freeTicketCount: '',
-      miscellaneousAmount: '',
-      revenue: '',
+      routeClosingVoucherId: null,
+      routeId: null,
+      passengerCount: null,
+      fullTicketBusinessCount: null,
+      fullTicketCount: null,
+      halfTicketCount: null,
+      freeTicketCount: null,
+      miscellaneousAmount: null,
+      revenue: null,
       revenueDiffExplanation: '',
       sourceStation: '',
       destinationStation: '',
-      loadEarning: '',
-      rewardCommission: '',
-      refreshmentExpense: '',
+      loadEarning: null,
+      rewardCommission: null,
+      refreshmentExpense: null,
       date: date
     });
     setIsRefreshmentExpenseCustom(false);
@@ -284,7 +284,7 @@ export default function NewRouteDialog({
     const route = routes.find(route => route.id === Number(value))
     setTripData((prev) => {
       const updatedData = { ...prev, sourceStation: route?.sourceAdda || "", destinationStation: route?.destinationAdda || "" }
-      updatedData.routeId = String(route?.id) || "";
+      updatedData.routeId = Number(route?.id) || null;
       updatedData.revenue = calculateRevenue(updatedData);
       return updatedData;
     })
@@ -322,14 +322,14 @@ export default function NewRouteDialog({
       const calculatedExpense = calculateRefreshmentExpense();
       setTripData((prev) => ({
         ...prev,
-        refreshmentExpense: String(calculatedExpense)
+        refreshmentExpense: Number(calculatedExpense)
       }));
     }
     if (!isRewardCommissionCustom) {
       const calculatedCommission = calculateRewardCommission();
       setTripData((prev) => ({
         ...prev,
-        rewardCommission: String(calculatedCommission)
+        rewardCommission: Number(calculatedCommission)
       }));
     }
   }, [tripData.routeId, tripData.passengerCount, fixedTripExpenses, isRefreshmentExpenseCustom, isRewardCommissionCustom]);
@@ -379,7 +379,7 @@ export default function NewRouteDialog({
                 id="fullTicketBusinessCount"
                 type="number"
                 placeholder="Enter full ticket count"
-                value={tripData.fullTicketBusinessCount}
+                value={tripData.fullTicketBusinessCount?.toString()}
                 onChange={handleInputChange}
                 min={0}
                 max={9}
@@ -396,7 +396,7 @@ export default function NewRouteDialog({
                 id="fullTicketCount"
                 type="number"
                 placeholder="Enter full ticket count"
-                value={tripData.fullTicketCount}
+                value={tripData.fullTicketCount?.toString()}
                 onChange={handleInputChange}
                 min={0}
               />
@@ -408,7 +408,7 @@ export default function NewRouteDialog({
                 id="halfTicketCount"
                 type="number"
                 placeholder="Enter half ticket count"
-                value={tripData.halfTicketCount}
+                value={tripData.halfTicketCount?.toString()}
                 onChange={handleInputChange}
                 min={0}
               />
@@ -420,7 +420,7 @@ export default function NewRouteDialog({
                 id="freeTicketCount"
                 type="number"
                 placeholder="Enter free ticket count"
-                value={tripData.freeTicketCount}
+                value={tripData.freeTicketCount?.toString()}
                 onChange={handleInputChange}
                 min={0}
               />
@@ -433,7 +433,7 @@ export default function NewRouteDialog({
                 id="passengerCount"
                 type="number"
                 placeholder="Enter passenger count"
-                value={tripData.passengerCount}
+                value={tripData.passengerCount?.toString()}
                 onChange={handleInputChange}
               />
             </div>
@@ -444,7 +444,7 @@ export default function NewRouteDialog({
                 id="loadEarning"
                 type="number"
                 placeholder="Enter load expense"
-                value={tripData.loadEarning}
+                value={tripData.loadEarning?.toString()}
                 onChange={handleInputChange}
                 min={0}
               />
@@ -456,7 +456,7 @@ export default function NewRouteDialog({
                 id="rewardCommission"
                 type="number"
                 placeholder={`Calculated: ${calculateRewardCommission()}`}
-                value={tripData.rewardCommission}
+                value={tripData.rewardCommission?.toString()}
                 onChange={handleInputChange}
                 min={0}
                 step="1"
@@ -469,7 +469,7 @@ export default function NewRouteDialog({
                 id="refreshmentExpense"
                 type="number"
                 placeholder={`Calculated: ${calculateRefreshmentExpense()}`}
-                value={tripData.refreshmentExpense}
+                value={tripData.refreshmentExpense?.toString()}
                 onChange={handleInputChange}
                 min={0}
                 step="1"
@@ -482,7 +482,7 @@ export default function NewRouteDialog({
                 id="miscellaneousAmount"
                 type="number"
                 placeholder="Enter miscellaneous amount"
-                value={tripData.miscellaneousAmount}
+                value={tripData.miscellaneousAmount?.toString()}
                 onChange={handleInputChange}
               />
             </div>
@@ -493,7 +493,7 @@ export default function NewRouteDialog({
                 id="actualRevenue"
                 type="number"
                 placeholder="Actual revenue"
-                value={tripData.revenue}
+                value={tripData.revenue?.toString()}
                 onChange={handleInputChange}
               />
             </div>

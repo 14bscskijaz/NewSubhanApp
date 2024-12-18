@@ -5,10 +5,10 @@ import { RootState } from '../store';
 export type BusClosingVoucher = {
   id: number;
   date: string;
-  driverId: string;
-  conductorId: string;
-  busId: string;
-  voucherNumber: string;
+  driverId: number;
+  conductorId: number | null;
+  busId: number;
+  voucherNumber: number;
   commission: number | null;
   diesel: number | null;
   dieselLitres: number | null;
@@ -19,7 +19,7 @@ export type BusClosingVoucher = {
   cityParchi: number | null;
   refreshment: number | null;
   revenue: number | null;
-  routeId?:number
+  routeId?: number
 };
 
 // Define the initial state with BusClosingVoucher type
@@ -29,7 +29,7 @@ interface BusClosingVoucherState {
 
 // Helper function to generate current ISO DateTime for Date field
 const getCurrentISODateTime = (): string => {
-  return new Date().toISOString().split('T')[0]; 
+  return new Date().toISOString().split('T')[0];
 };
 
 const initialState: BusClosingVoucherState = {
@@ -48,25 +48,25 @@ const busClosingVoucherSlice = createSlice({
       state.busClosingVouchers = action.payload;
     },
     // Action to add a new BusClosingVoucher
-   // Action to add a new BusClosingVoucher
-   addBusClosingVoucher: (
-    state,
-    action: PayloadAction<Omit<BusClosingVoucher, 'id'>>
-  ) => {
-    const newId =
-      state.busClosingVouchers.length > 0
-        ? state.busClosingVouchers[state.busClosingVouchers.length - 1].id + 1
-        : 1;
+    // Action to add a new BusClosingVoucher
+    addBusClosingVoucher: (
+      state,
+      action: PayloadAction<Omit<BusClosingVoucher, 'id'>>
+    ) => {
+      const newId =
+        state.busClosingVouchers.length > 0
+          ? state.busClosingVouchers[state.busClosingVouchers.length - 1].id + 1
+          : 1;
 
-    const newBusClosingVoucher: BusClosingVoucher = {
-      ...action.payload,
-      id: newId,
-      date: getCurrentISODateTime()
-    };
+      const newBusClosingVoucher: BusClosingVoucher = {
+        ...action.payload,
+        id: newId,
+        date: getCurrentISODateTime()
+      };
 
-    // Push the new voucher to the state (mutating the state directly)
-    state.busClosingVouchers.push(newBusClosingVoucher);
-  },
+      // Push the new voucher to the state (mutating the state directly)
+      state.busClosingVouchers.push(newBusClosingVoucher);
+    },
 
     // Action to remove a BusClosingVoucher by ID
     removeBusClosingVoucher: (state, action: PayloadAction<number>) => {

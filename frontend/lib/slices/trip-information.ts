@@ -3,19 +3,19 @@ import { RootState } from '../store';
 
 export type TripInformation = {
   id: number;
-  routeClosingVoucherId: string;
-  routeId: string | undefined;
-  passengerCount: string; // Auto
-  fullTicketBusinessCount: string;
-  fullTicketCount: string;
-  halfTicketCount: string;
-  freeTicketCount: string;
-  revenue: string; // Auto
-  miscellaneousAmount: string;
+  routeClosingVoucherId: number | null;
+  routeId: number | null;
+  passengerCount: number | null; // Auto
+  fullTicketBusinessCount: number | null;
+  fullTicketCount: number | null;
+  halfTicketCount: number | null;
+  freeTicketCount: number | null;
+  revenue: number | null; // Auto
+  miscellaneousAmount: number | null;
   revenueDiffExplanation: string;
-  loadEarning: string,
-  rewardCommission: string,
-  refreshmentExpense: string,
+  loadEarning: number | null,
+  rewardCommission: number | null,
+  refreshmentExpense: number | null,
   date?: string
 };
 

@@ -11,8 +11,6 @@ export type FixedTripExpense = {
   counter: number;
   dcParchi: number;
   refreshment: number;
-  driverCommission?:number;
-  isPercentage?:boolean;
 };
 
 // Define the TripState interface

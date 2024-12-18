@@ -6,7 +6,7 @@ export type Expense = {
   id: number; // Serial
   date: string; // Date
   type: 'bus' | 'general';
-  voucherId?: number | string; // Foreign key
+  voucherId?: number | null; // Foreign key
   busId?: number;
   routeId?:number; // Foreign key
   amount: number; // Integer

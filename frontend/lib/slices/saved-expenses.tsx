@@ -6,7 +6,7 @@ export type Expense = {
   id: number; // Serial
   date: string; // Date
   type: 'bus' | 'general';
-  voucherId?: number | string; // Foreign key
+  voucherId?: number | null ; // Foreign key
   busId?: number;
   routeId?:number; // Foreign key
   amount: number; // Integer
@@ -62,12 +62,13 @@ const savedExpenseSlice = createSlice({
     },
 
     // Action to set the entire state
-    setSavedExpenses: (state, action: PayloadAction<Omit<Expense, 'id' | 'type'>[]>) => {
+    setSavedExpenses: (state, action: PayloadAction<Expense[]>) => {
       // Manually add id and type for each expense in the filtered data
       state.expenses = action.payload.map((expense, index) => ({
         ...expense,
         id: index + 1,
-        type: 'bus'
+        type: 'bus',
+        voucherId: expense.voucherId ?? null,
       }));
     }
   }

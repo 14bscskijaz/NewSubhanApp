@@ -1,6 +1,5 @@
-import { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { Plus } from "lucide-react"
+import { createTicketPrice, getAllTicketPrices } from "@/app/actions/pricing.action"
+import SelectField from "@/components/ui/SelectField"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,13 +12,14 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { TicketPrice, TicketPriceRaw, addTicketRaw, setTicketRaw } from "@/lib/slices/pricing-slices"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useToast } from "@/hooks/use-toast"
+import { TicketPriceRaw, setTicketRaw } from "@/lib/slices/pricing-slices"
 import { Route, allRoutes } from "@/lib/slices/route-slices"
 import { RootState } from "@/lib/store"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createTicketPrice, getAllTicketPrices } from "@/app/actions/pricing.action"
-import SelectField from "@/components/ui/SelectField"
-import { useToast } from "@/hooks/use-toast"
+import { Plus } from "lucide-react"
+import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 
 export default function NewPricingDialog() {
   const routes = useSelector<RootState, Route[]>(allRoutes)

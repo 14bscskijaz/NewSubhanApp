@@ -3,19 +3,19 @@ import { RootState } from '../store';
 
 export type SavedTripInformation = {
   id: number;
-  routeClosingVoucherId: number;
-  routeId: number | undefined;
-  passengerCount: number; // Auto
-  fullTicketBusinessCount: number;
-  fullTicketCount: number;
-  halfTicketCount: number;
-  freeTicketCount: number;
-  revenue: number; // number
-  miscellaneousAmount: number;
+  routeClosingVoucherId: number | null;
+  routeId: number | null;
+  passengerCount: number | null; // Auto
+  fullTicketBusinessCount: number | null;
+  fullTicketCount: number | null;
+  halfTicketCount: number | null;
+  freeTicketCount: number | null;
+  revenue: number | null; // number
+  miscellaneousAmount: number | null;
   revenueDiffExplanation: string;
-  loadEarning: number,
-  rewardCommission: number,
-  refreshmentExpense: number,
+  loadEarning: number | null,
+  rewardCommission: number | null,
+  refreshmentExpense: number | null,
   date?: string
 };
 

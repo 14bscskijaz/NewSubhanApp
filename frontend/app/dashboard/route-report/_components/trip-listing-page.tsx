@@ -125,8 +125,8 @@ export default function TripListingPage({ }: TTripListingPage) {
     // Aggregate data by route
     filteredTrips.forEach((trip) => {
       const routeId = trip.routeId || "Unknown";
-      if (!routeMap.has(routeId)) {
-        routeMap.set(routeId, {
+      if (!routeMap.has(routeId.toString())) {
+        routeMap.set(routeId.toString(), {
           routeId,
           totalTrips: 0,
           totalPassengers: 0,
@@ -137,15 +137,15 @@ export default function TripListingPage({ }: TTripListingPage) {
         });
       }
 
-      const routeData = routeMap.get(routeId);
+      const routeData = routeMap.get(routeId.toString());
       routeData.totalTrips += 1;
-      routeData.totalPassengers += parseInt(trip.passengerCount) || 0;
-      routeData.totalRevenue += parseFloat(trip.revenue) || 0;
-      routeData.freePassengers += parseInt(trip.freeTicketCount) || 0;
-      routeData.halfPassengers += parseInt(trip.halfTicketCount) || 0;
-      routeData.fullPassengers += parseInt(trip.fullTicketCount) || 0;
+      routeData.totalPassengers += Number(trip.passengerCount) || 0;
+      routeData.totalRevenue += Number(trip.revenue) || 0;
+      routeData.freePassengers += Number(trip.freeTicketCount) || 0;
+      routeData.halfPassengers += Number(trip.halfTicketCount) || 0;
+      routeData.fullPassengers += Number(trip.fullTicketCount) || 0;
 
-      routeMap.set(routeId, routeData);
+      routeMap.set(routeId.toString(), routeData);
     });
 
     // Calculate averages and map route names

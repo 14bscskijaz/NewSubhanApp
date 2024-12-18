@@ -372,7 +372,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
       const updatedTripInfo = tripsInformation.map((info: TripInformation) => ({
         ...info,
-        routeClosingVoucherId: newVoucher?.id?.toString(),
+        routeClosingVoucherId: newVoucher?.id,
       }));
 
       await Promise.all(

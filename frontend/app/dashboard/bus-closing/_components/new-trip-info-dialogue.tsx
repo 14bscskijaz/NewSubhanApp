@@ -28,7 +28,7 @@ import { Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-export default function NewRouteDialog({
+export default function NewTripInfoDialog({
   busId,
   voucherNumber,
   driverId,
@@ -51,18 +51,18 @@ export default function NewRouteDialog({
     routeClosingVoucherId: '',
     routeId: '',
     passengerCount: '',
-    fullTicketBusinessCount: '',
-    fullTicketCount: '',
-    halfTicketCount: '',
-    freeTicketCount: '',
-    miscellaneousAmount: '',
+    fullTicketBusinessCount: '0',
+    fullTicketCount: '0',
+    halfTicketCount: '0',
+    freeTicketCount: '0',
+    miscellaneousAmount: '0',
     revenue: '',
     revenueDiffExplanation: '',
     sourceStation: '',
     destinationStation: '',
-    loadEarning: '',
+    loadEarning: '0',
     rewardCommission: '',
-    refreshmentExpense: '',
+    refreshmentExpense: '0',
     date: date
   });
   const [isRefreshmentExpenseCustom, setIsRefreshmentExpenseCustom] = useState(false);
@@ -439,7 +439,7 @@ export default function NewRouteDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="loadEarning" className="text-gradient">Load Expense</Label>
+              <Label htmlFor="loadEarning" className="text-gradient">Load Earning</Label>
               <Input
                 id="loadEarning"
                 type="number"

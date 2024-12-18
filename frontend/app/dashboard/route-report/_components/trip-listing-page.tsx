@@ -170,7 +170,7 @@ export default function TripListingPage({ }: TTripListingPage) {
         destinationCity: data.destinationCity,
         totalTrips: data.totalTrips,
         totalPassengers: data.totalPassengers,
-        totalRevenue: parseFloat(data.totalRevenue).toFixed(2),
+        totalRevenue: Math.floor(data.totalRevenue),
         freePassengers: data.freePassengers,
         halfPassengers: data.halfPassengers,
         fullPassengers: data.fullPassengers,

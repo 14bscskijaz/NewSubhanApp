@@ -220,7 +220,7 @@ export default function EditRouteDialog({
       miscellaneousAmount: tripData.miscellaneousAmount,
       revenue: tripData.revenue,
       revenueDiffExplanation: tripData.revenueDiffExplanation,
-      loadExpense: tripData.loadExpense,
+      loadEarning: tripData.loadEarning,
       rewardCommission: tripData.rewardCommission,
       refreshmentExpense: tripData.refreshmentExpense
     };

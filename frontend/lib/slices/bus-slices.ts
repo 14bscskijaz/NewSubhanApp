@@ -9,7 +9,7 @@ export type Buses = {
   busOwner: string;
   description: string;
   busStatus: string;
-  brandName: string;
+  busBrand: string;
 };
 
 

@@ -28,6 +28,10 @@ export const columns: ColumnDef<Buses>[] = [
     header: 'Bus Owner',
   },
   {
+    accessorKey: 'busBrand',
+    header: 'Bus Brand',
+  },
+  {
     accessorKey: 'description',
     header: 'Description',
     cell: ({ row }) => <ExpandableText text={row.original.description} />,

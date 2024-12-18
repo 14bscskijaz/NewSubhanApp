@@ -13,7 +13,7 @@ export type SavedTripInformation = {
   revenue: string; // Auto
   miscellaneousAmount: string;
   revenueDiffExplanation: string;
-  loadExpense: string,
+  loadEarning: string,
   rewardCommission: string,
   refreshmentExpense: string,
   date?: string

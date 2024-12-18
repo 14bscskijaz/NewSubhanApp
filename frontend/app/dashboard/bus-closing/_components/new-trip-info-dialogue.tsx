@@ -60,7 +60,7 @@ export default function NewRouteDialog({
     revenueDiffExplanation: '',
     sourceStation: '',
     destinationStation: '',
-    loadExpense: '',
+    loadEarning: '',
     rewardCommission: '',
     refreshmentExpense: '',
     date: date
@@ -123,7 +123,7 @@ export default function NewRouteDialog({
     remaining -= expenseForThisRouteId?.counter ?? 0;
     remaining -= expenseForThisRouteId?.dcParchi ?? 0;
     remaining -= Number(updatedData.refreshmentExpense) || 0;
-    remaining += Number(updatedData.loadExpense) || 0;
+    remaining += Number(updatedData.loadEarning) || 0;
     remaining -= Number(updatedData.rewardCommission) || 0;
 
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
@@ -236,7 +236,7 @@ export default function NewRouteDialog({
         revenue: tripData.revenue,
         revenueDiffExplanation: tripData.revenueDiffExplanation,
         refreshmentExpense: tripData.refreshmentExpense,
-        loadExpense: tripData.loadExpense,
+        loadEarning: tripData.loadEarning,
         rewardCommission: tripData.rewardCommission,
         date: date
       };
@@ -271,7 +271,7 @@ export default function NewRouteDialog({
       revenueDiffExplanation: '',
       sourceStation: '',
       destinationStation: '',
-      loadExpense: '',
+      loadEarning: '',
       rewardCommission: '',
       refreshmentExpense: '',
       date: date
@@ -439,12 +439,12 @@ export default function NewRouteDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="loadExpense" className="text-gradient">Load Expense</Label>
+              <Label htmlFor="loadEarning" className="text-gradient">Load Expense</Label>
               <Input
-                id="loadExpense"
+                id="loadEarning"
                 type="number"
                 placeholder="Enter load expense"
-                value={tripData.loadExpense}
+                value={tripData.loadEarning}
                 onChange={handleInputChange}
                 min={0}
               />

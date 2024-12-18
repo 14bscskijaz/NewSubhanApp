@@ -21,7 +21,7 @@ export default function RouteTable({
   data: any;
   totalData: number;
   totalRevenue: number;
-  printExpenses:()=>void;
+  printExpenses: () => void;
 }) {
   const {
     isAnyFilterActive,
@@ -69,12 +69,12 @@ export default function RouteTable({
             setFilterValue={setRouteFilter}
             filterValue={routeFilter}
           />
-          {/* <DateFilterBox
+          <DateFilterBox
             filterKey="date"
-            title="Date"
+            title="Date Range"
             filterValue={dateFilter}
             setFilterValue={setDateFilter}
-          /> */}
+          />
 
           <DataTableResetFilter
             isFilterActive={isAnyFilterActive}

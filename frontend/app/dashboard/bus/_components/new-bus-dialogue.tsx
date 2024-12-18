@@ -33,7 +33,7 @@ export default function NewBusDialog() {
   const [open, setOpen] = useState(false);
   const [busNumber, setBusNumber] = useState("");
   const [busType, setBusType] = useState("");
-  const [brandName, setBrand] = useState(""); // New field for Brand Name
+  const [busBrand, setBrand] = useState(""); // New field for Brand Name
   const [busOwner, setBusOwner] = useState("");
   const [description, setDescription] = useState("");
   const [busStatus, setBusStatus] = useState("");
@@ -42,7 +42,7 @@ export default function NewBusDialog() {
   const [validationErrors, setValidationErrors] = useState({
     busNumber: "",
     busType: "",
-    brandName: "",
+    busBrand: "",
     busOwner: "",
     description: "",
     busStatus: "",
@@ -59,7 +59,7 @@ export default function NewBusDialog() {
     setValidationErrors({
       busNumber: "",
       busType: "",
-      brandName: "",
+      busBrand: "",
       busOwner: "",
       description: "",
       busStatus: "",
@@ -70,7 +70,7 @@ export default function NewBusDialog() {
 
     if (!busNumber.trim()) errors.busNumber = "Bus Number is required.";
     if (!busType.trim()) errors.busType = "Bus Type is required.";
-    if (!brandName.trim()) errors.brandName = "Brand is required.";
+    if (!busBrand.trim()) errors.busBrand = "Brand is required.";
     if (!busOwner.trim()) errors.busOwner = "Bus Owner is required.";
     if (!description.trim()) errors.description = "Description is required.";
     if (!busStatus.trim()) errors.busStatus = "Bus Status is required.";
@@ -97,7 +97,7 @@ export default function NewBusDialog() {
     const newBus: Omit<Buses, "id"> = {
       busNumber,
       busType,
-      brandName,
+      busBrand,
       busOwner,
       description,
       busStatus,
@@ -132,7 +132,7 @@ export default function NewBusDialog() {
   const resetForm = () => {
     setBusNumber("");
     setBusType("");
-    setBrand(""); // Reset brandName
+    setBrand(""); // Reset busBrand
     setBusOwner("");
     setDescription("");
     setBusStatus("");
@@ -192,19 +192,19 @@ export default function NewBusDialog() {
             </div>
             {/* New Brand Name Field */}
             <div className="grid gap-2">
-              <Label htmlFor="brandName" className="text-gradient">
+              <Label htmlFor="busBrand" className="text-gradient">
                 Brand
               </Label>
               <Input
-                id="brandName"
+                id="busBrand"
                 placeholder="Enter Brand"
-                value={brandName}
+                value={busBrand}
                 onChange={(e) => setBrand(e.target.value)}
                 maxLength={50}
                 disabled={loading} // Disable input on loading
               />
-              {validationErrors.brandName && (
-                <p className="text-red-500 text-sm">{validationErrors.brandName}</p>
+              {validationErrors.busBrand && (
+                <p className="text-red-500 text-sm">{validationErrors.busBrand}</p>
               )}
             </div>
             <div className="grid gap-2">

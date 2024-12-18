@@ -1,7 +1,8 @@
 "use client"
 
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { CalendarIcon } from 'lucide-react'
+import { DateRange } from "react-day-picker"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -12,19 +13,24 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
-type DatePickerProps = {
-  selected: Date | undefined
-  onChange: (date: Date | undefined) => void
+type DateRangePickerProps = {
+  date: DateRange | undefined
+  onChange: (date: DateRange | undefined) => void
   className?: string
 }
 
-export function DatePicker({ selected, onChange, className }: DatePickerProps) {
-  const handleDateSelect = (newDate: Date | undefined) => {
-    onChange(newDate);  // Pass the selected date to parent component
-  };
-
-  // Handle invalid date or undefined case
-  const formattedDate = selected && !isNaN(selected.getTime()) ? format(selected, "PPP") : "Pick a date";
+export function DateRangePicker({ date, onChange, className }: DateRangePickerProps) {
+  // Format the date range for display
+  const formatDateRange = (range: DateRange | undefined) => {
+    if (!range) return "Select dates"
+    
+    const { from, to } = range
+    if (!from) return "Select dates"
+    
+    if (!to) return format(from, "PPP")
+    
+    return `${format(from, "PPP")} - ${format(to, "PPP")}`
+  }
 
   return (
     <Popover>
@@ -33,22 +39,25 @@ export function DatePicker({ selected, onChange, className }: DatePickerProps) {
           variant={"outline"}
           className={cn(
             "w-full justify-start text-left font-normal",
-            !selected && "text-muted-foreground",
+            !date?.from && "text-muted-foreground",
             className
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {formattedDate}
+          {formatDateRange(date)}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0" align="start">
         <Calendar
-          mode="single"
-          selected={selected}
-          onSelect={handleDateSelect}
           initialFocus
+          mode="range"
+          defaultMonth={date?.from}
+          selected={date}
+          onSelect={onChange}
+          numberOfMonths={2}
         />
       </PopoverContent>
     </Popover>
-  );
+  )
 }
+

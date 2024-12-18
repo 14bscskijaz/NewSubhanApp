@@ -34,7 +34,7 @@ export default function EditBusDialog({
   const [open, setOpen] = useState(false);
   const [busNumber, setBusNumber] = useState(bus.busNumber || "");
   const [busType, setBusType] = useState(bus.busType || "");
-  const [brandName, setBrand] = useState(bus.brandName || "");
+  const [busBrand, setBrand] = useState(bus.busBrand || "");
   const [busOwner, setBusOwner] = useState(bus.busOwner || "");
   const [description, setDescription] = useState(bus.description || "");
   const [busStatus, setBusStatus] = useState(bus.busStatus || "");
@@ -44,7 +44,7 @@ export default function EditBusDialog({
   useEffect(() => {
     setBusNumber(bus.busNumber || "");
     setBusType(bus.busType || "");
-    setBrand(bus.brandName || "");
+    setBrand(bus.busBrand || "");
     setBusOwner(bus.busOwner || "");
     setDescription(bus.description || "");
     setBusStatus(bus.busStatus || "");
@@ -57,7 +57,7 @@ export default function EditBusDialog({
     if (
       !busNumber.trim() ||
       !busType.trim() ||
-      !brandName.trim() ||
+      !busBrand.trim() ||
       !busOwner.trim() ||
       !description.trim() ||
       !busStatus.trim()
@@ -71,7 +71,7 @@ export default function EditBusDialog({
       id: bus.id,
       busNumber: busNumber.trim(),
       busType: busType.trim(),
-      brandName: brandName.trim(),
+      busBrand: busBrand.trim(),
       busOwner: busOwner.trim(),
       description: description.trim(),
       busStatus: busStatus.trim(),
@@ -124,14 +124,14 @@ export default function EditBusDialog({
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="brandName" className="text-gradient">Brand</Label>
+              <Label htmlFor="busBrand" className="text-gradient">Brand</Label>
               <Input
-                id="brandName"
-                value={brandName}
+                id="busBrand"
+                value={busBrand}
                 onChange={(e) => setBrand(e.target.value)}
-                placeholder="Enter brandName"
+                placeholder="Enter busBrand"
                 required
-                aria-describedby="brandName-error"
+                aria-describedby="busBrand-error"
               />
             </div>
             <div className="grid gap-2">

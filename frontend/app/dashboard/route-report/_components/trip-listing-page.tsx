@@ -80,28 +80,43 @@ export default function TripListingPage({ }: TTripListingPage) {
   }, [searchParams, dispatch]);
 
   const calculateMetricsByRoute = () => {
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
+    // Helper function to normalize date to start of day in UTC
+    const normalizeDate = (date: string | Date) => {
+      const d = new Date(date);
+      return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0));
+    };
 
-    // Parse start and end dates for comparison
-    const parsedStartDate = startDate ? new Date(startDate) : null;
-    const parsedEndDate = endDate ? new Date(endDate) : null;
+    // Get the date range from the params and parse it
+    const dateRangeParam = searchParams.get('date') || '';
+    let parsedStartDate: Date | null = null;
+    let parsedEndDate: Date | null = null;
+
+    // Parse the date range if it exists
+    if (dateRangeParam) {
+      const [startDate, endDate] = dateRangeParam.split('|');
+      parsedStartDate = startDate ? normalizeDate(startDate) : null;
+      parsedEndDate = endDate ? normalizeDate(endDate) : null;
+      // Add one day to end date to include the full end date
+      if (parsedEndDate) {
+        parsedEndDate.setDate(parsedEndDate.getDate() + 1);
+      }
+    }
 
     const routeMap = new Map<string, any>();
 
     // Filter trips within the date range
     const filteredTrips = SavedTripInformation.filter((trip) => {
-      const tripDate = trip.date ? new Date(trip.date) : null;
+      if (!trip.date) return true;
+
+      const tripDate = normalizeDate(trip.date);
 
       // Include trips only within the date range
-      if (tripDate) {
-        if (parsedStartDate && parsedEndDate) {
-          return tripDate >= parsedStartDate && tripDate <= parsedEndDate;
-        } else if (parsedStartDate) {
-          return tripDate >= parsedStartDate;
-        } else if (parsedEndDate) {
-          return tripDate <= parsedEndDate;
-        }
+      if (parsedStartDate && parsedEndDate) {
+        return tripDate >= parsedStartDate && tripDate < parsedEndDate;
+      } else if (parsedStartDate) {
+        return tripDate >= parsedStartDate;
+      } else if (parsedEndDate) {
+        return tripDate < parsedEndDate;
       }
 
       return true; // Include all trips if no date filter is applied
@@ -135,13 +150,13 @@ export default function TripListingPage({ }: TTripListingPage) {
 
     // Calculate averages and map route names
     const result = Array.from(routeMap.values()).map((data) => {
-      const route = routes.find((r) => r.id.toString() === data.routeId);
+    const route = routes.find((r) => r.id.toString() === data.routeId);
 
       return {
         routeId: data.routeId,
         totalTrips: data.totalTrips,
         totalPassengers: data.totalPassengers,
-        totalRevenue: data.totalRevenue.toFixed(2),
+        totalRevenue: Math.floor(data.totalRevenue),
         freePassengers: data.freePassengers,
         halfPassengers: data.halfPassengers,
         fullPassengers: data.fullPassengers,
@@ -155,9 +170,8 @@ export default function TripListingPage({ }: TTripListingPage) {
   };
 
 
+
   const routeMetrics = calculateMetricsByRoute();
-
-
   const filteredVouchers = routeMetrics.filter((voucher) => {
     // Match search filter
     const matchesSearch = search
@@ -199,7 +213,6 @@ export default function TripListingPage({ }: TTripListingPage) {
     // Return combined match result
     return matchesSearch && matchesRouteFilter;
   });
-
 
   const totalRevenue = filteredVouchers.reduce((sum: number, item: any) => sum + (item.revenue || 0), 0);
 

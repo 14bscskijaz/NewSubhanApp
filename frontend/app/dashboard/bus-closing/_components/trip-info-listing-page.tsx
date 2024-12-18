@@ -20,7 +20,7 @@ import { RootState } from '@/lib/store'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import NewRouteDialog from './new-trip-info-dialogue'
+import NewTripInfoDialog from './new-trip-info-dialogue'
 import RouteTable from './trip-info-tables'
 import VoucherForm from './voucher-form'
 import { getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action'
@@ -234,7 +234,7 @@ export default function TripInfoListingPage() {
             <div className="space-y-1">
               <div className="flex items-start gap-x-4">
                 <Heading title={`Trips (${totalUsers})`} description="" />
-                <NewRouteDialog
+                <NewTripInfoDialog
                   busId={busId}
                   voucherNumber={voucherNumber}
                   driverId={driverId}

@@ -1,6 +1,6 @@
 'use server'
 import { TripInformation } from "@/lib/slices/trip-information";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 // const API_BASE_URL = "https://localhost:7169/api/Trip";
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/Trip";
@@ -41,6 +41,7 @@ export async function createTrip(trip: Omit<TripInformation, 'id'>): Promise<Omi
         return response.data;
     } catch (error) {
         console.error("Error creating trip:", error);
+        // console.error("Error Message: ", error?.data?.errors)
         throw error;
     }
 }

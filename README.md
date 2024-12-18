@@ -1,4 +1,5 @@
 
+
 ## Run the application
 ### Instructions To Run Backend API Server
 
@@ -30,6 +31,19 @@ dotnet ef migrations add InitialMigration
 
 **Note:** Risky command, drops the database.
 dotnet ef database drop -f
+
+## Deployement Instructions
+
+### Backend
+
+1. first ensure that database is synced with the models.
+Use database update command to do that.
+
+2. Kill the old dotnet service using `kill -15 <pid>`.
+
+3. build the updated dotnet service.
+
+3. deploy using `nohup`.
 
 #### Access Swagger docs
 The API documentation can be accessed at the URL:

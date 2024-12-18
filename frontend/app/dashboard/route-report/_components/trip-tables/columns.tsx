@@ -1,9 +1,7 @@
-// columns.tsx
 'use client';
-import { BusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
+import { TripInformationInput } from '@/lib/slices/trip-information';
 import { ColumnDef } from '@tanstack/react-table';
 import SourceDestination from './SourceDestination';
-import { TripInformationInput } from '@/lib/slices/trip-information';
 
 export const columns: ColumnDef<TripInformationInput & {routeIds:[number]}>[] = [
   {
@@ -15,17 +13,10 @@ export const columns: ColumnDef<TripInformationInput & {routeIds:[number]}>[] = 
     id: 'source-destination',
     header: 'Route',
     cell: (
-      { row } // Parent component usage
+      { row } 
     ) => <SourceDestination routeId={Number(row.original.routeIds[0])} />
   },
   
-  // {
-  //   id: 'source-station-destination-station',
-  //   header: 'Station',
-  //   cell: ({ row }) => (
-  //     <SourceStationDestinationStation routeId={row?.original?.routeId || 1} />
-  //   )
-  // },
   {
     accessorKey: 'totalTrips',
     header: 'Trips Count'
@@ -50,17 +41,4 @@ export const columns: ColumnDef<TripInformationInput & {routeIds:[number]}>[] = 
     accessorKey: 'averagePassengers',
     header: 'Average Passengers'
   },
-  // {
-  //   accessorKey: 'dcParchi',
-  //   header: 'DC Parchi (Fsd Only)'
-  // },
-  // {
-  //   accessorKey: 'refreshment',
-  //   header: 'Refreshment'
-  // },
-  // {
-  //   id: 'actions',
-  //   header: 'Actions',
-  //   cell: ({ row }) => <CellAction data={row.original} />
-  // }
 ];

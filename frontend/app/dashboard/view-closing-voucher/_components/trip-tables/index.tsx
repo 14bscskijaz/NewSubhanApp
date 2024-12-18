@@ -10,6 +10,7 @@ import { columns } from './columns';
 import { useRouteTableFilters } from './use-route-table-filters';
 import { DataTableView } from './data-table-view';
 import { ReceiptText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function RouteTable({
   data,
@@ -40,6 +41,8 @@ export default function RouteTable({
     setSearchQuery
   } = useRouteTableFilters();
 
+  const isDataEmpty = data.length === 0;
+
   return (
     <div className="space-y-4 ">
       <div className="flex flex-col flex-wrap items-start gap-4">
@@ -50,9 +53,19 @@ export default function RouteTable({
             setSearchQuery={setSearchQuery}
             setPage={setPage}
           />
-          <div className='border p-1.5 rounded-sm cursor-pointer bg-gradient-border hover:bg-gradient-2 active:opacity-50 group transition-all duration-500' onClick={printExpenses}>
-            <ReceiptText className='text-gradient group-hover:text-gradient-2' />
-          </div>
+          <Button
+            className={`border p-1.5 rounded-sm bg-gradient-border hover:bg-gradient-2 active:opacity-50 group transition-all duration-500 ${
+              isDataEmpty ? 'cursor-not-allowed opacity-50' : ''
+            }`}
+            onClick={printExpenses}
+            disabled={isDataEmpty}
+          >
+            <ReceiptText
+              className={`text-gradient ${
+                isDataEmpty ? 'opacity-50' : 'group-hover:text-gradient-2'
+              }`}
+            />
+          </Button>
         </div>
         <div className='flex flex-wrap items-start gap-4'>
 

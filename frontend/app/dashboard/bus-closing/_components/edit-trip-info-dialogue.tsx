@@ -13,12 +13,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger
-} from '@/components/ui/select'; // ShadCN Select
 import { Textarea } from '@/components/ui/textarea';
 import {
   FixedTripExpense,
@@ -32,11 +26,10 @@ import {
 } from '@/lib/slices/trip-information';
 import { RootState } from '@/lib/store';
 import { Pen } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 type EditRouteDialogProps = {
-  // route: BusClosing;
   tripInformation: TripInformation;
   onUpdate: (updatedTripInformation: TripInformation) => void;
 };
@@ -51,6 +44,8 @@ export default function EditRouteDialog({
   const fixedTripExpenses = useSelector<RootState, FixedTripExpense[]>(
     allFixedTripExpenses
   );
+  const [isRefreshmentExpenseCustom, setIsRefreshmentExpenseCustom] = useState(false);
+  const [isRewardCommissionCustom, setIsRewardCommissionCustom] = useState(false);
   const [tripData, setTripData] = useState<TripInformationInput>({
     ...tripInformation,
     sourceStation:
@@ -78,15 +73,14 @@ export default function EditRouteDialog({
   };
 
   const calculateRevenue = (updatedData: Omit<TripInformationInput, 'id'>) => {
-    // Get the ticket price for standard and luxury buses tickets
     const standardTicketPrice = tickets.find(
-      (ticket: { routeId: { toString: () => string | null; }; busType: string; }) =>
-        ticket.routeId.toString() === updatedData.routeId &&
+      (ticket) =>
+        ticket.routeId === updatedData.routeId &&
         ticket.busType === 'Standard'
     )?.ticketPrice;
     const luxuryTicketPrice = tickets.find(
-      (ticket: { routeId: { toString: () => string | null; }; busType: string; }) =>
-        ticket.routeId.toString() === updatedData.routeId &&
+      (ticket) =>
+        ticket.routeId === updatedData.routeId &&
         ticket.busType === 'Business'
     )?.ticketPrice;
 
@@ -105,9 +99,8 @@ export default function EditRouteDialog({
       ticketEarnings = revenue;
     }
 
-    // Subtract the fixed trip expenses from the ticket earnings. Possibly can be undefined
     const expenseForThisRouteId = fixedTripExpenses.find(
-      (expense: { routeId: number; }) => expense.routeId === Number(updatedData.routeId)
+      (expense) => expense.routeId === Number(updatedData.routeId)
     );
 
     let remaining = ticketEarnings;
@@ -115,9 +108,10 @@ export default function EditRouteDialog({
     remaining -= expenseForThisRouteId?.steward ?? 0;
     remaining -= expenseForThisRouteId?.counter ?? 0;
     remaining -= expenseForThisRouteId?.dcParchi ?? 0;
-    remaining -= expenseForThisRouteId?.refreshment ?? 0;
+    remaining -= Number(updatedData.refreshmentExpense) || 0;
+    remaining += Number(updatedData.loadEarning) || 0;
+    remaining -= Number(updatedData.rewardCommission) || 0;
 
-    // Calculate Stand Commission (routeCommission variable in code)
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
       remaining -= expenseForThisRouteId.routeCommission;
     } else if (expenseForThisRouteId && expenseForThisRouteId.routeCommission < 1) {
@@ -125,38 +119,46 @@ export default function EditRouteDialog({
       remaining -= standCommissionValue;
     }
 
-    // Add or subtract the miscellaneous amount
     if (updatedData.miscellaneousAmount) {
       remaining += Number(updatedData.miscellaneousAmount);
     }
     return Number(remaining);
   };
 
-  const handleSelectChange = (
-    id: keyof TripInformationInput,
-    value: string
-  ) => {
+  const handleRouteChange = (value: string) => {
+    const route = routes.find(route => route.id === Number(value))
     setTripData((prev) => {
-      const updatedData = { ...prev, [id]: value };
-
-      if (id === 'sourceStation' || id === 'destinationStation') {
-        // Recalculate the routeId if source or destination station changes
-        const newRouteId = routes.find(
-          (route) =>
-            route.sourceAdda ===
-            (id === 'sourceStation' ? value : prev.sourceStation) &&
-            route.destinationAdda ===
-            (id === 'destinationStation' ? value : prev.destinationStation)
-        )?.id;
-        updatedData.routeId = newRouteId ? Number(newRouteId) : null;
-
-        // Recalculate revenue with the new ticket price
-        console.log('updated Data route id: ', updatedData.routeId);
-        updatedData.revenue = calculateRevenue(updatedData);
-      }
-
+      const updatedData = { ...prev, sourceStation: route?.sourceAdda || "", destinationStation: route?.destinationAdda || "" }
+      updatedData.routeId = Number(route?.id) || null;
+      updatedData.revenue = calculateRevenue(updatedData);
       return updatedData;
-    });
+    })
+  }
+
+  const calculateRefreshmentExpense = () => {
+    if (tripData.routeId && tripData.passengerCount) {
+      const expenseForThisRouteId = fixedTripExpenses.find(
+        (expense) => expense.routeId === Number(tripData.routeId)
+      );
+      if (expenseForThisRouteId && expenseForThisRouteId.refreshment) {
+        const calculatedRefreshmentExpense =
+          Number(tripData.passengerCount) * expenseForThisRouteId.refreshment;
+        return calculatedRefreshmentExpense;
+      }
+    }
+    return '0';
+  };
+
+  const calculateRewardCommission = () => {
+    if (tripData.routeId) {
+      const expenseForThisRouteId = fixedTripExpenses.find(
+        (expense) => expense.routeId === Number(tripData.routeId)
+      );
+      if (expenseForThisRouteId && expenseForThisRouteId.rewardCommission) {
+        return expenseForThisRouteId.rewardCommission;
+      }
+    }
+    return '0';
   };
 
   const handleInputChange = (
@@ -171,39 +173,58 @@ export default function EditRouteDialog({
       'fullTicketCount',
       'halfTicketCount',
       'freeTicketCount',
-      'revenue'
+      'revenue',
+      'refreshmentExpense',
+      'rewardCommission'
     ];
+
+    if (id === 'refreshmentExpense') {
+      setIsRefreshmentExpenseCustom(true);
+    }
+
+    if (id === 'rewardCommission') {
+      setIsRewardCommissionCustom(true);
+    }
 
     setTripData((prev) => {
       const newData = {
         ...prev,
-        // If id is in numericFields, set value to empty string if it's not a number
         [id]: numericFields.includes(id)
-          ? value === '' || (isNaN(Number(value)) ? '' : value)
+          ? value === '' || isNaN(Number(value)) ? '' : value
           : value
       };
-
-      // If the changed field is a numeric field, set actual revenue to empty string, else remain same.
-      newData.revenue = numericFields.includes(id)
-        ? null
-        : newData.revenue;
 
       const fullCount = Number(newData.fullTicketCount) || 0;
       const halfCount = Number(newData.halfTicketCount) || 0;
       const freeCount = Number(newData.freeTicketCount) || 0;
       const luxuryCount = Number(newData.fullTicketBusinessCount) || 0;
 
-      // Calculate the passenger count
       newData.passengerCount = Number(
         fullCount + halfCount + freeCount + luxuryCount
       );
-      console.log('new Data full ticket routeID:', newData.routeId);
-      // Calculate the revenue if we have a ticket price
+
       newData.revenue = calculateRevenue(newData);
 
       return newData;
     });
   };
+
+  useEffect(() => {
+    if (!isRefreshmentExpenseCustom) {
+      const calculatedExpense = calculateRefreshmentExpense();
+      setTripData((prev) => ({
+        ...prev,
+        refreshmentExpense: Number(calculatedExpense)
+      }));
+    }
+    if (!isRewardCommissionCustom) {
+      const calculatedCommission = calculateRewardCommission();
+      setTripData((prev) => ({
+        ...prev,
+        rewardCommission: Number(calculatedCommission)
+      }));
+    }
+  }, [tripData.routeId, tripData.passengerCount, fixedTripExpenses, isRefreshmentExpenseCustom, isRewardCommissionCustom]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -222,37 +243,12 @@ export default function EditRouteDialog({
       revenueDiffExplanation: tripData.revenueDiffExplanation,
       loadEarning: tripData.loadEarning,
       rewardCommission: tripData.rewardCommission,
-      refreshmentExpense: tripData.refreshmentExpense
+      refreshmentExpense: tripData.refreshmentExpense,
+      date: tripData.date
     };
 
     onUpdate(updatedTripData);
     setOpen(false);
-  };
-
-  const getSourceStations = () => {
-    const uniqueSourceStations = new Map();
-    routes.forEach((route: { sourceAdda: any; sourceCity: any; }) => {
-      if (!uniqueSourceStations.has(route.sourceAdda)) {
-        uniqueSourceStations.set(route.sourceAdda, {
-          value: route.sourceAdda,
-          label: `${route.sourceAdda} (${route.sourceCity})`
-        });
-      }
-    });
-    return Array.from(uniqueSourceStations.values());
-  };
-
-  const getDestinationStations = () => {
-    const uniqueDestinationStations = new Map();
-    routes.forEach((route: { destinationAdda: any; destinationCity: any; }) => {
-      if (!uniqueDestinationStations.has(route.destinationAdda)) {
-        uniqueDestinationStations.set(route.destinationAdda, {
-          value: route.destinationAdda,
-          label: `${route.destinationAdda} (${route.destinationCity})`
-        });
-      }
-    });
-    return Array.from(uniqueDestinationStations.values());
   };
 
   return (
@@ -274,58 +270,21 @@ export default function EditRouteDialog({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-8 py-4 md:grid-cols-2">
-            {/* Source Station Dropdown */}
             <SelectField
-              id="sourceStation"
-              value={tripData.sourceStation}
-              onChange={(value) => handleSelectChange("sourceStation", value)}
-              placeholder="Select Source Station"
-              options={getSourceStations()}
-              label="Source Station"
-              className="flex-col !space-x-0 gap-y-2 !items-start"
+              id="route"
+              label="Select Route"
+              value={tripData?.routeId?.toString()}
+              onChange={handleRouteChange}
+              placeholder="Select Route"
+              options={routes.map((route) => ({
+                value: route.id.toString(),
+                label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+              }))}
+              className="flex-col !items-start !space-x-0"
             />
 
-            <SelectField
-              id="destinationStation"
-              value={tripData.destinationStation}
-              onChange={(value) => handleSelectChange("destinationStation", value)}
-              placeholder="Select Destination Station"
-              options={getDestinationStations()}
-              label="Destination Station"
-              className="flex-col !space-x-0 gap-y-2 !items-start"
-            />
-
-            {/* Other Fields */}
-            {/* <div className="grid gap-2">
-              <Label htmlFor="routeClosingVoucherId">
-                Voucher <span className="text-gradient">ID</span>
-              </Label>
-              <Input
-                id="routeClosingVoucherId"
-                type="number"
-                value={tripData.routeClosingVoucherId}
-                onChange={handleInputChange}
-                placeholder="Enter Voucher ID"
-              />
-            </div> */}
             <div className="grid gap-2">
-              <Label htmlFor="passengerCount">
-                Passenger <span className="text-gradient">Count</span>
-              </Label>
-              <Input
-                id="passengerCount"
-                type="number"
-                value={tripData.passengerCount?.toString()}
-                onChange={handleInputChange}
-                placeholder="Enter Passenger Count"
-                disabled
-                readOnly
-              />
-            </div>
-
-            {/* Full Ticket Luxury Count */}
-            <div className="grid gap-2">
-              <Label htmlFor="fullTicketBusinessCount">
+              <Label htmlFor="fullTicketBusinessCount" className="text-gradient">
                 Full Ticket Luxury Count
               </Label>
               <Input
@@ -334,12 +293,18 @@ export default function EditRouteDialog({
                 placeholder="Enter full ticket count"
                 value={tripData.fullTicketBusinessCount?.toString()}
                 onChange={handleInputChange}
+                min={0}
+                max={9}
+                onInput={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  if (Number(target.value) > 9) target.value = "9";
+                }}
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="fullTicketCount">
-                Full Ticket <span className="text-gradient">Count</span>{' '}
+              <Label htmlFor="fullTicketCount" className="text-gradient">
+                Full Ticket Count
               </Label>
               <Input
                 id="fullTicketCount"
@@ -347,11 +312,13 @@ export default function EditRouteDialog({
                 value={tripData.fullTicketCount?.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter Full Ticket Count"
+                min={0}
               />
             </div>
+
             <div className="grid gap-2">
-              <Label htmlFor="halfTicketCount">
-                Half Ticket <span className="text-gradient">Count</span>
+              <Label htmlFor="halfTicketCount" className="text-gradient">
+                Half Ticket Count
               </Label>
               <Input
                 id="halfTicketCount"
@@ -359,11 +326,13 @@ export default function EditRouteDialog({
                 value={tripData.halfTicketCount?.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter Half Ticket Count"
+                min={0}
               />
             </div>
+
             <div className="grid gap-2">
-              <Label htmlFor="freeTicketCount">
-                Free Ticket <span className="text-gradient">Count</span>
+              <Label htmlFor="freeTicketCount" className="text-gradient">
+                Free Ticket Count
               </Label>
               <Input
                 id="freeTicketCount"
@@ -371,44 +340,103 @@ export default function EditRouteDialog({
                 value={tripData.freeTicketCount?.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter Free Ticket Count"
+                min={0}
               />
             </div>
 
-            {/* Miscellaneous Revenue */}
             <div className="grid gap-2">
-              <Label htmlFor="miscellaneousAmount">Miscellaneous Amount</Label>
+              <Label htmlFor="passengerCount" className="text-gradient">
+                Passenger Count
+              </Label>
+              <Input
+                disabled={true}
+                id="passengerCount"
+                type="number"
+                placeholder="Enter passenger count"
+                value={tripData.passengerCount?.toString()}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="loadEarning" className="text-gradient">
+                Load Earning
+              </Label>
+              <Input
+                id="loadEarning"
+                type="number"
+                placeholder="Enter load expense"
+                value={tripData.loadEarning?.toString()}
+                onChange={handleInputChange}
+                min={0}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="rewardCommission" className="text-gradient">
+                Reward Commission
+              </Label>
+              <Input
+                id="rewardCommission"
+                type="number"
+                placeholder={`Calculated: ${calculateRewardCommission()}`}
+                value={tripData.rewardCommission?.toString()}
+                onChange={handleInputChange}
+                min={0}
+                step="1"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="refreshmentExpense" className="text-gradient">
+                Refreshment Expense
+              </Label>
+              <Input
+                id="refreshmentExpense"
+                type="number"
+                placeholder={`Calculated: ${calculateRefreshmentExpense()}`}
+                value={tripData.refreshmentExpense?.toString()}
+                onChange={handleInputChange}
+                min={0}
+                step="1"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="miscellaneousAmount" className="text-gradient">
+                Miscellaneous Amount
+              </Label>
               <Input
                 id="miscellaneousAmount"
                 type="number"
-                placeholder="Calculated revenue"
+                placeholder="Enter miscellaneous amount"
                 value={tripData.miscellaneousAmount?.toString()}
                 onChange={handleInputChange}
               />
             </div>
 
-            {/* Actual Revenue */}
             <div className="grid gap-2">
-              <Label htmlFor="actualRevenue">Actual Revenue</Label>
+              <Label htmlFor="actualRevenue" className="text-gradient">
+                Actual Revenue
+              </Label>
               <Input
                 id="actualRevenue"
                 type="number"
                 placeholder="Actual revenue"
-                value={tripData?.revenue?.toString()}
+                value={tripData.revenue?.toString()}
                 onChange={handleInputChange}
               />
             </div>
 
             <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="revenueDiffExplanation">
-                Miscellaneous  Difference{' '}
-                <span className="text-gradient">Explanation</span>
+              <Label htmlFor="revenueDiffExplanation" className="text-gradient">
+                Miscellaneous Explanation
               </Label>
               <Textarea
                 id="revenueDiffExplanation"
                 value={tripData.revenueDiffExplanation}
                 onChange={handleInputChange}
-                placeholder="Explain Revenue Differences"
-                className="rounded-md border p-2"
+                placeholder="Enter explanation for revenue difference"
               />
             </div>
           </div>
@@ -420,3 +448,4 @@ export default function EditRouteDialog({
     </Dialog>
   );
 }
+

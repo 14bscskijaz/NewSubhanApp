@@ -9,7 +9,7 @@ type InputFieldProps = {
   label: string;
 };
 
-export default function InputField({ id, value, onChange, placeholder, label }: InputFieldProps) {
+export default function InputField({ id, value = '', onChange, placeholder, label }: InputFieldProps) {
   return (
     <div className="flex items-center space-x-3 text-nowrap">
       <Label htmlFor={id} className="text-gradient text-sm font-medium">

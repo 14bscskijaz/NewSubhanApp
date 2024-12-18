@@ -1,13 +1,12 @@
 'use client';
-import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
 import { getAllBuses } from '@/app/actions/bus.action';
 import { getAllTicketPrices } from '@/app/actions/pricing.action';
 import { getAllRoutes } from '@/app/actions/route.action';
+import { getAllTrips } from '@/app/actions/trip.action';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
 import { setTicketRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
@@ -17,9 +16,6 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
-import NewTripDialog from '../../trip-expense/_components/new-trip-dialogue';
-import { getAllTrips } from '@/app/actions/trip.action';
-import { TripInformation, allTripsInformation, setTripInformation } from '@/lib/slices/trip-information';
 
 type TTripListingPage = {};
 
@@ -86,6 +82,15 @@ export default function TripListingPage({ }: TTripListingPage) {
       return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0));
     };
 
+    // Helper function to get route details
+    const getRouteDetails = (routeId: string) => {
+      const route = routes.find((r) => r.id.toString() === routeId);
+      return route ? {
+        sourceCity: route.sourceCity.toString().trim(),
+        destinationCity: route.destinationCity.toString().trim()
+      } : null;
+    };
+
     // Get the date range from the params and parse it
     const dateRangeParam = searchParams.get('date') || '';
     let parsedStartDate: Date | null = null;
@@ -102,6 +107,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       }
     }
 
+    // Use Map to store unique route combinations
     const routeMap = new Map<string, any>();
 
     // Filter trips within the date range
@@ -119,56 +125,65 @@ export default function TripListingPage({ }: TTripListingPage) {
         return tripDate < parsedEndDate;
       }
 
-      return true;
+      return true; // Include all trips if no date filter is applied
     });
 
-    // Aggregate data by route
+    // Aggregate data by unique source-destination combination
     filteredTrips.forEach((trip) => {
-      const routeId = trip.routeId || "Unknown";
-      if (!routeMap.has(routeId.toString())) {
-        routeMap.set(routeId.toString(), {
-          routeId,
+      const routeDetails = getRouteDetails(trip.routeId?.toString() ?? "");
+      if (!routeDetails) return;
+
+      const routeKey = `${routeDetails.sourceCity}-${routeDetails.destinationCity}`;
+
+      if (!routeMap.has(routeKey)) {
+        routeMap.set(routeKey, {
+          sourceCity: routeDetails.sourceCity,
+          destinationCity: routeDetails.destinationCity,
+          routeKey,
           totalTrips: 0,
           totalPassengers: 0,
           totalRevenue: 0,
           freePassengers: 0,
           halfPassengers: 0,
           fullPassengers: 0,
+          routeIds: new Set(),
         });
       }
 
-      const routeData = routeMap.get(routeId.toString());
+      const routeData = routeMap.get(routeKey);
       routeData.totalTrips += 1;
       routeData.totalPassengers += Number(trip.passengerCount) || 0;
       routeData.totalRevenue += Number(trip.revenue) || 0;
       routeData.freePassengers += Number(trip.freeTicketCount) || 0;
       routeData.halfPassengers += Number(trip.halfTicketCount) || 0;
       routeData.fullPassengers += Number(trip.fullTicketCount) || 0;
+      routeData.routeIds.add(trip.routeId); // Change from add() to push()
 
-      routeMap.set(routeId.toString(), routeData);
+      routeMap.set(routeKey, routeData);
     });
 
-    // Calculate averages and map route names
+    // Convert to array and calculate averages
     const result = Array.from(routeMap.values()).map((data) => {
-    const route = routes.find((r) => r.id.toString() === data.routeId);
-
       return {
-        routeId: data.routeId,
+        routeKey: data.routeKey,
+        sourceCity: data.sourceCity,
+        destinationCity: data.destinationCity,
         totalTrips: data.totalTrips,
         totalPassengers: data.totalPassengers,
-        totalRevenue: Math.floor(data.totalRevenue),
+        totalRevenue: parseFloat(data.totalRevenue).toFixed(2),
         freePassengers: data.freePassengers,
         halfPassengers: data.halfPassengers,
         fullPassengers: data.fullPassengers,
         averagePassengers: data.totalTrips
           ? Math.floor(data.totalPassengers / data.totalTrips)
           : 0,
+        routeCount: Array.from(data.routeIds).length,
+        routeIds: Array.from(data.routeIds),
       };
     });
 
     return result;
   };
-
 
 
   const routeMetrics = calculateMetricsByRoute();
@@ -184,7 +199,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       : true;
 
     const routeData = routes.find(
-      (route) => route.id.toString().trim() === voucher.routeId?.toString().trim()
+      (route) => route.id.toString().trim() === voucher.routeIds[0]?.toString().trim()
     );
 
     // Create route key for filtering
@@ -192,23 +207,12 @@ export default function TripListingPage({ }: TTripListingPage) {
       ? `${routeData.sourceCity.trim()}-${routeData.destinationCity.trim()}`
       : '';
 
-    // // Normalize voucher date to remove the time part for comparison
-    // const voucherDate = voucher.date ? new Date(voucher.date).setHours(0, 0, 0, 0) : 0;
-
-    // // Normalize filter date to remove the time part for comparison
-    // const dateToBeFilter = dateFilter ? new Date(dateFilter).setHours(0, 0, 0, 0) : 0;
-
 
 
     // Match route filter
     const matchesRouteFilter = routeFilter
       ? routeToBeFilter.toLowerCase() === routeFilter.toLowerCase()
       : true;
-
-    // Match date filter
-    // const matchesDateFilter = dateFilter
-    //   ? voucherDate === dateToBeFilter
-    //   : true;
 
     // Return combined match result
     return matchesSearch && matchesRouteFilter;
@@ -227,7 +231,8 @@ export default function TripListingPage({ }: TTripListingPage) {
 
     // Prepare the data for printing
     const voucherData = filteredVouchers.map((voucher) => {
-      const route: any = RouteMap.get(voucher.routeId || 0) || {};
+      const routeId = voucher?.routeIds[0];
+      const route: any = RouteMap.get(typeof routeId === 'number' ? routeId : 0) ?? 0;
 
       return {
         ...voucher,
@@ -236,6 +241,7 @@ export default function TripListingPage({ }: TTripListingPage) {
           : 'N/A'
       };
     });
+
 
     // Open print window
     const printWindow = window.open('', '_blank');

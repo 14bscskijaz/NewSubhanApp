@@ -2,12 +2,10 @@
 'use client';
 import { BusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { ColumnDef } from '@tanstack/react-table';
-import BusNumber from './BusNumber';
-import Expense from './Expense';
-import Revenue from './Revenue';
 import SourceDestination from './SourceDestination';
+import { TripInformationInput } from '@/lib/slices/trip-information';
 
-export const columns: ColumnDef<BusClosingVoucher>[] = [
+export const columns: ColumnDef<TripInformationInput & {routeIds:[number]}>[] = [
   {
     id: 'serial_no',
     header: 'S.No',
@@ -18,7 +16,7 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
     header: 'Route',
     cell: (
       { row } // Parent component usage
-    ) => <SourceDestination routeId={Number(row.original.routeId)} />
+    ) => <SourceDestination routeId={Number(row.original.routeIds[0])} />
   },
   
   // {

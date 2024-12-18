@@ -28,6 +28,8 @@ import { setFixedTripExpense } from '@/lib/slices/fixed-trip-expense'
 import busClosing, { BusClosing, addBusClosing, allBusClosings } from '@/lib/slices/bus-closing'
 import { getAllTicketPrices } from '@/app/actions/pricing.action'
 import { useToast } from '@/hooks/use-toast'
+import { getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action'
+import { setClosingExpense } from '@/lib/slices/fixed-closing-expense-slice'
 
 export default function TripInfoListingPage() {
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
@@ -60,15 +62,17 @@ export default function TripInfoListingPage() {
   const fetchAllData = async () => {
     try {
       const allBuses = await getAllBuses();
-      const allEmployees = await getAllEmployees();
-      const allRoutes = await getAllRoutes();
-      const tickets = await getAllTicketPrices();
-      const fixedTripExpenses = await getAllFixedTripExpenses();
-      dispatch(setRoute(allRoutes));
-      dispatch(setTicketRaw(tickets));
-      dispatch(setEmployee(allEmployees));
       dispatch(setBus(allBuses));
+      const allEmployees = await getAllEmployees();
+      dispatch(setEmployee(allEmployees));
+      const allRoutes = await getAllRoutes();
+      dispatch(setRoute(allRoutes));
+      const tickets = await getAllTicketPrices();
+      dispatch(setTicketRaw(tickets));
+      const fixedTripExpenses = await getAllFixedTripExpenses();
       dispatch(setFixedTripExpense(fixedTripExpenses));
+      const fixedBusClosingExpenses = await getAllFixedBusClosingExpenses();
+      dispatch(setClosingExpense(fixedBusClosingExpenses));
 
     } catch (error: any) {
       console.error(error.message);
@@ -151,7 +155,7 @@ export default function TripInfoListingPage() {
 
   const formatAmount = (amount: string | number) => {
     return Number(amount).toLocaleString('en-US');
-};
+  };
 
   return (
     <PageContainer scrollable>

@@ -119,7 +119,7 @@ export default function TripListingPage({ }: TTripListingPage) {
         return tripDate < parsedEndDate;
       }
 
-      return true; // Include all trips if no date filter is applied
+      return true;
     });
 
     // Aggregate data by route

@@ -3,6 +3,7 @@ using System;
 using BusServiceAPI.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BusServiceAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241219124538_everythingnullable")]
+    partial class everythingnullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,11 +41,9 @@ namespace BusServiceAPI.Migrations
                         .HasColumnType("character varying(9)");
 
                     b.Property<string>("BusOwner")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("BusStatus")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
@@ -53,7 +53,6 @@ namespace BusServiceAPI.Migrations
                         .HasColumnType("character varying(15)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -69,52 +68,52 @@ namespace BusServiceAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Alliedmor")
+                    b.Property<int?>("Alliedmor")
                         .HasColumnType("integer");
 
-                    b.Property<int>("BusId")
+                    b.Property<int?>("BusId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("COilTechnician")
+                    b.Property<int?>("COilTechnician")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CityParchi")
+                    b.Property<int?>("CityParchi")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Cleaning")
+                    b.Property<int?>("Cleaning")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Commission")
+                    b.Property<int?>("Commission")
                         .HasColumnType("integer");
 
                     b.Property<int?>("ConductorId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Diesel")
+                    b.Property<int?>("Diesel")
                         .HasColumnType("integer");
 
-                    b.Property<double>("DieselLitres")
+                    b.Property<double?>("DieselLitres")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("DriverId")
+                    b.Property<int?>("DriverId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Refreshment")
+                    b.Property<int?>("Refreshment")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Revenue")
+                    b.Property<int?>("Revenue")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RouteId")
+                    b.Property<int?>("RouteId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Toll")
+                    b.Property<int?>("Toll")
                         .HasColumnType("integer");
 
-                    b.Property<int>("VoucherNumber")
+                    b.Property<int?>("VoucherNumber")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -139,7 +138,6 @@ namespace BusServiceAPI.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CNIC")
@@ -147,33 +145,28 @@ namespace BusServiceAPI.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
-                    b.Property<DateTime>("DOB")
+                    b.Property<DateTime?>("DOB")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("EmployeeStatus")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("EmployeeType")
+                    b.Property<int?>("EmployeeType")
                         .HasColumnType("integer");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("HireDate")
+                    b.Property<DateTime?>("HireDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("MobileNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Notes")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -189,7 +182,7 @@ namespace BusServiceAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Amount")
+                    b.Property<int?>("Amount")
                         .HasColumnType("integer");
 
                     b.Property<int?>("BusClosingVoucherId")
@@ -198,11 +191,10 @@ namespace BusServiceAPI.Migrations
                     b.Property<int?>("BusId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -227,31 +219,31 @@ namespace BusServiceAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AlliedMorde")
+                    b.Property<int?>("AlliedMorde")
                         .HasColumnType("integer");
 
-                    b.Property<int>("COilExpense")
+                    b.Property<int?>("COilExpense")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DcPerchi")
+                    b.Property<int?>("DcPerchi")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DriverCommission")
+                    b.Property<int?>("DriverCommission")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FullSafai")
+                    b.Property<int?>("FullSafai")
                         .HasColumnType("integer");
 
-                    b.Property<int>("HalfSafai")
+                    b.Property<int?>("HalfSafai")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RefreshmentRate")
+                    b.Property<int?>("RefreshmentRate")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RouteId")
+                    b.Property<int?>("RouteId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TollTax")
+                    b.Property<int?>("TollTax")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -269,25 +261,25 @@ namespace BusServiceAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Counter")
+                    b.Property<int?>("Counter")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DcParchi")
+                    b.Property<int?>("DcParchi")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Refreshment")
+                    b.Property<int?>("Refreshment")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RewardCommission")
+                    b.Property<int?>("RewardCommission")
                         .HasColumnType("integer");
 
-                    b.Property<double>("RouteCommission")
+                    b.Property<double?>("RouteCommission")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("RouteId")
+                    b.Property<int?>("RouteId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Steward")
+                    b.Property<int?>("Steward")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -306,19 +298,15 @@ namespace BusServiceAPI.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DestinationAdda")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("DestinationCity")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SourceAdda")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SourceCity")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -358,42 +346,42 @@ namespace BusServiceAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
+                        .IsRequired()
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("FreeTicketCount")
+                    b.Property<int?>("FreeTicketCount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FullTicketCount")
+                    b.Property<int?>("FullTicketCount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("HalfTicketCount")
+                    b.Property<int?>("HalfTicketCount")
                         .HasColumnType("integer");
 
                     b.Property<int?>("LoadEarning")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PassengerCount")
+                    b.Property<int?>("PassengerCount")
                         .HasColumnType("integer");
 
                     b.Property<int?>("RefreshmentExpense")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Revenue")
+                    b.Property<int?>("Revenue")
                         .HasColumnType("integer");
 
                     b.Property<string>("RevenueDiffExplanation")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
                     b.Property<int?>("RewardCommission")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RouteClosingVoucherId")
+                    b.Property<int?>("RouteClosingVoucherId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RouteId")
+                    b.Property<int?>("RouteId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -408,8 +396,7 @@ namespace BusServiceAPI.Migrations
                     b.HasOne("BusServiceAPI.Models.Bus", "Bus")
                         .WithMany("BusClosingVouchers")
                         .HasForeignKey("BusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BusServiceAPI.Models.Employee", "Conductor")
                         .WithMany("BusClosingVouchersAsConductor")
@@ -419,14 +406,12 @@ namespace BusServiceAPI.Migrations
                     b.HasOne("BusServiceAPI.Models.Employee", "Driver")
                         .WithMany("BusClosingVouchersAsDriver")
                         .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BusServiceAPI.Models.Route", "Route")
                         .WithMany("BusClosingVouchers")
                         .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Bus");
 
@@ -458,8 +443,7 @@ namespace BusServiceAPI.Migrations
                     b.HasOne("BusServiceAPI.Models.Route", "Route")
                         .WithMany("FixedBusClosingExpenses")
                         .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Route");
                 });
@@ -469,8 +453,7 @@ namespace BusServiceAPI.Migrations
                     b.HasOne("BusServiceAPI.Models.Route", "Route")
                         .WithMany("FixedTripExpenses")
                         .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Route");
                 });
@@ -491,8 +474,7 @@ namespace BusServiceAPI.Migrations
                     b.HasOne("BusServiceAPI.Models.Route", "Route")
                         .WithMany("Trips")
                         .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Route");
                 });

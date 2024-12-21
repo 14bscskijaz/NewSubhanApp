@@ -5,19 +5,19 @@
         public int Id { get; set; } // Primary key, auto-incremented
 
         //Less than 1 will ne considered commission percentage more than 1 will be the commision amount
-        public int DriverCommission { get; set; }
+        public int? DriverCommission { get; set; }
         
-        public int COilExpense { get; set; } // C-Oil
-        public int TollTax { get; set; } // Increase 10% annually
-        public int HalfSafai { get; set; }
-        public int FullSafai { get; set; }
-        public int DcPerchi { get; set; } // Other than Fsd source
-        public int RefreshmentRate { get; set; } // Fixed for Islamabad
-        public int AlliedMorde { get; set; }
+        public int? COilExpense { get; set; } // C-Oil
+        public int? TollTax { get; set; } // Increase 10% annually
+        public int? HalfSafai { get; set; }
+        public int? FullSafai { get; set; }
+        public int? DcPerchi { get; set; } // Other than Fsd source
+        public int? RefreshmentRate { get; set; } // Fixed for Islamabad
+        public int? AlliedMorde { get; set; }
 
         // Navigation properties
-        public Route Route { get; set; }
-        public int RouteId { get; set; }
+        public Route? Route { get; set; }
+        public int? RouteId { get; set; }
     }
 
 }

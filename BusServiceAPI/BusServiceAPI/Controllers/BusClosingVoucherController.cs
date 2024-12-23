@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BusServiceAPI.Models.DTOs;
 using BusServiceAPI.Common;
+using System.Reflection.Emit;
 
 
 namespace BusServiceAPI.Controllers
@@ -49,7 +50,11 @@ namespace BusServiceAPI.Controllers
                 Alliedmor = v.Alliedmor,
                 CityParchi = v.CityParchi,
                 Refreshment = v.Refreshment,
-                Revenue = v.Revenue
+                Revenue = v.Revenue,
+                Repair= v.Repair,
+                MiscellaneousExpense = v.MiscellaneousExpense,
+                Explanation = v.Explanation,
+                Generator = v.Generator,
             }).ToList();
         }
 
@@ -87,7 +92,11 @@ namespace BusServiceAPI.Controllers
                 Alliedmor = voucher.Alliedmor,
                 CityParchi = voucher.CityParchi,
                 Refreshment = voucher.Refreshment,
-                Revenue = voucher.Revenue
+                Revenue = voucher.Revenue,
+                Repair = voucher.Repair,
+                MiscellaneousExpense = voucher.MiscellaneousExpense,
+                Explanation = voucher.Explanation,
+                Generator = voucher.Generator,
             };
 
             return voucherDto;
@@ -134,7 +143,11 @@ namespace BusServiceAPI.Controllers
                 Alliedmor = voucherDto.Alliedmor,
                 CityParchi = voucherDto.CityParchi,
                 Refreshment = voucherDto.Refreshment,
-                Revenue = voucherDto.Revenue
+                Revenue = voucherDto.Revenue,
+                Repair = voucherDto.Repair,
+                MiscellaneousExpense = voucherDto.MiscellaneousExpense,
+                Explanation = voucherDto.Explanation,
+                Generator = voucherDto.Generator,
             };
 
             _context.BusClosingVouchers.Add(voucher);
@@ -161,7 +174,11 @@ namespace BusServiceAPI.Controllers
                     Alliedmor = voucher.Alliedmor,
                     CityParchi = voucher.CityParchi,
                     Refreshment = voucher.Refreshment,
-                    Revenue = voucher.Revenue
+                    Revenue = voucher.Revenue,
+                    Repair = voucher.Repair,
+                    MiscellaneousExpense = voucher.MiscellaneousExpense,
+                    Explanation = voucher.Explanation,
+                    Generator = voucher.Generator,
                 };
 
                 return CreatedAtAction(
@@ -219,6 +236,10 @@ namespace BusServiceAPI.Controllers
             voucher.CityParchi = voucherDto.CityParchi;
             voucher.Refreshment = voucherDto.Refreshment;
             voucher.Revenue = voucherDto.Revenue;
+            voucher.Repair = voucherDto.Repair;
+            voucher.MiscellaneousExpense = voucherDto.MiscellaneousExpense;
+            voucher.Explanation = voucherDto.Explanation;
+            voucher.Generator = voucherDto.Generator;
 
             try
             {

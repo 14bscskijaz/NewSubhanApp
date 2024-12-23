@@ -12,6 +12,7 @@
         public int? RefreshmentExpense { get; set; }
         public int? RewardCommission { get; set; }
         public int? LoadEarning { get; set; }
+        public int? CheckerExpense { get; set; }
         public int? Revenue { get; set; } // Int
         public string? RevenueDiffExplanation { get; set; } // varchar(255)
         public DateTime? Date { get; set; } // DateTime

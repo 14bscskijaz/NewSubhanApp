@@ -37,7 +37,8 @@ namespace BusServiceAPI.Controllers
                   RewardCommission = t.RewardCommission,
                   Revenue = t.Revenue,
                   RevenueDiffExplanation = t.RevenueDiffExplanation,
-                  Date = t.Date
+                  Date = t.Date,
+                  CheckerExpense = t.CheckerExpense
               }).ToList();
 
             return Ok(trips);
@@ -63,7 +64,8 @@ namespace BusServiceAPI.Controllers
                    RewardCommission = t.RewardCommission,
                    Revenue = t.Revenue,
                    RevenueDiffExplanation = t.RevenueDiffExplanation,
-                   Date = t.Date
+                   Date = t.Date,
+                   CheckerExpense = t.CheckerExpense
                })
                 .FirstOrDefault(t => t.Id == id);
 
@@ -93,7 +95,8 @@ namespace BusServiceAPI.Controllers
                 RewardCommission = tripDto.RewardCommission,
                 Revenue = tripDto.Revenue,
                 RevenueDiffExplanation = tripDto.RevenueDiffExplanation,
-                Date = tripDto.Date
+                Date = tripDto.Date,
+                CheckerExpense = tripDto.CheckerExpense
             };
 
             _context.Trips.Add(trip);
@@ -113,7 +116,8 @@ namespace BusServiceAPI.Controllers
                 RewardCommission = trip.RewardCommission,
                 Revenue = trip.Revenue,
                 RevenueDiffExplanation = trip.RevenueDiffExplanation,
-                Date = trip.Date
+                Date = trip.Date,
+                CheckerExpense = trip.CheckerExpense
             };
 
             return CreatedAtAction(nameof(GetTrip), new { id = createdTrip.Id }, createdTrip);
@@ -139,7 +143,7 @@ namespace BusServiceAPI.Controllers
             trip.Revenue = tripDto.Revenue;
             trip.RevenueDiffExplanation = tripDto.RevenueDiffExplanation;
             trip.Date = tripDto.Date;
-
+            trip.CheckerExpense = tripDto.CheckerExpense;
             _context.SaveChanges();
 
             return NoContent();

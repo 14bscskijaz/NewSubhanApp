@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using BusServiceAPI.Models;
 using BusServiceAPI.Common;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,15 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    // Add both HTTP and HTTPS ports
+    serverOptions.Listen(IPAddress.Any, 5099);  // HTTP port
+    serverOptions.Listen(IPAddress.Any, 7169, listenOptions =>
+    {
+        listenOptions.UseHttps();  // HTTPS port
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();  // Needed for Swagger to work

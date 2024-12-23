@@ -79,16 +79,29 @@ export default function TripListingPage({ }: TTripListingPage) {
   }, [searchParams, dispatch]);
 
   const filteredVouchers = vouchers.filter((voucher) => {
+    // Parse date range filter
+    let startDate = 0;
+    let endDate = 0;
+  
+    if (dateFilter.includes('|')) {
+      const [start, end] = dateFilter.split('|');
+      startDate = new Date(start).setHours(0, 0, 0, 0); // Normalize start date
+      endDate = new Date(end).setHours(23, 59, 59, 999); // Normalize end date
+    }
+  
+    // Normalize voucher date to remove the time part for comparison
+    const voucherDate = voucher.date ? new Date(voucher.date).getTime() : 0;
+  
     // Match search filter
     const matchesSearch = search
       ? voucher.alliedmor?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.coilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
+        voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.coilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
       : true;
-
+  
     // Find corresponding bus and route data
     const busData = buses.find(
       (bus) => bus.id.toString().trim() === voucher.busId.toString().trim()
@@ -96,36 +109,31 @@ export default function TripListingPage({ }: TTripListingPage) {
     const routeData = routes.find(
       (route) => route.id.toString().trim() === voucher.routeId?.toString().trim()
     );
-
+  
     // Create route key for filtering
     const routeToBeFilter = routeData
       ? `${routeData.sourceCity.trim()}-${routeData.destinationCity.trim()}`
       : '';
-
-    // Normalize voucher date to remove the time part for comparison
-    const voucherDate = voucher.date ? new Date(voucher.date).setHours(0, 0, 0, 0) : 0;
-
-    // Normalize filter date to remove the time part for comparison
-    const dateToBeFilter = dateFilter ? new Date(dateFilter).setHours(0, 0, 0, 0) : 0;
-
+  
     // Match busNumber filter
     const matchesBusNumber = busNumber
       ? busData?.busNumber?.toString().trim().toLowerCase() === busNumber.toLowerCase()
       : true;
-
+  
     // Match route filter
     const matchesRouteFilter = routeFilter
       ? routeToBeFilter.toLowerCase() === routeFilter.toLowerCase()
       : true;
-
-    // Match date filter
-    const matchesDateFilter = dateFilter
-      ? voucherDate === dateToBeFilter
+  
+    // Match date range filter
+    const matchesDateRange = startDate && endDate
+      ? voucherDate >= startDate && voucherDate <= endDate
       : true;
-
+  
     // Return combined match result
-    return matchesSearch && matchesBusNumber && matchesRouteFilter && matchesDateFilter;
+    return matchesSearch && matchesBusNumber && matchesRouteFilter && matchesDateRange;
   });
+  
 
 
   const totalRevenue = filteredVouchers.reduce((sum: number, item: any) => sum + (item.revenue || 0), 0);

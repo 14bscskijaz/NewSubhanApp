@@ -201,7 +201,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
             </style>
           </head>
           <body>
-            <h1>Expenses Report</h1>
+            <h1>Daily Closing Report</h1>
             <p><strong>Date:</strong> ${selectedDate ? selectedDate.toLocaleDateString() : 'All Dates'}</p>
 
             <h2>Bus Expenses</h2>
@@ -232,7 +232,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
                         <td>${voucher.voucherNumber || 'N/A'}</td>
                         <td>${voucher.revenue || 0}</td>
                         <td>${sourceCity !== 'N/A'
-                ? `${sourceCity} (${sourceAdda}) - ${destinationCity} (${destinationAdda})`
+                ? `${sourceCity} - ${destinationCity}`
                 : 'N/A'
               }</td>
                         <td>${expense.description || 'N/A'}</td>
@@ -326,7 +326,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
       toast({
         title: "Success",
-        variant:"default",
+        variant: "default",
         description: "Expenses submitted successfully!",
         duration: 3000,
       });
@@ -337,7 +337,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
     } catch (error) {
       toast({
         title: "Error",
-        variant:"destructive",
+        variant: "destructive",
         description: "Failed to submit expenses. Please try again.",
         duration: 3000,
       });
@@ -384,7 +384,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
         <div className='flex justify-end mt-4'>
           <Button
             onClick={handleSubmitExpenses}
-            disabled={loading} 
+            disabled={loading}
             className={`${loading ? 'cursor-not-allowed opacity-50' : ''
               }`}
           >

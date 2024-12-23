@@ -16,6 +16,7 @@ export type TripInformation = {
   loadEarning: number | null,
   rewardCommission: number | null,
   refreshmentExpense: number | null,
+  checkerExpenses: number | null,
   date?: string
 };
 

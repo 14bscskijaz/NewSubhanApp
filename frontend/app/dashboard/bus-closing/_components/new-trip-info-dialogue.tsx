@@ -63,8 +63,10 @@ export default function NewTripInfoDialog({
     loadEarning: null,
     rewardCommission: null,
     refreshmentExpense: null,
+    checkerExpenses: null, // New field
     date: date
   });
+
   const [isRefreshmentExpenseCustom, setIsRefreshmentExpenseCustom] = useState(false);
   const [isRewardCommissionCustom, setIsRewardCommissionCustom] = useState(false);
 
@@ -125,6 +127,8 @@ export default function NewTripInfoDialog({
     remaining -= Number(updatedData.refreshmentExpense) || 0;
     remaining += Number(updatedData.loadEarning) || 0;
     remaining -= Number(updatedData.rewardCommission) || 0;
+    remaining -= Number(updatedData.checkerExpenses) || 0;
+
 
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
       remaining -= expenseForThisRouteId.routeCommission;
@@ -175,7 +179,8 @@ export default function NewTripInfoDialog({
       'freeTicketCount',
       'revenue',
       'refreshmentExpense',
-      'rewardCommission'
+      'rewardCommission',
+      "checkerExpenses"
     ];
 
     setTripData((prev) => {
@@ -238,6 +243,7 @@ export default function NewTripInfoDialog({
         refreshmentExpense: tripData.refreshmentExpense,
         loadEarning: tripData.loadEarning,
         rewardCommission: tripData.rewardCommission,
+        checkerExpenses: tripData.checkerExpenses,
         date: date
       };
 
@@ -274,6 +280,7 @@ export default function NewTripInfoDialog({
       loadEarning: null,
       rewardCommission: null,
       refreshmentExpense: null,
+      checkerExpenses: null,
       date: date
     });
     setIsRefreshmentExpenseCustom(false);
@@ -344,7 +351,7 @@ export default function NewTripInfoDialog({
           <Plus className="mr-2 h-4 w-4" /> Add Trip
         </Button>
       </DialogTrigger>
-      <DialogContent className="custom-scrollbar max-h-[500px] overflow-y-auto sm:max-w-[900px]">
+      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto sm:max-w-[900px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
@@ -484,6 +491,19 @@ export default function NewTripInfoDialog({
                 placeholder="Enter miscellaneous amount"
                 value={tripData.miscellaneousAmount?.toString()}
                 onChange={handleInputChange}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="checkerExpenses" className="text-gradient">
+                Checker Expenses
+              </Label>
+              <Input
+                id="checkerExpenses"
+                type="number"
+                placeholder="Enter checker expenses"
+                value={tripData.checkerExpenses?.toString()}
+                onChange={handleInputChange}
+                min={0}
               />
             </div>
 

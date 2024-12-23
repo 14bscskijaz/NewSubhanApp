@@ -1,16 +1,15 @@
 'use client';
 
-import { DataTable } from '@/components/ui/table/data-table';
+import { Button } from '@/components/ui/button';
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { BusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
+import { ReceiptText } from 'lucide-react';
 import { DateFilterBox } from '../ui/DateFilterBox';
 import { DataTableFilterBoxView } from '../ui/data-table-filter-box-view';
 import { columns } from './columns';
-import { useRouteTableFilters } from './use-route-table-filters';
 import { DataTableView } from './data-table-view';
-import { ReceiptText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useRouteTableFilters } from './use-route-table-filters';
 
 export default function RouteTable({
   data,

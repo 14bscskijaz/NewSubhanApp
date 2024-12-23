@@ -106,6 +106,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       repair: null,
       generator: null,
       miscellaneous: null,
+      miscellaneousExplanation: "",
       revenue: 0,
       date: date,
     },
@@ -141,9 +142,6 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   }, []);
 
   useEffect(() => {
-
-    // console.log("Form data", methods.getValues());
-    // console.log("Fixed, based on route, Closing expense: ", routeFixedClosingExpense);
 
     const subscription = methods.watch((data) => {
       handleRevenueCalculation(data);
@@ -362,6 +360,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         repair: Number(data.repair) || 0,
         generator: Number(data.generator) || 0,
         miscellaneous: Number(data.miscellaneous) || 0,
+        miscellaneousExplanation: "",
         revenue: Number(data.revenue) || 0,
       };
 
@@ -438,17 +437,35 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             'repair',
             'generator',
             'miscellaneous',
-          ].map((field) => (
-            <div key={field} >
-              <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
-              <Input id={field} type="number" {...methods.register(field as any)} min={0} />
-            </div>
-          ))}
+          ].map((field) => {
+            // Format the field name to include spaces
+            const formattedLabel = field
+              // Add space before uppercase letters
+              .replace(/([a-z])([A-Z])/g, '$1 $2')
+              // Capitalize the first letter
+              .replace(/^([a-z])/, (match) => match.toUpperCase());
+
+            return (
+              <div key={field}>
+                <Label htmlFor={field}>{formattedLabel}</Label>
+                <Input id={field} type="number" {...methods.register(field as any)} min={0} />
+              </div>
+            );
+          })}
+
 
           {/* Revenue */}
           <div>
             <Label htmlFor="revenue">Revenue</Label>
             <Input id="revenue" type="number" value={methods.watch('revenue')} disabled />
+          </div>
+          <div className='col-span-2'>
+            <Label htmlFor="miscellaneousExplanation">Miscellaneous Explanation</Label>
+            <Input
+              id="miscellaneousExplanation"
+              type="text"
+              {...methods.register('miscellaneousExplanation')}
+            />
           </div>
         </div>
 

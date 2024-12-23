@@ -125,7 +125,7 @@ export default function TripListingPage({ }: TTripListingPage) {
         return tripDate < parsedEndDate;
       }
 
-      return true; // Include all trips if no date filter is applied
+      return true;
     });
 
     // Aggregate data by unique source-destination combination
@@ -157,7 +157,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       routeData.freePassengers += Number(trip.freeTicketCount) || 0;
       routeData.halfPassengers += Number(trip.halfTicketCount) || 0;
       routeData.fullPassengers += Number(trip.fullTicketCount) || 0;
-      routeData.routeIds.add(trip.routeId); // Change from add() to push()
+      routeData.routeIds.add(trip.routeId); 
 
       routeMap.set(routeKey, routeData);
     });
@@ -367,7 +367,6 @@ export default function TripListingPage({ }: TTripListingPage) {
             title={`Route Report (${totalTripExpense})`}
             description=""
           />
-          {/* <NewTripDialog /> */}
         </div>
         <Separator />
         <TripTable data={paginatedTrips} totalData={totalTripExpense} totalRevenue={totalRevenue}

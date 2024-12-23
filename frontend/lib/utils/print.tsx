@@ -1,15 +1,15 @@
+'use client'
 import { RouteMetric } from '@/types/trip';
 import { Route } from '@/lib/slices/route-slices';
 import { toast } from '@/hooks/use-toast';
 import { RouteDetails, VoucherPrintData } from '@/types/trip';
-import useAccounting from '@/hooks/useAccounting';
+import { formatNumber } from './accounting';
 
 const isRouteDetails = (route: RouteDetails | 0): route is RouteDetails => {
   return route !== 0 && 'sourceCity' in route && 'destinationCity' in route;
 };
 
 export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], isCity: boolean) => {
-  const { formatNumber } = useAccounting()
   // Create a Map with proper typing
   const RouteMap = new Map<number | string, RouteDetails>(
     routes.map(({ id, sourceAdda, destinationAdda, destinationCity, sourceCity }) => [
@@ -109,7 +109,7 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
           </thead>
           <tbody>
             ${voucherData
-      .map(voucher => `
+              .map(voucher => `
                 <tr>
                   <td>${voucher.route}</td>
                   <td>${formatNumber(voucher.totalTrips)}</td>
@@ -120,7 +120,7 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
                   <td>${formatNumber(voucher.averagePassengers) || 0}</td>
                 </tr>
               `)
-      .join('')}
+              .join('')}
           </tbody>
         </table>
       </body>
@@ -135,4 +135,3 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
     printWindow.close();
   }, 250);
 };
-

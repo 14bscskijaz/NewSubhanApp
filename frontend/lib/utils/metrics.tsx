@@ -1,21 +1,20 @@
+
 import { SavedTripInformation } from '@/lib/slices/trip-information-saved';
 import { RouteMetric } from '@/types/trip';
 import { Route } from '../slices/route-slices';
-import useAccounting from '@/hooks/useAccounting';
+import { formatNumber } from './accounting';
 
 export const calculateMetrics = (
     filteredTrips: SavedTripInformation[],
     routes: Route[],
     isCity: boolean
 ): RouteMetric[] => {
-    const { formatNumber } = useAccounting();
     const routeMap = new Map<string, any>();
 
     filteredTrips.forEach(trip => {
         const route = routes.find(r => r.id.toString() === trip.routeId?.toString());
         if (!route) return;
 
-        // For non-city view, use routeId as the key
         const routeKey = isCity
             ? `${route.sourceCity}-${route.destinationCity}`
             : route.id.toString();
@@ -23,7 +22,6 @@ export const calculateMetrics = (
         if (!routeMap.has(routeKey)) {
             routeMap.set(routeKey, {
                 routeKey,
-                // For non-city view, store both source and destination data
                 sourceCity: route.sourceCity,
                 destinationCity: route.destinationCity,
                 sourceAdda: route.sourceAdda,
@@ -55,7 +53,6 @@ export const calculateMetrics = (
 
     return Array.from(routeMap.values()).map(data => ({
         ...data,
-        // Format numbers for display
         totalTrips: formatNumber(data.uniqueVoucherIds.size),
         totalPassengers: formatNumber(data.totalPassengers),
         totalRevenue: formatNumber(Math.floor(data.totalRevenue)),

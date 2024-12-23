@@ -2,6 +2,7 @@ import { deleteTicketPrice, updateTicketPrice } from '@/app/actions/pricing.acti
 import { AlertModal } from '@/components/modal/alert-modal';
 import {
   TicketPriceRaw,
+  TicketPriceRawEdit,
   removeTicketRaw,
   updateTicketRaw
 } from '@/lib/slices/pricing-slices';
@@ -50,7 +51,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(false);
     }
   };
-  const handleUpdate = async (updatedPrice: TicketPriceRaw) => {
+  const handleUpdate = async (updatedPrice: TicketPriceRawEdit) => {
     try {
       await updateTicketPrice(data.id, updatedPrice)
       dispatch(updateTicketRaw(updatedPrice));

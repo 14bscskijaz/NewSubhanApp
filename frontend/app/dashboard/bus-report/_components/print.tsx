@@ -4,10 +4,10 @@ import { toast } from '@/hooks/use-toast';
 import { RouteDetails, VoucherPrintData } from '@/types/trip';
 import { Buses } from '@/lib/slices/bus-slices';
 import useAccounting from '@/hooks/useAccounting';
+import { formatNumber } from '@/lib/utils/accounting';
 
 
 export const printExpenses = (busData: any, buses: Buses[]) => {
-    const {formatNumber}  = useAccounting()
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
         toast({

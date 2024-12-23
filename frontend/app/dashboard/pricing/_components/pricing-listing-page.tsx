@@ -23,7 +23,7 @@ export type TicketPriceDisplay = {
   sourceStation: string;
   destination: string;
   destinationStation: string;
-  ticketPrice: number;
+  ticketPrice: number | string;
   routeId?: number;
   busType: string;
 };
@@ -93,7 +93,7 @@ export default function PricingListingPage({ }: TPricingListingPage) {
         sourceStation: route.sourceAdda,
         destination: route.destinationCity,
         destinationStation: route.destinationAdda,
-        ticketPrice: Number(formatNumber(ticket.ticketPrice)),
+        ticketPrice: formatNumber(Number(ticket.ticketPrice)),
         busType: ticket.busType,
         routeId: ticket.routeId,
       };

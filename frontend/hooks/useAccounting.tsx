@@ -1,17 +1,31 @@
 import accounting from 'accounting';
 
+interface FormatOptions {
+  symbol?: string;
+  format?: string;
+  thousand?: string;
+  precision?: number;
+  negative?: string;
+}
+
 const useAccounting = () => {
-    const formatCurrency = (amount: number): string => {
-        return accounting.formatMoney(amount, {
-            symbol: '',
-            format: '%s%v',
-            thousand: ',',
-        });
+  const formatNumber = (amount: number): string => {
+    const options: FormatOptions = {
+      symbol: '', 
+      format: '%s%v', 
+      thousand: ',',
+      precision: 0, 
+      negative: '(%v)' 
     };
 
-    return {
-        formatCurrency,
-    };
+    return accounting.formatMoney(amount, options);
+  };
+
+
+
+  return {
+    formatNumber,
+  };
 };
 
 export default useAccounting;

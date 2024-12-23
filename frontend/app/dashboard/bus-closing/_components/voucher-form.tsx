@@ -24,6 +24,7 @@ import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'r
 import { FormProvider, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import NetExpenses from './net-expense';
+import useAccounting from '@/hooks/useAccounting';
 
 interface BusClosingVoucherFormProps {
   driverId: string;
@@ -60,6 +61,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   setSelectedRoute,
   setConductorId
 }) => {
+  const {formatNumber}  = useAccounting()
   const { toast } = useToast();
   const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(
     allClosingExpenses
@@ -457,7 +459,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           {/* Revenue */}
           <div>
             <Label htmlFor="revenue">Revenue</Label>
-            <Input id="revenue" type="number" value={methods.watch('revenue')} disabled />
+            <Input id="revenue" type="number" value={formatNumber(methods.watch('revenue'))} disabled />
           </div>
           <div className='col-span-2'>
             <Label htmlFor="miscellaneousExplanation">Miscellaneous Explanation</Label>

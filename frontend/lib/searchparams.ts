@@ -13,6 +13,7 @@ export const searchParams = {
   q: parseAsString,
   gender: parseAsString,
   busNumber: parseAsString,
+  busOwner: parseAsString,
   route: parseAsString,
   categories: parseAsString,
   date: parseAsString,

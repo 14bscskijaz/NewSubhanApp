@@ -30,8 +30,10 @@ import { getAllTicketPrices } from '@/app/actions/pricing.action'
 import { useToast } from '@/hooks/use-toast'
 import { getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action'
 import { setClosingExpense } from '@/lib/slices/fixed-closing-expense-slice'
+import useAccounting from '@/hooks/useAccounting'
 
 export default function TripInfoListingPage() {
+  const {formatNumber}  = useAccounting()
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const employees = useSelector<RootState, Employee[]>(allEmployees);
@@ -248,7 +250,7 @@ export default function TripInfoListingPage() {
             <RouteTable data={paginatedRoutes} totalData={totalUsers} />
             {parseInt(tripRevenue) > 0 && (
               <div className="mt-4 flex md:justify-end justify-start text-lg">
-                <span className="text-gradient font-bold">Total Revenue</span>: {formatAmount(tripRevenue)}
+                <span className="text-gradient font-bold">Total Revenue</span>: {formatNumber(Number(tripRevenue))}
               </div>
             )}
           </div>

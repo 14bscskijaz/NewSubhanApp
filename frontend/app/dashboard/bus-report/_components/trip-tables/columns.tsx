@@ -14,11 +14,23 @@ export const columns: ColumnDef<BusReport>[] = [
     header: 'Bus Number'
   },
   {
-    accessorKey: 'passengersMonthWise',
+    accessorKey: 'busOwner',
+    header: 'Bus Owner'
+  },
+  {
+    accessorKey: 'totalTrips',
+    header: 'Trips Count'
+  },
+  {
+    accessorKey: 'totalPassengers',
     header: 'Passengers'
   },
   {
-    accessorKey: 'revenue',
-    header: 'Gross Revenue'
-  }
+    accessorKey: 'totalExpenses',
+    header: 'Expenses'
+  },
+  {
+    accessorKey: 'totalRevenue',
+    header: 'Revenue'
+  },
 ];

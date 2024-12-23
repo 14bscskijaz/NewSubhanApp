@@ -6,6 +6,7 @@ import BusNumber from './BusNumber';
 import Expense from './Expense';
 import Revenue from './Revenue';
 import SourceDestination from './SourceDestination';
+import FormatedRevenue from './FormatedRevenue';
 
 export const columns: ColumnDef<BusClosingVoucher>[] = [
   {
@@ -48,8 +49,12 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
   //   )
   // },
   {
+    id:"revenue",
+    header:"revenue",
     accessorKey: 'revenue',
-    header: 'Revenue'
+    cell:(
+      {row}
+    )=><FormatedRevenue revenue={row?.original?.revenue}/>
   },
 
   {

@@ -9,8 +9,8 @@ type VoucherProps = {
 };
 
 const Expense: React.FC<VoucherProps> = ({ voucherId }) => {
+    const {formatNumber}  = useAccounting()
     const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
-    const { formatCurrency } = useAccounting();
     // Find the voucher with the given VoucherId
     const foundVoucher = vouchers.find((voucher) => voucher.id === voucherId);
 
@@ -31,7 +31,7 @@ const Expense: React.FC<VoucherProps> = ({ voucherId }) => {
         // Safely sum up all values
         .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
 
-    const formattedExpenses = formatCurrency(allExpenses);
+    const formattedExpenses = formatNumber(allExpenses);
 
     return (
         <div>

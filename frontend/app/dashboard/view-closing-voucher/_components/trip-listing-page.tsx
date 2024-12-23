@@ -18,10 +18,13 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
 import NewTripDialog from '../../trip-expense/_components/new-trip-dialogue';
+import useAccounting from '@/hooks/useAccounting';
 
 type TTripListingPage = {};
 
 export default function TripListingPage({ }: TTripListingPage) {
+  const { formatNumber } = useAccounting();
+
   const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const SavedTripInformation = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
   const routes = useSelector<RootState, Route[]>(allRoutes);
@@ -153,7 +156,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       .reduce((sum, val) => sum + (isNaN(val) ? 0 : val), 0); // Sum the values, treating NaN as 0
 
     return acc + expenses; // Accumulate the total expense
-  }, 0);
+  }, 0)
 
   const handleCalculateExpenses = (voucher: any) => {
     // Sum all expenses, ensuring proper field names and valid numeric conversions
@@ -189,7 +192,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       const route:any = RouteMap.get(voucher.routeId || 0) || {};
       const busNumber = BusNumberMap.get(Number(voucher?.busId) || 0) || 'N/A';
       const expenses = handleCalculateExpenses(voucher);
-      const grossRevenue = (Number(voucher.revenue) || 0) - expenses;
+      const grossRevenue = Number(voucher.revenue) || 0 - expenses;
   
       return {
         ...voucher,
@@ -281,9 +284,9 @@ export default function TripListingPage({ }: TTripListingPage) {
                         <td>${voucher.voucherNumber || 'N/A'}</td>
                         <td>${voucher.busNumber}</td>
                         <td>${voucher.route}</td>
-                        <td>${voucher.revenue || 0}</td>
-                        <td>${voucher.expenses}</td>
-                        <td>${voucher.grossRevenue || 0}</td>
+                        <td>${formatNumber(Number(voucher.revenue)) || 0}</td>
+                        <td>${formatNumber(voucher.expenses)}</td>
+                        <td>${formatNumber(voucher.grossRevenue) || 0}</td>
                       </tr>
                     `;
                   })
@@ -292,9 +295,9 @@ export default function TripListingPage({ }: TTripListingPage) {
               <tfoot>
                 <tr>
                   <th colspan="4" class="text-left">Total</th>
-                  <td>${totalRevenue}</td>
-                  <td>${totalExpense}</td>
-                  <td>${Number(totalRevenue)-Number(totalExpense)}</td>
+                  <td>${formatNumber(Number(totalRevenue))}</td>
+                  <td>${formatNumber(Number(totalExpense))}</td>
+                  <td>${formatNumber(Number(totalRevenue)-Number(totalExpense))}</td>
                 </tr>
               </tfoot>
             </table>

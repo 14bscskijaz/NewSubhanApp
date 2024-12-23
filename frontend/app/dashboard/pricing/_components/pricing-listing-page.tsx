@@ -13,6 +13,7 @@ import RouteTable from './route-tables';
 import { getAllTicketPrices } from '@/app/actions/pricing.action';
 import { getAllRoutes } from '@/app/actions/route.action';
 import { useToast } from '@/hooks/use-toast';
+import useAccounting from '@/hooks/useAccounting';
 
 type TPricingListingPage = {};
 
@@ -28,6 +29,7 @@ export type TicketPriceDisplay = {
 };
 
 export default function PricingListingPage({ }: TPricingListingPage) {
+  const {formatNumber}  = useAccounting()
   const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const searchParams = useSearchParams();
@@ -91,7 +93,7 @@ export default function PricingListingPage({ }: TPricingListingPage) {
         sourceStation: route.sourceAdda,
         destination: route.destinationCity,
         destinationStation: route.destinationAdda,
-        ticketPrice: ticket.ticketPrice,
+        ticketPrice: Number(formatNumber(ticket.ticketPrice)),
         busType: ticket.busType,
         routeId: ticket.routeId,
       };
@@ -102,7 +104,7 @@ export default function PricingListingPage({ }: TPricingListingPage) {
         sourceStation: 'Unknown',
         destination: 'Unknown',
         destinationStation: 'Unknown',
-        ticketPrice: ticket.ticketPrice,
+        ticketPrice: Number(formatNumber(ticket.ticketPrice)),
         busType: ticket.busType,
         routeId: ticket.routeId,
       };

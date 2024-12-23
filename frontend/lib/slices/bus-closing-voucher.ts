@@ -19,7 +19,11 @@ export type BusClosingVoucher = {
   cityParchi: number | null;
   refreshment: number | null;
   revenue: number | null;
-  routeId?: number
+  generator:number | null;
+  miscellaneousExpense:number | null;
+  repair:number | null;
+  explanation:string;
+  routeId?: number;
 };
 
 // Define the initial state with BusClosingVoucher type

@@ -63,7 +63,7 @@ export default function NewTripInfoDialog({
     loadEarning: null,
     rewardCommission: null,
     refreshmentExpense: null,
-    checkerExpenses: null, // New field
+    checkerExpense: null, // New field
     date: date
   });
 
@@ -127,7 +127,7 @@ export default function NewTripInfoDialog({
     remaining -= Number(updatedData.refreshmentExpense) || 0;
     remaining += Number(updatedData.loadEarning) || 0;
     remaining -= Number(updatedData.rewardCommission) || 0;
-    remaining -= Number(updatedData.checkerExpenses) || 0;
+    remaining -= Number(updatedData.checkerExpense) || 0;
 
 
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
@@ -180,7 +180,7 @@ export default function NewTripInfoDialog({
       'revenue',
       'refreshmentExpense',
       'rewardCommission',
-      "checkerExpenses"
+      "checkerExpense"
     ];
 
     setTripData((prev) => {
@@ -230,20 +230,20 @@ export default function NewTripInfoDialog({
       event.preventDefault();
 
       const newTripData: Omit<TripInformation, 'id'> = {
-        routeClosingVoucherId: tripData.routeClosingVoucherId,
-        routeId: tripData.routeId,
-        passengerCount: tripData.passengerCount,
-        fullTicketBusinessCount: tripData.fullTicketBusinessCount,
-        fullTicketCount: tripData.fullTicketCount,
-        halfTicketCount: tripData.halfTicketCount,
-        freeTicketCount: tripData.freeTicketCount,
-        miscellaneousAmount: tripData.miscellaneousAmount,
-        revenue: tripData.revenue,
+        routeClosingVoucherId: Number(tripData.routeClosingVoucherId),
+        routeId: Number(tripData.routeId),
+        passengerCount: Number(tripData.passengerCount),
+        fullTicketBusinessCount: Number(tripData.fullTicketBusinessCount),
+        fullTicketCount: Number(tripData.fullTicketCount),
+        halfTicketCount: Number(tripData.halfTicketCount),
+        freeTicketCount: Number(tripData.freeTicketCount),
+        miscellaneousAmount: Number(tripData.miscellaneousAmount),
+        revenue: Number(tripData.revenue),
         revenueDiffExplanation: tripData.revenueDiffExplanation,
-        refreshmentExpense: tripData.refreshmentExpense,
-        loadEarning: tripData.loadEarning,
-        rewardCommission: tripData.rewardCommission,
-        checkerExpenses: tripData.checkerExpenses,
+        refreshmentExpense: Number(tripData.refreshmentExpense),
+        loadEarning: Number(tripData.loadEarning),
+        rewardCommission: Number(tripData.rewardCommission),
+        checkerExpense: Number(tripData.checkerExpense),
         date: date
       };
 
@@ -280,7 +280,7 @@ export default function NewTripInfoDialog({
       loadEarning: null,
       rewardCommission: null,
       refreshmentExpense: null,
-      checkerExpenses: null,
+      checkerExpense: null,
       date: date
     });
     setIsRefreshmentExpenseCustom(false);
@@ -494,14 +494,14 @@ export default function NewTripInfoDialog({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="checkerExpenses" className="text-gradient">
+              <Label htmlFor="checkerExpense" className="text-gradient">
                 Checker Expenses
               </Label>
               <Input
-                id="checkerExpenses"
+                id="checkerExpense"
                 type="number"
                 placeholder="Enter checker expenses"
-                value={tripData.checkerExpenses?.toString()}
+                value={tripData.checkerExpense?.toString()}
                 onChange={handleInputChange}
                 min={0}
               />

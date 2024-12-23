@@ -8,22 +8,27 @@ export const calculateMetrics = (
     routes: Route[],
     isCity: boolean
 ): RouteMetric[] => {
-    const {formatNumber}  = useAccounting()
+    const { formatNumber } = useAccounting();
     const routeMap = new Map<string, any>();
 
     filteredTrips.forEach(trip => {
         const route = routes.find(r => r.id.toString() === trip.routeId?.toString());
         if (!route) return;
 
+        // For non-city view, use routeId as the key
         const routeKey = isCity
             ? `${route.sourceCity}-${route.destinationCity}`
-            : `${route.sourceAdda}-${route.destinationAdda}`;
+            : route.id.toString();
 
         if (!routeMap.has(routeKey)) {
             routeMap.set(routeKey, {
                 routeKey,
-                [isCity ? 'sourceCity' : 'sourceAdda']: isCity ? route.sourceCity : route.sourceAdda,
-                [isCity ? 'destinationCity' : 'destinationAdda']: isCity ? route.destinationCity : route.destinationAdda,
+                // For non-city view, store both source and destination data
+                sourceCity: route.sourceCity,
+                destinationCity: route.destinationCity,
+                sourceAdda: route.sourceAdda,
+                destinationAdda: route.destinationAdda,
+                routeId: route.id,
                 totalTrips: 0,
                 totalPassengers: 0,
                 totalRevenue: 0,
@@ -50,13 +55,19 @@ export const calculateMetrics = (
 
     return Array.from(routeMap.values()).map(data => ({
         ...data,
+        // Format numbers for display
         totalTrips: formatNumber(data.uniqueVoucherIds.size),
+        totalPassengers: formatNumber(data.totalPassengers),
         totalRevenue: formatNumber(Math.floor(data.totalRevenue)),
-        averagePassengers: data.totalTrips ? formatNumber(Math.floor(data.totalPassengers / data.totalTrips)) : 0,
+        freePassengers: formatNumber(data.freePassengers),
+        halfPassengers: formatNumber(data.halfPassengers),
+        fullPassengers: formatNumber(data.fullPassengers),
+        averagePassengers: data.totalTrips ? 
+            formatNumber(Math.floor(data.totalPassengers / data.totalTrips)) : 
+            formatNumber(0),
         routeCount: formatNumber(data.routeIds.size),
         routeIds: Array.from(data.routeIds),
         tripsCount: data.uniqueVoucherIds.size,
         voucherIds: Array.from(data.uniqueVoucherIds),
     }));
 };
-

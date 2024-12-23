@@ -81,9 +81,9 @@ export default function RouteTable({
               onReset={resetFilters}
             />
           </div>
-          <div className='bg-gray-50 p-1 flex justify-between items-center gap-4 rounded-lg border bg-gradient-border transition-all duration-500'>
-            <span className={` p-2 cursor-pointer rounded-lg ${isCityTab?"text-white bg-gradient-2":"text-gradient"} transition-all duration-300`} onClick={()=>setIsCityTab(true)}><Map /></span>
-            <span className={` p-2 cursor-pointer rounded-lg ${!isCityTab?"text-white bg-gradient-2":"text-gradient"} transition-all duration-300`} onClick={()=>setIsCityTab(false)}><Waypoints /></span>
+          <div className='bg-gray-50 p-0.5 flex justify-between items-center gap-2 rounded-md border bg-gradient-border transition-all duration-500'>
+            <span className={` p-1.5  cursor-pointer rounded-md ${isCityTab?"text-white bg-gradient-2":"text-gradient"} transition-all duration-300`} onClick={()=>setIsCityTab(true)}><Map size={20} /></span>
+            <span className={` p-1.5 cursor-pointer rounded-md ${!isCityTab?"text-white bg-gradient-2":"text-gradient"} transition-all duration-300`} onClick={()=>setIsCityTab(false)}><Waypoints size={20} /></span>
           </div>
         </div>
       </div>

@@ -5,43 +5,43 @@ import { RouteDetails, VoucherPrintData } from '@/types/trip';
 import useAccounting from '@/hooks/useAccounting';
 
 const isRouteDetails = (route: RouteDetails | 0): route is RouteDetails => {
-    return route !== 0 && 'sourceCity' in route && 'destinationCity' in route;
+  return route !== 0 && 'sourceCity' in route && 'destinationCity' in route;
 };
 
-export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[]) => {
-  const {formatNumber}  = useAccounting()
-    // Create a Map with proper typing
-    const RouteMap = new Map<number | string, RouteDetails>(
-        routes.map(({ id, sourceAdda, destinationAdda, destinationCity, sourceCity }) => [
-            id,
-            { id, sourceAdda, sourceCity, destinationAdda, destinationCity },
-        ])
-    );
+export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], isCity: boolean) => {
+  const { formatNumber } = useAccounting()
+  // Create a Map with proper typing
+  const RouteMap = new Map<number | string, RouteDetails>(
+    routes.map(({ id, sourceAdda, destinationAdda, destinationCity, sourceCity }) => [
+      id,
+      { id, sourceAdda, sourceCity, destinationAdda, destinationCity },
+    ])
+  );
 
-    const voucherData: VoucherPrintData[] = filteredVouchers.map((voucher) => {
-        const routeId = voucher?.routeIds[0];
-        const route = RouteMap.get(typeof routeId === 'number' ? routeId : 0) ?? 0;
+  const voucherData: VoucherPrintData[] = filteredVouchers.map((voucher) => {
+    const routeId = voucher?.routeIds[0];
+    const route = RouteMap.get(typeof routeId === 'number' ? routeId : 0) ?? 0;
 
-        return {
-            ...voucher,
-            route: isRouteDetails(route)
-                ? `${route.sourceCity} - ${route.destinationCity}`
-                : 'N/A'
-        };
+    return {
+      ...voucher,
+      route: isRouteDetails(route)
+        ? `${isCity ? `${route.sourceCity} - ${route.destinationCity}` : `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`}`
+        : 'N/A'
+    };
+  });
+
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    toast({
+      title: 'Error',
+      description: 'Unable to open print window. Please check your browser settings.',
+      variant: 'destructive',
+      duration: 1500,
     });
+    return;
+  }
 
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-        toast({
-            title: 'Error',
-            description: 'Unable to open print window. Please check your browser settings.',
-            variant: 'destructive',
-            duration: 1500,
-        });
-        return;
-    }
-
-    const content = `
+  const content = `
     <html>
       <head>
         <title>Route Report</title>
@@ -109,7 +109,7 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[]) 
           </thead>
           <tbody>
             ${voucherData
-            .map(voucher => `
+      .map(voucher => `
                 <tr>
                   <td>${voucher.route}</td>
                   <td>${formatNumber(voucher.totalTrips)}</td>
@@ -120,19 +120,19 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[]) 
                   <td>${formatNumber(voucher.averagePassengers) || 0}</td>
                 </tr>
               `)
-            .join('')}
+      .join('')}
           </tbody>
         </table>
       </body>
     </html>
   `;
 
-    printWindow.document.write(content);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-    }, 250);
+  printWindow.document.write(content);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 250);
 };
 

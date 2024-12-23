@@ -5,18 +5,18 @@ export type TripInformation = {
   id: number;
   routeClosingVoucherId: number | null;
   routeId: number | null;
-  passengerCount: number | null; // Auto
+  passengerCount: number | null; 
   fullTicketBusinessCount: number | null;
   fullTicketCount: number | null;
   halfTicketCount: number | null;
   freeTicketCount: number | null;
-  revenue: number | null; // Auto
+  revenue: number | null; 
   miscellaneousAmount: number | null;
   revenueDiffExplanation: string;
   loadEarning: number | null,
   rewardCommission: number | null,
   refreshmentExpense: number | null,
-  checkerExpenses: number | null,
+  checkerExpense: number | null,
   date?: string
 };
 

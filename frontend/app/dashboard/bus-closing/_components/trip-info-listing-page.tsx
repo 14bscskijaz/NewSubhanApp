@@ -230,8 +230,7 @@ export default function TripInfoListingPage() {
 
         </div>
 
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-4 relative"
-          style={{ gridTemplateColumns: '45% 55%' }}>
+        <div className="grid  grid-cols-1 md:grid-cols-[45%_55%] gap-4 relative">
           <div className="space-y-2">
             <div className="space-y-1">
               <div className="flex items-start gap-x-4">

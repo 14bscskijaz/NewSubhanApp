@@ -15,11 +15,6 @@
         public int? CityParchi { get; set; }
         public int? Refreshment { get; set; }
         public int? Revenue { get; set; }
-        public int? Repair { get; set; }
-        public int? Generator { get; set; }
-        public int? MiscellaneousExpense { get; set; }
-        public string? Explanation { get; set; }
-
 
 
         // Navigation properties

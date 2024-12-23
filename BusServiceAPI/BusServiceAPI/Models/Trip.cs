@@ -11,7 +11,6 @@
         public int? RefreshmentExpense {  get; set; }
         public int? RewardCommission { get; set; }
         public int? LoadEarning {  get; set; }
-        public int? CheckerExpense {  get; set; }
         public int? Revenue { get; set; }
         public string? RevenueDiffExplanation { get; set; } // VARCHAR(255)
         public DateTime? Date { get; set; }

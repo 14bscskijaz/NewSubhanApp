@@ -14,6 +14,8 @@
         public int? Revenue { get; set; }
         public string? RevenueDiffExplanation { get; set; } // VARCHAR(255)
         public DateTime? Date { get; set; }
+        public int? CheckerExpense { get; set; }
+
 
         // Navigation properties
         public Route? Route { get; set; }

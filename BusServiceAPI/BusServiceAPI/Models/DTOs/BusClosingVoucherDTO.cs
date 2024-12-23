@@ -19,6 +19,10 @@
         public int? CityParchi { get; set; } // Int
         public int? Refreshment { get; set; } // Int
         public int? Revenue { get; set; } // Int
+        public int? Repair { get; set; }
+        public int? Generator { get; set; }
+        public int? MiscellaneousExpense { get; set; }
+        public string? Explanation { get; set; }
     }
 
 }

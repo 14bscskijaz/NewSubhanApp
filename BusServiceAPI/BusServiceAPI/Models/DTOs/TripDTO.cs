@@ -15,6 +15,8 @@
         public int? Revenue { get; set; } // Int
         public string? RevenueDiffExplanation { get; set; } // varchar(255)
         public DateTime? Date { get; set; } // DateTime
+        public int? CheckerExpense { get; set; }
+
     }
 
 }

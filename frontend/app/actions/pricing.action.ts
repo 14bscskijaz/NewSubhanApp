@@ -1,5 +1,5 @@
 'use server'
-import { TicketPriceRaw, TicketPriceRawEdit } from "@/lib/slices/pricing-slices";
+import { TicketPriceRaw } from "@/lib/slices/pricing-slices";
 import axios from "axios";
 
 // const API_BASE_URL = "https://localhost:7169/api/TicketPricing";
@@ -35,7 +35,7 @@ export async function createTicketPrice(ticketPrice: Omit<TicketPriceRaw,"id">):
 }
 
 // Update an existing ticket price
-export async function updateTicketPrice(id: number, updatedTicketPrice: Partial<TicketPriceRawEdit>): Promise<TicketPriceRawEdit> {
+export async function updateTicketPrice(id: number, updatedTicketPrice: Partial<TicketPriceRaw>): Promise<TicketPriceRaw> {
     try {
         const response = await axiosInstance.put(`${API_BASE_URL}/${id}`, updatedTicketPrice);
         return response.data;

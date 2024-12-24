@@ -10,11 +10,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
 import { TripInformation, allTripsInformation } from '@/lib/slices/trip-information';
-import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
-import { Buses, allBuses } from '@/lib/slices/bus-slices';
-import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
+import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
+import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
+import { SavedTripInformation, allSavedsavedTripsInformation, setSavedTripInformation } from '@/lib/slices/trip-information-saved';
 import { printExpenses } from './print';
 import useAccounting from '@/hooks/useAccounting';
+import { getAllBuses } from '@/app/actions/bus.action';
+import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
+import { getAllTrips } from '@/app/actions/trip.action';
 
 
 export default function BusReportPage() {
@@ -26,6 +29,22 @@ export default function BusReportPage() {
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchData = async() =>{
+      const allBus = await getAllBuses();
+      dispatch(setBus(allBus));
+      const allVoucher = await getAllBusClosingVouchers();
+      dispatch(setBusClosingVoucher(allVoucher));
+      const allTrips = await getAllTrips();
+      dispatch(setSavedTripInformation(allTrips));
+
+    }
+
+    fetchData()
+  }, [])
+  
 
   const calculateTotalExpenses = (voucher: BusClosingVoucher): number => {
     return (

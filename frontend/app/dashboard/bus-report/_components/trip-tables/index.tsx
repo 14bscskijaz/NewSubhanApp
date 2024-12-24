@@ -10,6 +10,7 @@ import { DataTableFilterBoxView } from '../ui/data-table-filter-box-view';
 import { columns } from './columns';
 import { useRouteTableFilters } from './use-route-table-filters';
 import { DataTable } from '@/components/ui/table/data-table';
+import { SearchTable } from './SearchTable';
 
 export default function RouteTable({
   data,
@@ -42,8 +43,8 @@ export default function RouteTable({
   return (
     <div className="space-y-4 ">
       <div className="flex flex-col flex-wrap items-start gap-4">
-        <div className=' w-full flex justify-between items-center'>
-          <DataTableSearch
+        <div className=' w-full flex justify-between items-center gap-4'>
+          <SearchTable
             searchKey="name"
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}

@@ -361,7 +361,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         refreshment: Number(data.refreshment) || 0,
         repair: Number(data.repair) || 0,
         generator: Number(data.generator) || 0,
-        miscellaneousExpense: Number(data.miscellaneous) || 0,
+        miscellaneousExpense: Number(data.miscellaneousExpense) || 0,
         explanation: data.explanation,
         revenue: Number(data.revenue) || 0,
       };
@@ -438,7 +438,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             'refreshment',
             'repair',
             'generator',
-            'miscellaneous',
+            'miscellaneousExpense',
           ].map((field) => {
             // Format the field name to include spaces
             const formattedLabel = field

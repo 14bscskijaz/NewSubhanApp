@@ -106,7 +106,8 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       cityParchi: getExpenseValue('dcPerchi'),
       refreshment: getExpenseValue('refreshmentRate'),
       repair: null,
-      generator: null,
+      // generator: null,
+      challan: null,
       miscellaneousExpense: null,
       explanation: "",
       revenue: 0,
@@ -125,7 +126,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       (Number(data.cityParchi) || 0) +
       (Number(data.refreshment) || 0) +
       (Number(data.repair) || 0) +
-      (Number(data.generator) || 0) +
+      (Number(data.challan) || 0) +
       (Number(data.miscellaneousExpense) || 0);
 
     setExpenses(totalExpense);
@@ -291,7 +292,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             <tr><td>Commission</td><td>${formatNumber(data.commission) || '-'}</td></tr>
             <tr><td>Diesel Litres</td><td>${formatNumber(data.dieselLitres) || '-'}</td></tr>
             <tr><td>Miscellaneous</td><td>${formatNumber(data.miscellaneousExpense) || '-'}</td></tr>
-            <tr><td>Generator</td><td>${formatNumber(data.generator) || '-'}</td></tr>
+            <tr><td>Challan</td><td>${formatNumber(data.challan) || '-'}</td></tr>
             <tr><td>Repair</td><td>${formatNumber(data.repair) || '-'}</td></tr>
             <tr><td>Refreshment</td><td>${formatNumber(data.refreshment) || '-'}</td></tr>
             <tr><td>City Parchi</td><td>${formatNumber(data.cityParchi) || '-'}</td></tr>
@@ -360,7 +361,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         cityParchi: Number(data.cityParchi) || 0,
         refreshment: Number(data.refreshment) || 0,
         repair: Number(data.repair) || 0,
-        generator: Number(data.generator) || 0,
+        challan: Number(data.challan) || 0,
         miscellaneousExpense: Number(data.miscellaneousExpense) || 0,
         explanation: data.explanation,
         revenue: Number(data.revenue) || 0,
@@ -437,7 +438,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             'cityParchi',
             'refreshment',
             'repair',
-            'generator',
+            'challan',
             'miscellaneousExpense',
           ].map((field) => {
             // Format the field name to include spaces

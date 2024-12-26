@@ -46,18 +46,28 @@ export default function BusReportPage() {
   }, [])
   
 
-  const calculateTotalExpenses = (voucher: BusClosingVoucher): number => {
-    return (
-      Math.floor(voucher.commission || 0) +
-      Math.floor(voucher.diesel || 0) +
-      Math.floor(voucher.coilTechnician || 0) +
-      Math.floor(voucher.toll || 0) +
-      Math.floor(voucher.cleaning || 0) +
-      Math.floor(voucher.alliedmor || 0) +
-      Math.floor(voucher.cityParchi || 0) +
-      Math.floor(voucher.refreshment || 0)
-    );
+  const calculateTotalExpenses = (voucher: BusClosingVoucher): any => {
+    if (!voucher) {
+      console.error("Voucher data is missing.");
+      return 0;
+    }
+  
+    const expenses = [
+      voucher.commission,
+      voucher.diesel,
+      voucher.coilTechnician,
+      voucher.toll,
+      voucher.cleaning,
+      voucher.alliedmor,
+      voucher.cityParchi,
+      voucher.refreshment,
+    ];
+  
+    const total = expenses.reduce((sum:any, expense) => sum + (Math.floor(expense || 0)), 0);
+  
+    return total;
   };
+  
 
   const busMetrics = useCallback(() => {
     const dateRange = searchParams.get('date')?.split('|') || [];
@@ -69,6 +79,7 @@ export default function BusReportPage() {
     const endDate = dateRange[1] ? new Date(dateRange[1]) : null;
   
     const busMap = new Map<string, any>();
+    const processedVoucherIds = new Set<string>(); // Track processed vouchers for expenses and revenue
   
     tripInfo
       .filter((trip) => {
@@ -111,9 +122,15 @@ export default function BusReportPage() {
   
         const busData = busMap.get(busNumber);
         busData.totalTrips += 1;
-        busData.totalPassengers += Number(trip.passengerCount) || 0;
-        busData.totalRevenue += Number(voucher?.revenue || 0);
-        busData.totalExpenses += calculateTotalExpenses(voucher as any);
+        busData.totalPassengers += Number(trip?.passengerCount) || 0;
+  
+        // Only add expenses and revenue if the voucher hasn't been processed yet
+        if (voucher?.id && !processedVoucherIds.has(voucher.id.toString())) {
+          busData.totalExpenses += calculateTotalExpenses(voucher as any);
+          busData.totalRevenue += Number(voucher.revenue || 0);
+          processedVoucherIds.add(voucher.id.toString());
+        }
+  
         busData.uniqueVoucherIds.add(voucher?.id);
         busMap.set(busNumber, busData);
       });
@@ -127,6 +144,8 @@ export default function BusReportPage() {
       totalExpenses: formatNumber(data.totalExpenses),
     }));
   }, [tripInfo, vouchers, buses, searchParams]);
+  
+  
   
 
   const busData = busMetrics();

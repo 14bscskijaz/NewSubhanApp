@@ -1,4 +1,6 @@
-﻿namespace BusServiceAPI.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BusServiceAPI.Models
 {
     public class BusClosingVoucher
     {
@@ -14,7 +16,9 @@
         public int? Alliedmor { get; set; }
         public int? CityParchi { get; set; }
         public int? Refreshment { get; set; }
-        public int? Revenue { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? Revenue { get; set; }
         public int? Repair { get; set; }
         public int? Generator { get; set; }
         public int? MiscellaneousExpense { get; set; }

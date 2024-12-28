@@ -1,4 +1,6 @@
-﻿namespace BusServiceAPI.Models.DTOs
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BusServiceAPI.Models.DTOs
 {
     public class TripDTO
     {
@@ -12,7 +14,9 @@
         public int? RefreshmentExpense { get; set; }
         public int? RewardCommission { get; set; }
         public int? LoadEarning { get; set; }
-        public int? Revenue { get; set; } // Int
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? Revenue { get; set; } // Int
         public string? RevenueDiffExplanation { get; set; } // varchar(255)
         public DateTime? Date { get; set; } // DateTime
         public int? CheckerExpense { get; set; }

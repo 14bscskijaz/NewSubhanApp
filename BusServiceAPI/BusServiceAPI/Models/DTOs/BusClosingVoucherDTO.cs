@@ -1,4 +1,6 @@
-﻿namespace BusServiceAPI.Models.DTOs
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BusServiceAPI.Models.DTOs
 {
     public class BusClosingVoucherDTO
     {
@@ -18,7 +20,9 @@
         public int? Alliedmor { get; set; } // Int
         public int? CityParchi { get; set; } // Int
         public int? Refreshment { get; set; } // Int
-        public int? Revenue { get; set; } // Int
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? Revenue { get; set; }
         public int? Repair { get; set; }
         public int? Generator { get; set; }
         public int? MiscellaneousExpense { get; set; }

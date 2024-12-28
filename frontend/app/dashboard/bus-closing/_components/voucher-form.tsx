@@ -24,6 +24,7 @@ import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'r
 import { FormProvider, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import NetExpenses from './net-expense';
+import useAccounting from '@/hooks/useAccounting';
 
 interface BusClosingVoucherFormProps {
   driverId: string;
@@ -60,6 +61,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   setSelectedRoute,
   setConductorId
 }) => {
+  const { formatNumber } = useAccounting()
   const { toast } = useToast();
   const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(
     allClosingExpenses
@@ -104,8 +106,10 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       cityParchi: getExpenseValue('dcPerchi'),
       refreshment: getExpenseValue('refreshmentRate'),
       repair: null,
-      generator: null,
-      miscellaneous: null,
+      // generator: null,
+      challan: null,
+      miscellaneousExpense: null,
+      explanation: "",
       revenue: 0,
       date: date,
     },
@@ -122,8 +126,8 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       (Number(data.cityParchi) || 0) +
       (Number(data.refreshment) || 0) +
       (Number(data.repair) || 0) +
-      (Number(data.generator) || 0) +
-      (Number(data.miscellaneous) || 0);
+      (Number(data.challan) || 0) +
+      (Number(data.miscellaneousExpense) || 0);
 
     setExpenses(totalExpense);
     setTotalExpense(totalExpense.toString());
@@ -141,9 +145,6 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   }, []);
 
   useEffect(() => {
-
-    // console.log("Form data", methods.getValues());
-    // console.log("Fixed, based on route, Closing expense: ", routeFixedClosingExpense);
 
     const subscription = methods.watch((data) => {
       handleRevenueCalculation(data);
@@ -288,35 +289,35 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           <h2>Voucher</h2>
           <table>
             <tr><th>Type</th><td class="th-heading">Amount</td></tr>
-            <tr><td>Commission</td><td>${data.commission || '-'}</td></tr>
-            <tr><td>Diesel Litres</td><td>${data.dieselLitres || '-'}</td></tr>
-            <tr><td>Miscellaneous</td><td>${data.miscellaneous || '-'}</td></tr>
-            <tr><td>Generator</td><td>${data.generator || '-'}</td></tr>
-            <tr><td>Repair</td><td>${data.repair || '-'}</td></tr>
-            <tr><td>Refreshment</td><td>${data.refreshment || '-'}</td></tr>
-            <tr><td>City Parchi</td><td>${data.cityParchi || '-'}</td></tr>
-            <tr><td>Alliedmor</td><td>${data.alliedmor || '-'}</td></tr>
-            <tr><td>Cleaning</td><td>${data.cleaning || '-'}</td></tr>
-            <tr><td>Toll</td><td>${data.toll || '-'}</td></tr>
-            <tr><td>Coil Technician</td><td>${data.coilTechnician || '-'}</td></tr>
-            <tr><td>Diesel</td><td>${data.diesel || '-'}</td></tr>
+            <tr><td>Commission</td><td>${formatNumber(data.commission) || '-'}</td></tr>
+            <tr><td>Diesel Litres</td><td>${formatNumber(data.dieselLitres) || '-'}</td></tr>
+            <tr><td>Miscellaneous</td><td>${formatNumber(data.miscellaneousExpense) || '-'}</td></tr>
+            <tr><td>Challan</td><td>${formatNumber(data.challan) || '-'}</td></tr>
+            <tr><td>Repair</td><td>${formatNumber(data.repair) || '-'}</td></tr>
+            <tr><td>Refreshment</td><td>${formatNumber(data.refreshment) || '-'}</td></tr>
+            <tr><td>City Parchi</td><td>${formatNumber(data.cityParchi) || '-'}</td></tr>
+            <tr><td>Alliedmor</td><td>${formatNumber(data.alliedmor) || '-'}</td></tr>
+            <tr><td>Cleaning</td><td>${formatNumber(data.cleaning) || '-'}</td></tr>
+            <tr><td>Toll</td><td>${formatNumber(data.toll) || '-'}</td></tr>
+            <tr><td>Coil Technician</td><td>${formatNumber(data.coilTechnician) || '-'}</td></tr>
+            <tr><td>Diesel</td><td>${formatNumber(data.diesel) || '-'}</td></tr>
           </table>
           <div class="flex-right">
-          <strong class="text-color">Total Expenses : </strong> ${TotalExpense}
+          <strong class="text-color">Total Expenses : </strong> ${formatNumber(Number(TotalExpense))}
           </div>
           <h2>Summary</h2>
           <table>
           <tr>
             <td>Total Revenue</td>
-            <td>${tripRevenue}</td>
+            <td>${formatNumber(Number(tripRevenue))}</td>
           </tr>
           <tr>
             <td>Total Expenses</td>
-            <td>${TotalExpense}</td>
+            <td>${formatNumber(Number(TotalExpense))}</td>
           </tr>
           <tr>
             <th>Net Income</th>
-            <td>${Number(tripRevenue) - Number(TotalExpense)}</td>
+            <td>${formatNumber(Number(tripRevenue) - Number(TotalExpense))}</td>
           </tr>
         </table>
           </div>
@@ -360,8 +361,9 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         cityParchi: Number(data.cityParchi) || 0,
         refreshment: Number(data.refreshment) || 0,
         repair: Number(data.repair) || 0,
-        generator: Number(data.generator) || 0,
-        miscellaneous: Number(data.miscellaneous) || 0,
+        challan: Number(data.challan) || 0,
+        miscellaneousExpense: Number(data.miscellaneousExpense) || 0,
+        explanation: data.explanation,
         revenue: Number(data.revenue) || 0,
       };
 
@@ -436,19 +438,37 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             'cityParchi',
             'refreshment',
             'repair',
-            'generator',
-            'miscellaneous',
-          ].map((field) => (
-            <div key={field} >
-              <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
-              <Input id={field} type="number" {...methods.register(field as any)} min={0} />
-            </div>
-          ))}
+            'challan',
+            'miscellaneousExpense',
+          ].map((field) => {
+            // Format the field name to include spaces
+            const formattedLabel = field
+              // Add space before uppercase letters
+              .replace(/([a-z])([A-Z])/g, '$1 $2')
+              // Capitalize the first letter
+              .replace(/^([a-z])/, (match) => match.toUpperCase());
+
+            return (
+              <div key={field}>
+                <Label htmlFor={field}>{formattedLabel}</Label>
+                <Input id={field} type="number" {...methods.register(field as any)} min={0} />
+              </div>
+            );
+          })}
+
 
           {/* Revenue */}
           <div>
             <Label htmlFor="revenue">Revenue</Label>
             <Input id="revenue" type="number" value={methods.watch('revenue')} disabled />
+          </div>
+          <div className='col-span-1'>
+            <Label htmlFor="miscellaneousExplanation">Explanation</Label>
+            <Input
+              id="miscellaneousExplanation"
+              type="text"
+              {...methods.register('explanation')}
+            />
           </div>
         </div>
 

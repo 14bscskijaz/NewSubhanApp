@@ -1,3 +1,4 @@
+import useAccounting from '@/hooks/useAccounting';
 import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
 import { RootState } from '@/lib/store';
 import React from 'react';
@@ -8,8 +9,8 @@ type VoucherProps = {
 };
 
 const Expense: React.FC<VoucherProps> = ({ voucherId }) => {
+    const {formatNumber}  = useAccounting()
     const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
-
     // Find the voucher with the given VoucherId
     const foundVoucher = vouchers.find((voucher) => voucher.id === voucherId);
 
@@ -25,13 +26,17 @@ const Expense: React.FC<VoucherProps> = ({ voucherId }) => {
         foundVoucher?.refreshment,
         foundVoucher?.toll,
     ]
-        .map(Number) // Convert all values to numbers
-        .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0); // Safely sum up all values
+        // Convert all values to numbers
+        .map(Number)
+        // Safely sum up all values
+        .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
+
+    const formattedExpenses = formatNumber(allExpenses);
 
     return (
         <div>
             {foundVoucher ? (
-                <p>{allExpenses}</p>
+                <p>{formattedExpenses}</p>
             ) : (
                 <p>N/A</p>
             )}

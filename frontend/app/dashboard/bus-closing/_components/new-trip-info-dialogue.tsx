@@ -63,8 +63,10 @@ export default function NewTripInfoDialog({
     loadEarning: null,
     rewardCommission: null,
     refreshmentExpense: null,
+    checkerExpense: null, // New field
     date: date
   });
+
   const [isRefreshmentExpenseCustom, setIsRefreshmentExpenseCustom] = useState(false);
   const [isRewardCommissionCustom, setIsRewardCommissionCustom] = useState(false);
 
@@ -125,6 +127,8 @@ export default function NewTripInfoDialog({
     remaining -= Number(updatedData.refreshmentExpense) || 0;
     remaining += Number(updatedData.loadEarning) || 0;
     remaining -= Number(updatedData.rewardCommission) || 0;
+    remaining -= Number(updatedData.checkerExpense) || 0;
+
 
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
       remaining -= expenseForThisRouteId.routeCommission;
@@ -175,7 +179,8 @@ export default function NewTripInfoDialog({
       'freeTicketCount',
       'revenue',
       'refreshmentExpense',
-      'rewardCommission'
+      'rewardCommission',
+      "checkerExpense"
     ];
 
     setTripData((prev) => {
@@ -225,19 +230,20 @@ export default function NewTripInfoDialog({
       event.preventDefault();
 
       const newTripData: Omit<TripInformation, 'id'> = {
-        routeClosingVoucherId: tripData.routeClosingVoucherId,
-        routeId: tripData.routeId,
-        passengerCount: tripData.passengerCount,
-        fullTicketBusinessCount: tripData.fullTicketBusinessCount,
-        fullTicketCount: tripData.fullTicketCount,
-        halfTicketCount: tripData.halfTicketCount,
-        freeTicketCount: tripData.freeTicketCount,
-        miscellaneousAmount: tripData.miscellaneousAmount,
-        revenue: tripData.revenue,
+        routeClosingVoucherId: Number(tripData.routeClosingVoucherId),
+        routeId: Number(tripData.routeId),
+        passengerCount: Number(tripData.passengerCount),
+        fullTicketBusinessCount: Number(tripData.fullTicketBusinessCount),
+        fullTicketCount: Number(tripData.fullTicketCount),
+        halfTicketCount: Number(tripData.halfTicketCount),
+        freeTicketCount: Number(tripData.freeTicketCount),
+        miscellaneousAmount: Number(tripData.miscellaneousAmount),
+        revenue: Number(tripData.revenue),
         revenueDiffExplanation: tripData.revenueDiffExplanation,
-        refreshmentExpense: tripData.refreshmentExpense,
-        loadEarning: tripData.loadEarning,
-        rewardCommission: tripData.rewardCommission,
+        refreshmentExpense: Number(tripData.refreshmentExpense),
+        loadEarning: Number(tripData.loadEarning),
+        rewardCommission: Number(tripData.rewardCommission),
+        checkerExpense: Number(tripData.checkerExpense),
         date: date
       };
 
@@ -274,6 +280,7 @@ export default function NewTripInfoDialog({
       loadEarning: null,
       rewardCommission: null,
       refreshmentExpense: null,
+      checkerExpense: null,
       date: date
     });
     setIsRefreshmentExpenseCustom(false);
@@ -344,7 +351,7 @@ export default function NewTripInfoDialog({
           <Plus className="mr-2 h-4 w-4" /> Add Trip
         </Button>
       </DialogTrigger>
-      <DialogContent className="custom-scrollbar max-h-[500px] overflow-y-auto sm:max-w-[900px]">
+      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto sm:max-w-[900px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
@@ -484,6 +491,19 @@ export default function NewTripInfoDialog({
                 placeholder="Enter miscellaneous amount"
                 value={tripData.miscellaneousAmount?.toString()}
                 onChange={handleInputChange}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="checkerExpense" className="text-gradient">
+                Checker Expenses
+              </Label>
+              <Input
+                id="checkerExpense"
+                type="number"
+                placeholder="Enter checker expenses"
+                value={tripData.checkerExpense?.toString()}
+                onChange={handleInputChange}
+                min={0}
               />
             </div>
 

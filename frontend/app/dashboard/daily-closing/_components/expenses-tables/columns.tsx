@@ -7,6 +7,7 @@ import VoucherNumber from './filtersData/VoucherNumber';
 import Revenue from './filtersData/Revenue';
 import Routes from './filtersData/Route';
 import SerialNo from './SerialNo';
+import FormattedAmount from './FormattedAmount';
 
 export const columns: ColumnDef<Expense>[] = [
   {
@@ -47,8 +48,12 @@ export const columns: ColumnDef<Expense>[] = [
     header: 'Description'
   },
   {
+    id:"amount",
     accessorKey: 'amount',
-    header: 'Amount'
+    header: 'Amount',
+    cell:(
+      {row}
+    )=><FormattedAmount amount={row.original.amount}/>
   },
   {
     id: 'actions',

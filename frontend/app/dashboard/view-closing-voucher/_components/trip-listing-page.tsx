@@ -18,10 +18,13 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
 import NewTripDialog from '../../trip-expense/_components/new-trip-dialogue';
+import useAccounting from '@/hooks/useAccounting';
 
 type TTripListingPage = {};
 
 export default function TripListingPage({ }: TTripListingPage) {
+  const { formatNumber } = useAccounting();
+
   const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const SavedTripInformation = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
   const routes = useSelector<RootState, Route[]>(allRoutes);
@@ -79,16 +82,29 @@ export default function TripListingPage({ }: TTripListingPage) {
   }, [searchParams, dispatch]);
 
   const filteredVouchers = vouchers.filter((voucher) => {
+    // Parse date range filter
+    let startDate = 0;
+    let endDate = 0;
+  
+    if (dateFilter.includes('|')) {
+      const [start, end] = dateFilter.split('|');
+      startDate = new Date(start).setHours(0, 0, 0, 0); // Normalize start date
+      endDate = new Date(end).setHours(23, 59, 59, 999); // Normalize end date
+    }
+  
+    // Normalize voucher date to remove the time part for comparison
+    const voucherDate = voucher.date ? new Date(voucher.date).getTime() : 0;
+  
     // Match search filter
     const matchesSearch = search
       ? voucher.alliedmor?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.coilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
+        voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.coilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
       : true;
-
+  
     // Find corresponding bus and route data
     const busData = buses.find(
       (bus) => bus.id.toString().trim() === voucher.busId.toString().trim()
@@ -96,36 +112,31 @@ export default function TripListingPage({ }: TTripListingPage) {
     const routeData = routes.find(
       (route) => route.id.toString().trim() === voucher.routeId?.toString().trim()
     );
-
+  
     // Create route key for filtering
     const routeToBeFilter = routeData
       ? `${routeData.sourceCity.trim()}-${routeData.destinationCity.trim()}`
       : '';
-
-    // Normalize voucher date to remove the time part for comparison
-    const voucherDate = voucher.date ? new Date(voucher.date).setHours(0, 0, 0, 0) : 0;
-
-    // Normalize filter date to remove the time part for comparison
-    const dateToBeFilter = dateFilter ? new Date(dateFilter).setHours(0, 0, 0, 0) : 0;
-
+  
     // Match busNumber filter
     const matchesBusNumber = busNumber
       ? busData?.busNumber?.toString().trim().toLowerCase() === busNumber.toLowerCase()
       : true;
-
+  
     // Match route filter
     const matchesRouteFilter = routeFilter
       ? routeToBeFilter.toLowerCase() === routeFilter.toLowerCase()
       : true;
-
-    // Match date filter
-    const matchesDateFilter = dateFilter
-      ? voucherDate === dateToBeFilter
+  
+    // Match date range filter
+    const matchesDateRange = startDate && endDate
+      ? voucherDate >= startDate && voucherDate <= endDate
       : true;
-
+  
     // Return combined match result
-    return matchesSearch && matchesBusNumber && matchesRouteFilter && matchesDateFilter;
+    return matchesSearch && matchesBusNumber && matchesRouteFilter && matchesDateRange;
   });
+  
 
 
   const totalRevenue = filteredVouchers.reduce((sum: number, item: any) => sum + (item.revenue || 0), 0);
@@ -145,7 +156,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       .reduce((sum, val) => sum + (isNaN(val) ? 0 : val), 0); // Sum the values, treating NaN as 0
 
     return acc + expenses; // Accumulate the total expense
-  }, 0);
+  }, 0)
 
   const handleCalculateExpenses = (voucher: any) => {
     // Sum all expenses, ensuring proper field names and valid numeric conversions
@@ -181,7 +192,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       const route:any = RouteMap.get(voucher.routeId || 0) || {};
       const busNumber = BusNumberMap.get(Number(voucher?.busId) || 0) || 'N/A';
       const expenses = handleCalculateExpenses(voucher);
-      const grossRevenue = (Number(voucher.revenue) || 0) - expenses;
+      const grossRevenue = Number(voucher.revenue) || 0 - expenses;
   
       return {
         ...voucher,
@@ -273,9 +284,9 @@ export default function TripListingPage({ }: TTripListingPage) {
                         <td>${voucher.voucherNumber || 'N/A'}</td>
                         <td>${voucher.busNumber}</td>
                         <td>${voucher.route}</td>
-                        <td>${voucher.revenue || 0}</td>
-                        <td>${voucher.expenses}</td>
-                        <td>${voucher.grossRevenue || 0}</td>
+                        <td>${formatNumber(Number(voucher.revenue)) || 0}</td>
+                        <td>${formatNumber(voucher.expenses)}</td>
+                        <td>${formatNumber(voucher.grossRevenue) || 0}</td>
                       </tr>
                     `;
                   })
@@ -284,9 +295,9 @@ export default function TripListingPage({ }: TTripListingPage) {
               <tfoot>
                 <tr>
                   <th colspan="4" class="text-left">Total</th>
-                  <td>${totalRevenue}</td>
-                  <td>${totalExpense}</td>
-                  <td>${Number(totalRevenue)-Number(totalExpense)}</td>
+                  <td>${formatNumber(Number(totalRevenue))}</td>
+                  <td>${formatNumber(Number(totalExpense))}</td>
+                  <td>${formatNumber(Number(totalRevenue)-Number(totalExpense))}</td>
                 </tr>
               </tfoot>
             </table>

@@ -91,6 +91,7 @@ export default function EditPricingDialog({
 
     const updatedFormData = {
       ...formData,
+      ticketPrice:Number(formData.ticketPrice),
       routeId: formData.routeId !== undefined ? formData.routeId : 0,
     };
 

@@ -23,10 +23,12 @@ import { getAllBuses } from '@/app/actions/bus.action';
 import { getAllRoutes } from '@/app/actions/route.action';
 import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
 import { createExpense } from '@/app/actions/expenses.action';
+import useAccounting from '@/hooks/useAccounting';
 
 type TExpensesListingPage = {};
 
 export default function ExpensesListingPage({ }: TExpensesListingPage) {
+  const { formatNumber } = useAccounting()
   const busClosingVouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const [loading, setLoading] = useState(false);
   const expenses = useSelector<RootState, Expense[]>(allExpenses);
@@ -201,7 +203,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
             </style>
           </head>
           <body>
-            <h1>Expenses Report</h1>
+            <h1>Daily Closing Report</h1>
             <p><strong>Date:</strong> ${selectedDate ? selectedDate.toLocaleDateString() : 'All Dates'}</p>
 
             <h2>Bus Expenses</h2>
@@ -230,13 +232,13 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
                       <tr>
                         <td>${BusNumberMap.get(expense?.busId || 0) || 'N/A'}</td>
                         <td>${voucher.voucherNumber || 'N/A'}</td>
-                        <td>${voucher.revenue || 0}</td>
+                        <td>${formatNumber(voucher.revenue) || 0}</td>
                         <td>${sourceCity !== 'N/A'
-                ? `${sourceCity} (${sourceAdda}) - ${destinationCity} (${destinationAdda})`
+                ? `${sourceCity} - ${destinationCity}`
                 : 'N/A'
               }</td>
                         <td>${expense.description || 'N/A'}</td>
-                        <td>${expense.amount || 0}</td>
+                        <td>${formatNumber(expense.amount) || 0}</td>
                       </tr>
                     `;
           })
@@ -245,7 +247,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               <tfoot>
                 <tr>
                   <th colspan="5">Total Bus Expenses</th>
-                  <td>${totalBusExpenses}</td>
+                  <td>${formatNumber(totalBusExpenses)}</td>
                 </tr>
               </tfoot>
             </table>
@@ -264,7 +266,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
             expense => `
                     <tr>
                       <td>${expense.description || 'N/A'}</td>
-                      <td>${expense.amount || 0}</td>
+                      <td>${formatNumber(expense.amount )|| 0}</td>
                     </tr>
                   `
           )
@@ -273,7 +275,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               <tfoot>
                 <tr>
                   <th>Total General Expenses</th>
-                  <td>${totalGeneralExpenses}</td>
+                  <td>${formatNumber(totalGeneralExpenses)}</td>
                 </tr>
               </tfoot>
             </table>
@@ -282,15 +284,15 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
             <table>
             <tr>
               <th>Total Revenue</th>
-              <td>${totalRevenue}</td>
+              <td>${formatNumber(totalRevenue)}</td>
             </tr>
               <tr>
                 <th>Total Expenses</th>
-                <td>${TotalExpense}</td>
+                <td>${formatNumber(TotalExpense)}</td>
               </tr>
               <tr>
                 <th>Net Income</th>
-                <td>${totalRevenue - TotalExpense}</td>
+                <td>${formatNumber(totalRevenue - TotalExpense)}</td>
               </tr>
             </table>
           </body>
@@ -326,7 +328,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
       toast({
         title: "Success",
-        variant:"default",
+        variant: "default",
         description: "Expenses submitted successfully!",
         duration: 3000,
       });
@@ -337,7 +339,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
     } catch (error) {
       toast({
         title: "Error",
-        variant:"destructive",
+        variant: "destructive",
         description: "Failed to submit expenses. Please try again.",
         duration: 3000,
       });
@@ -384,7 +386,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
         <div className='flex justify-end mt-4'>
           <Button
             onClick={handleSubmitExpenses}
-            disabled={loading} 
+            disabled={loading}
             className={`${loading ? 'cursor-not-allowed opacity-50' : ''
               }`}
           >

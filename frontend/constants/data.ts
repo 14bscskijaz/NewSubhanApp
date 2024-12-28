@@ -244,11 +244,11 @@ export const navItems: NavItem[] = [
         url: '/dashboard/route-report',
         icon: 'login'
       },
-      // {
-      //   title: 'Bus Reports',
-      //   url: '/dashboard/bus-report',
-      //   icon: 'userPen'
-      // }
+      {
+        title: 'Bus Report',
+        url: '/dashboard/bus-report',
+        icon: 'userPen'
+      }
     ]
   },
   

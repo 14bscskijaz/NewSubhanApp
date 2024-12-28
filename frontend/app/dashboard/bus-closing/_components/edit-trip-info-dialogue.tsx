@@ -230,20 +230,21 @@ export default function EditRouteDialog({
     event.preventDefault();
 
     const updatedTripData: TripInformation = {
-      id: tripData.id,
+      id: Number(tripData.id),
       routeClosingVoucherId: Number(tripData.routeClosingVoucherId),
       routeId: Number(tripData.routeId),
       passengerCount: Number(tripData.passengerCount),
       fullTicketBusinessCount: Number(tripData.fullTicketBusinessCount),
       fullTicketCount: Number(tripData.fullTicketCount),
-      halfTicketCount: tripData.halfTicketCount,
-      freeTicketCount: tripData.freeTicketCount,
-      miscellaneousAmount: tripData.miscellaneousAmount,
-      revenue: tripData.revenue,
+      halfTicketCount: Number(tripData.halfTicketCount),
+      freeTicketCount: Number(tripData.freeTicketCount),
+      miscellaneousAmount: Number(tripData.miscellaneousAmount),
+      revenue: Number(tripData.revenue),
       revenueDiffExplanation: tripData.revenueDiffExplanation,
-      loadEarning: tripData.loadEarning,
-      rewardCommission: tripData.rewardCommission,
-      refreshmentExpense: tripData.refreshmentExpense,
+      refreshmentExpense: Number(tripData.refreshmentExpense),
+      loadEarning: Number(tripData.loadEarning),
+      rewardCommission: Number(tripData.rewardCommission),
+      checkerExpense: Number(tripData.checkerExpense),
       date: tripData.date
     };
 

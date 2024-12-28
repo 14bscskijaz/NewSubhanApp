@@ -22,6 +22,7 @@ import { ChevronLeftIcon, ChevronRightIcon, DoubleArrowLeftIcon, DoubleArrowRigh
 import { usePathname } from 'next/navigation';
 import { useSidebar } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
+import useAccounting from '@/hooks/useAccounting';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -40,6 +41,7 @@ export function DataTableView<TData, TValue>({
     totalRevenue,
     totalExpense
 }: DataTableProps<TData, TValue>) {
+    const { formatNumber } = useAccounting();
     const path = usePathname();
     const hiddenPaths = ['/dashboard/bus-closing', '/dashboard/Expenses'];
 
@@ -78,7 +80,7 @@ export function DataTableView<TData, TValue>({
 
     // Calculate totals for Revenue, Expense, and Gross Revenue from all rows
 
-    const totalGrossRevenue = Number(totalRevenue)-Number(totalExpense);
+    const totalGrossRevenue = formatNumber(Number(totalRevenue)-Number(totalExpense));
 
     const table = useReactTable({
         data,
@@ -154,10 +156,10 @@ export function DataTableView<TData, TValue>({
                                 Total
                             </TableCell>
                             <TableCell className="text-left pl-4 font-semibold">
-                                {totalRevenue}
+                                {formatNumber(totalRevenue)}
                             </TableCell>
                             <TableCell className="text-left pl-4 font-semibold">
-                                {totalExpense}
+                                {formatNumber(totalExpense)}
                             </TableCell>
                             <TableCell className="text-left pl-4 font-semibold">
                                 {totalGrossRevenue}

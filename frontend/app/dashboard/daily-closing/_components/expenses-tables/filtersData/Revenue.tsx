@@ -1,3 +1,4 @@
+import useAccounting from '@/hooks/useAccounting';
 import { BusClosingVoucher, allBusClosingVouchers } from '@/lib/slices/bus-closing-voucher';
 import { RootState } from '@/lib/store';
 import React from 'react';
@@ -8,6 +9,7 @@ type VoucherProps = {
 };
 
 const Revenue: React.FC<VoucherProps> = ({ voucherId }) => {
+    const {formatNumber}  = useAccounting()
     const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
 
     // Find the voucher with the given VoucherId
@@ -16,7 +18,7 @@ const Revenue: React.FC<VoucherProps> = ({ voucherId }) => {
     return (
         <div>
             {foundVoucher ? (
-                <p>{foundVoucher.revenue}</p>
+                <p>{formatNumber(Number(foundVoucher.revenue))}</p>
             ) : (
                 <p>N/A</p>
             )}

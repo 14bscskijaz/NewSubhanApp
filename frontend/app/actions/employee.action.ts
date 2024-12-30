@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 export async function getAllEmployees() {
     try {
         const response = await axiosInstance.get(`${API_BASE_URL}/Employees`);
-        console.log(response.data, 'Fetched Employees');
+        // console.log(response.data, 'Fetched Employees');
         return response.data;
     } catch (error:any) {
         console.error('Error fetching employees:', error.message);

@@ -49,3 +49,10 @@ Use database update command to do that.
 The API documentation can be accessed at the URL:
 "<address on which the server is running>/swagger/index.html".
 Add "/swagger/index.html" to the base URL of the server to access the API documentation.
+
+### Testing
+
+#### Update Playwrite
+```bash
+pip install pytest-playwright playwright -U
+```

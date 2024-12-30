@@ -1,6 +1,7 @@
 'use server'
 import { BusClosingVoucher } from "@/lib/slices/bus-closing-voucher";
 import axios from "axios";
+import util from 'util';
 
 // const API_BASE_URL = "https://localhost:7169/api/BusClosingVoucher";
 const API_BASE_URL  = process.env.NEXT_PUBLIC_BACKEND_URL + "/BusClosingVoucher";
@@ -30,7 +31,14 @@ export async function createBusClosingVoucher(busClosingVoucher: BusClosingVouch
         const response = await axiosInstance.post(API_BASE_URL, busClosingVoucher);
         return response.data;
     } catch (error) {
-        console.error("Error creating bus closing voucher:", error);
+        console.error("Error creating bus closing voucher:");
+        if (error instanceof Error) {
+            const axiosError = error as any;
+            console.error("Error Message from the server:", axiosError?.response?.data);
+            console.error(util.inspect(axiosError?.response?.data?.detail, { depth: null, colors: true }))
+            console.log("Original Request Data:", axiosError?.config?.data);
+        }
+        // console.error("Error creating bus closing voucher:", error);
         throw error;
     }
 }

@@ -6,7 +6,7 @@ export type Expense = {
   id: number; // Serial
   date: string; // Date
   type: 'bus' | 'general';
-  voucherId?: number | null ; // Foreign key
+  busClosingVoucherId?: number | null ; // Foreign key
   busId?: number;
   routeId?:number; // Foreign key
   amount: number; // Integer
@@ -37,7 +37,7 @@ const savedExpenseSlice = createSlice({
       const newExpense: Expense = {
         ...action.payload,
         id: newId,
-        voucherId: action.payload.voucherId,
+        busClosingVoucherId: action.payload.busClosingVoucherId,
       };
       state.expenses.push(newExpense);
     },
@@ -68,7 +68,7 @@ const savedExpenseSlice = createSlice({
         ...expense,
         id: index + 1,
         type: 'bus',
-        voucherId: expense.voucherId ?? null,
+        busClosingVoucherId: expense.busClosingVoucherId ?? null,
       }));
     }
   }

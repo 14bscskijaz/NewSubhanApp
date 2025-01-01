@@ -10,12 +10,31 @@ interface FormatOptions {
 
 export const formatNumber = (amount: number): string => {
   const options: FormatOptions = {
-    symbol: '',
-    format: '%s%v',
-    thousand: ',',
-    precision: 0,
-    negative: '(%v)'
+    symbol: '', // No currency symbol
+    format: '%s%v', // Default format
+    thousand: ',', // Thousands separator
+    precision: 0, // No decimal places
+    negative: '(%v)', // Format for negative numbers
   };
 
-  return accounting.formatMoney(amount, options);
+  // Check if the number is negative
+  if (amount < 0) {
+    return accounting.formatMoney(
+      Math.abs(amount), // Format the positive value
+      options.symbol, 
+      options.precision, 
+      options.thousand, 
+      options.format, 
+      options.negative
+    );
+  }
+
+  // For positive values, return normally
+  return accounting.formatMoney(
+    amount, 
+    options.symbol, 
+    options.precision, 
+    options.thousand, 
+    options.format
+  );
 };

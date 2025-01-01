@@ -44,7 +44,7 @@ export default function NewBusDialog() {
     busType: "",
     busBrand: "",
     busOwner: "",
-    description: "",
+    // description: "",
     busStatus: "",
   });
 
@@ -61,7 +61,7 @@ export default function NewBusDialog() {
       busType: "",
       busBrand: "",
       busOwner: "",
-      description: "",
+      // description: "",
       busStatus: "",
     });
 
@@ -72,7 +72,6 @@ export default function NewBusDialog() {
     if (!busType.trim()) errors.busType = "Bus Type is required.";
     if (!busBrand.trim()) errors.busBrand = "Brand is required.";
     if (!busOwner.trim()) errors.busOwner = "Bus Owner is required.";
-    if (!description.trim()) errors.description = "Description is required.";
     if (!busStatus.trim()) errors.busStatus = "Bus Status is required.";
 
     if (Object.keys(errors).length > 0) {
@@ -236,9 +235,9 @@ export default function NewBusDialog() {
                 maxLength={255}
                 disabled={loading} // Disable textarea on loading
               />
-              {validationErrors.description && (
+              {/* {validationErrors.description && (
                 <p className="text-red-500 text-sm">{validationErrors.description}</p>
-              )}
+              )} */}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="busStatus">

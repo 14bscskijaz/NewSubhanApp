@@ -174,7 +174,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
     const printContent = `
       <html>
         <head>
-          <title>Bus Closing Voucher and Trip Information</title>
+          <title>Bus Closing Voucher - New Subhan (Bus Service) </title>
           <style>
             body {
               font-family: Arial, sans-serif;
@@ -243,10 +243,24 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             .margin-top{
               margin-top:14px;
             }
+            .header-class{
+              color: #2a5934;
+              font-size: 20px;
+              font-weight: 700;
+              border-bottom: 1px solid #000;
+              padding: 5px;
+              margin: 10px 0px ;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
           </style>
         </head>
         <body>
-          <h1 class="margin-top">Bus Closing Voucher</h1>
+        <div class="header-class">
+        <div>Bus Closing Voucher</div>
+        <div>New Subhan</div>
+      </div>
           <div class="grid-data">
             <p><strong>Date : </strong> ${date ? new Date(date).toLocaleDateString() : 'All Dates'}</p>
             <p><strong>Bus : </strong> ${filterBus?.busNumber || '-'}</p>

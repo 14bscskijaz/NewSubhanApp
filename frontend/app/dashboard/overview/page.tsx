@@ -1,7 +1,7 @@
 import OverViewPage from './_components/overview';
 
 export const metadata = {
-  title: 'Dashboard : Overview'
+  title: 'Dashboard : Dashboard'
 };
 
 export default function page() {

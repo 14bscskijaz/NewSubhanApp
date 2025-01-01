@@ -89,12 +89,15 @@ export default function TripListingPage({ }: TTripListingPage) {
   });
 
   // console.log(filteredExpense, "filteredExpense");
+  const sortedRoutes = filteredExpense.sort((a, b) => {
+    return a.id - b.id;
+  });
 
-  const totalTripExpense = filteredExpense.length;
+  const totalTripExpense = sortedRoutes.length;
 
   const startIndex = (page - 1) * pageLimit;
   const endIndex = startIndex + pageLimit;
-  const paginatedExpense = filteredExpense.slice(startIndex, endIndex);
+  const paginatedExpense = sortedRoutes.slice(startIndex, endIndex);
 
   return (
     <PageContainer scrollable>

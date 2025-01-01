@@ -6,9 +6,10 @@ import { useSelector } from 'react-redux';
 
 type VoucherProps = {
     voucherId: number;
+    amount: number;
 };
 
-const NetIncome: React.FC<VoucherProps> = ({ voucherId }) => {
+const NetIncome: React.FC<VoucherProps> = ({ voucherId,amount }) => {
     const { formatNumber } = useAccounting();
     const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
 
@@ -27,13 +28,13 @@ const NetIncome: React.FC<VoucherProps> = ({ voucherId }) => {
     ]
         .map(Number)
         .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
-    const getNetIncome = Number(foundVoucher?.revenue) - Number(allExpenses)
+    const getNetIncome = Number(foundVoucher?.revenue) - Number(allExpenses+amount)
     return (
         <div>
             {foundVoucher ? (
                 <p>{formatNumber(getNetIncome)}</p>
             ) : (
-                <p>N/A</p>
+                <p>{amount?`(${amount})`:0}</p>
             )}
         </div>
     );

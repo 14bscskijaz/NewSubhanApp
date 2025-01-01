@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Plus } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,60 +19,71 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Route, addRoute, setRoute } from "@/lib/slices/route-slices";
+import { Route, setRoute } from "@/lib/slices/route-slices";
 import { createRoute, getAllRoutes } from "@/app/actions/route.action";
 import { useToast } from "@/hooks/use-toast";
 
+const newRouteSchema = z.object({
+  source: z.string().nonempty("Source is required").max(32, "Maximum 32 characters"),
+  sourceStation: z.string().nonempty("Source Station is required").max(32, "Maximum 32 characters"),
+  destination: z.string().nonempty("Destination is required").max(32, "Maximum 32 characters"),
+  destinationStation: z.string().nonempty("Destination Station is required").max(32, "Maximum 32 characters"),
+});
+
+type NewRouteFormValues = z.infer<typeof newRouteSchema>;
+
 export default function NewRouteDialog() {
   const [open, setOpen] = useState(false);
-  const [source, setSource] = useState("");
-  const [sourceStation, setSourceStation] = useState("");
-  const [destination, setDestination] = useState("");
-  const [destinationStation, setDestinationStation] = useState("");
-  const {toast} = useToast();
-
   const dispatch = useDispatch();
+  const { toast } = useToast();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<NewRouteFormValues>({
+    resolver: zodResolver(newRouteSchema),
+    defaultValues: {
+      source: "",
+      sourceStation: "",
+      destination: "",
+      destinationStation: "",
+    },
+  });
+
+  const onSubmit = async (data: NewRouteFormValues) => {
     try {
-      event.preventDefault();
-  
       const newRoute: Omit<Route, "id"> = {
-        sourceCity: source,
-        sourceAdda: sourceStation,
-        destinationCity: destination,
-        destinationAdda: destinationStation,
+        sourceCity: data.source,
+        sourceAdda: data.sourceStation,
+        destinationCity: data.destination,
+        destinationAdda: data.destinationStation,
       };
-      await createRoute(newRoute)
-      const getRoutes = await getAllRoutes()
-      dispatch(setRoute(getRoutes));
-      // dispatch(addRoute(newRoute));
-      toast({
-        title:"Success",
-        description:"Bus Deleted successfully",
-        variant:"default",
-        duration:1000
-      })
-      setOpen(false);
-      resetForm();
-      
-    } catch (error:any) {
-      console.error(error.message);
-      
-      toast({
-        title:"Error",
-        description:error.message,
-        variant:"destructive",
-        duration:1000
-      })
-    }
-  };
 
-  const resetForm = () => {
-    setSource("");
-    setSourceStation("");
-    setDestination("");
-    setDestinationStation("");
+      await createRoute(newRoute);
+      const getRoutes = await getAllRoutes();
+      dispatch(setRoute(getRoutes));
+
+      toast({
+        title: "Success",
+        description: "Route added successfully",
+        variant: "default",
+        duration: 1000,
+      });
+
+      setOpen(false);
+      reset();
+    } catch (error: any) {
+      console.error(error.message);
+
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000,
+      });
+    }
   };
 
   return (
@@ -79,7 +94,7 @@ export default function NewRouteDialog() {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[500px] overflow-y-auto custom-scrollbar">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle>
               Add New <span className="text-gradient">Route</span>
@@ -94,40 +109,50 @@ export default function NewRouteDialog() {
               <Input
                 id="source"
                 placeholder="Enter source"
-                value={source}
-                onChange={(e) => setSource(e.target.value)}
-                maxLength={32}
+                {...register("source")}
               />
+              {errors.source && (
+                <p className="text-red-500 text-sm">{errors.source.message}</p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="sourceStation">Source Station</Label>
               <Input
                 id="sourceStation"
                 placeholder="Enter source station"
-                value={sourceStation}
-                onChange={(e) => setSourceStation(e.target.value)}
-                maxLength={32}
+                {...register("sourceStation")}
               />
+              {errors.sourceStation && (
+                <p className="text-red-500 text-sm">
+                  {errors.sourceStation.message}
+                </p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="destination">Destination</Label>
               <Input
                 id="destination"
                 placeholder="Enter destination"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                maxLength={32}
+                {...register("destination")}
               />
+              {errors.destination && (
+                <p className="text-red-500 text-sm">
+                  {errors.destination.message}
+                </p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="destinationStation">Destination Station</Label>
               <Input
                 id="destinationStation"
                 placeholder="Enter destination station"
-                value={destinationStation}
-                onChange={(e) => setDestinationStation(e.target.value)}
-                maxLength={32}
+                {...register("destinationStation")}
               />
+              {errors.destinationStation && (
+                <p className="text-red-500 text-sm">
+                  {errors.destinationStation.message}
+                </p>
+              )}
             </div>
           </div>
           <DialogFooter>

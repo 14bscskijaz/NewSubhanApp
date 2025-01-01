@@ -62,7 +62,7 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
     header: 'Expense',
     cell: (
       { row }
-    ) => <Expense voucherId={Number(row.original.id)} />
+    ) => <Expense voucherId={Number(row.original.id)}  />
   },
   {
     id: 'actual-revenue',

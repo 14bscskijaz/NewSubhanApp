@@ -44,21 +44,21 @@ export const columns: ColumnDef<Expense>[] = [
     header: 'Gross Revenue',
     cell: (
       { row } // Parent component usage
-    ) => <Revenue voucherId={Number(row.original.id)} />
+    ) => <Revenue voucherId={Number(row.original.busClosingVoucherId)} />
   },
   {
     id: 'expense',
     header: 'TotalExpense',
     cell: (
       { row }
-    ) => <Expenses voucherId={Number(row.original.id)} />
+    ) => <Expenses voucherId={Number(row.original.busClosingVoucherId)} amount={row.original.amount} />
   },
   {
     id: 'net-income',
     header: 'Net Income',
     cell: (
       { row } // Parent component usage
-    ) => <NetIncome voucherId={Number(row.original.id)} />
+    ) => <NetIncome voucherId={Number(row.original.busClosingVoucherId)} amount={row.original.amount} />
   },
   // {
   //   accessorKey: 'description',

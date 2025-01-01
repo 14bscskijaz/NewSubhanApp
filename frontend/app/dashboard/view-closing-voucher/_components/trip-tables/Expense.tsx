@@ -6,9 +6,10 @@ import { useSelector } from 'react-redux';
 
 type VoucherProps = {
     voucherId: number;
+    amount?: number;
 };
 
-const Expense: React.FC<VoucherProps> = ({ voucherId }) => {
+const Expense: React.FC<VoucherProps> = ({ voucherId,amount }) => {
     const {formatNumber}  = useAccounting()
     const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
     // Find the voucher with the given VoucherId
@@ -31,14 +32,14 @@ const Expense: React.FC<VoucherProps> = ({ voucherId }) => {
         // Safely sum up all values
         .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
 
-    const formattedExpenses = formatNumber(allExpenses);
+    const formattedExpenses = formatNumber(allExpenses+(amount||0));
 
     return (
         <div>
             {foundVoucher ? (
                 <p>{formattedExpenses}</p>
             ) : (
-                <p>N/A</p>
+                <p>{amount}</p>
             )}
         </div>
     );

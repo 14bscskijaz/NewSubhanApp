@@ -148,12 +148,11 @@ export default function TripInfoListingPage() {
     return matchesSearch
   })
 
-  const totalUsers = filteredRoutes.length
-  const startIndex = (page - 1) * pageLimit
-  const paginatedRoutes = filteredRoutes.slice(
-    startIndex,
-    startIndex + pageLimit
-  )
+
+
+const totalUsers = filteredRoutes.length;
+const startIndex = (page - 1) * pageLimit;
+const paginatedRoutes = filteredRoutes.slice(startIndex, startIndex + pageLimit);
 
   const formatAmount = (amount: string | number) => {
     return Number(amount).toLocaleString('en-US');

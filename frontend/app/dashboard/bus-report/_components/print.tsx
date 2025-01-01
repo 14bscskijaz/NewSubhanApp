@@ -22,7 +22,7 @@ export const printExpenses = (busData: any, buses: Buses[]) => {
     const content = `
     <html>
       <head>
-        <title>Bus Report</title>
+        <title>Bus Report - new Subhan (Bus Service)</title>
         <style>
           body {
             font-family: Arial, sans-serif;
@@ -69,10 +69,25 @@ export const printExpenses = (busData: any, buses: Buses[]) => {
           .text-left {
             text-align: left;
           }
+
+          .header-class{
+            color: #2a5934;
+            font-size: 20px;
+            font-weight: 700;
+            border-bottom: 1px solid #000;
+            padding: 5px;
+            margin: 10px 0px ;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
         </style>
       </head>
       <body>
-        <h1>Bus Report</h1>
+        <div class="header-class">
+          <div>Bus Report</div>
+          <div>New Subhan</div>
+        </div>
         <table>
           <thead>
             <tr>

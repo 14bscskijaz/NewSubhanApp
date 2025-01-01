@@ -44,7 +44,7 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
   const content = `
     <html>
       <head>
-        <title>Route Report</title>
+      <title>Bus Report - new Subhan (Bus Service)</title>
         <style>
           body {
             font-family: Arial, sans-serif;
@@ -91,10 +91,24 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
           .text-left {
             text-align: left;
           }
+          .header-class{
+            color: #2a5934;
+            font-size: 20px;
+            font-weight: 700;
+            border-bottom: 1px solid #000;
+            padding: 5px;
+            margin: 10px 0px ;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
         </style>
       </head>
       <body>
-        <h1>Route Report</h1>
+      <div class="header-class">
+      <div>Route Report</div>
+      <div>New Subhan</div>
+    </div>
         <table>
           <thead>
             <tr>
@@ -109,7 +123,7 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
           </thead>
           <tbody>
             ${voucherData
-              .map(voucher => `
+      .map(voucher => `
                 <tr>
                   <td>${voucher.route}</td>
                   <td>${formatNumber(voucher.totalTrips)}</td>
@@ -120,7 +134,7 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
                   <td>${formatNumber(voucher.averagePassengers) || 0}</td>
                 </tr>
               `)
-              .join('')}
+      .join('')}
           </tbody>
         </table>
       </body>

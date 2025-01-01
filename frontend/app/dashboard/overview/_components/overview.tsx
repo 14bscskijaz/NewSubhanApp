@@ -15,11 +15,11 @@ import { RootState } from '@/lib/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { BarGraph } from './bar-graph';
 import { getAllExpenses } from '@/app/actions/expenses.action';
-import { setSavedExpenses } from '@/lib/slices/saved-expenses';
-import { useEffect, useState } from 'react';
+import { allSavedExpenses, setSavedExpenses } from '@/lib/slices/saved-expenses';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
 import { getAllTrips } from '@/app/actions/trip.action';
-import { setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
+import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { setSavedTripInformation } from '@/lib/slices/trip-information-saved';
 import { getAllRoutes } from '@/app/actions/route.action';
 import { setRoute } from '@/lib/slices/route-slices';
@@ -30,20 +30,16 @@ import { formatNumber } from 'accounting';
 // Helper function for calculating dynamic values
 const calculateDynamicValue = (
   card: dashboardCardsT,
-  filterVoucher: any,
-  fetchedExpenses: Expense[]
+  fetchedExpenses: any
 ): number => {
-  const totalExpenses = calculateTotalExpenses(filterVoucher);
-  const revenue = Number(filterVoucher?.revenue) || 0;
-  const expenseAmount = fetchedExpenses[0]?.amount || 0;
 
   switch (card.id) {
     case 1:
-      return (revenue + totalExpenses);
+      return fetchedExpenses[0]?.revenue;
     case 2:
-      return totalExpenses + expenseAmount;
+      return fetchedExpenses[0]?.expense;
     case 3:
-      return revenue - expenseAmount;
+      return fetchedExpenses[0]?.netIncome;
     default:
       return card.value;
   }
@@ -70,10 +66,12 @@ const calculateTotalExpenses = (voucher: any): number => {
 
 // OverViewPage Component
 export default function OverViewPage() {
+  const savedExpenses = useSelector<RootState, Expense[]>(allSavedExpenses);
+  const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const dispatch = useDispatch();
   const [latestExpense, setLatestExpense] = useState<dashboardCardsT[]>(dashboardCards);
 
-  const fetchAPI = async () => {
+  const fetchAPI = useCallback(async () => {
     try {
       const [fetchedExpenses, fetchedVouchers, fetchTrip, fetchRoute] = await Promise.all([
         getAllExpenses(),
@@ -86,26 +84,86 @@ export default function OverViewPage() {
       dispatch(setBusClosingVoucher(fetchedVouchers));
       dispatch(setSavedTripInformation(fetchTrip));
       dispatch(setRoute(fetchRoute));
-
-      const filterVoucher = fetchedVouchers.find(
-        (voucher) => voucher.id === fetchedExpenses[0]?.busClosingVoucherId
-      );
-
-      if (filterVoucher) {
-        const dynamicClosing = dashboardCards.map((card) => ({
-          ...card,
-          value: calculateDynamicValue(card, filterVoucher, fetchedExpenses),
-        }));
-        setLatestExpense(dynamicClosing);
-      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     fetchAPI();
-  }, []);
+  }, [fetchAPI]);
+
+  const handleCalculateExpenses = (voucher: any) => {
+    // Sum all expenses, ensuring proper field names and valid numeric conversions
+    const allExpenses = [
+      voucher?.alliedmor,
+      voucher?.cityParchi,
+      voucher?.cleaning,
+      voucher?.coilTechnician,
+      voucher?.commission,
+      voucher?.diesel,
+      voucher?.dieselLitres,
+      voucher?.refreshment,
+      voucher?.toll,
+    ]
+      .map(Number) // Convert all values to numbers
+      .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
+
+    return allExpenses;
+  };
+
+  // Group expenses by date
+  const aggregatedSummaryData = useMemo(() => {
+    const groupedExpenses = savedExpenses.reduce((acc, expense) => {
+      if (!acc[expense.date]) {
+        acc[expense.date] = { revenue: 0, expense: 0, netIncome: 0, date: expense.date };
+      }
+
+      const voucher = vouchers.find(
+        (voucher) => voucher.id === expense.busClosingVoucherId
+      );
+      const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount)
+
+      const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher))
+
+      if (voucher) {
+        acc[expense.date].revenue += sum || 0;
+      }
+
+      acc[expense.date].expense += expenseCalc;
+      acc[expense.date].netIncome = Number(acc[expense.date].revenue) - Number(acc[expense.date].expense);
+
+      return acc;
+    }, {} as Record<string, { revenue: number, expense: number, netIncome: number, date: string }>);
+
+    const summaryData = Object.values(groupedExpenses);
+    
+    const aggregatedData = summaryData.reduce((acc, current) => {
+      const dateKey = current.date.split('T')[0];
+
+      if (!acc[dateKey]) {
+        acc[dateKey] = { revenue: 0, expense: 0, netIncome: 0, date: dateKey };
+      }
+
+      acc[dateKey].revenue += current.revenue;
+      acc[dateKey].expense += current.expense;
+      acc[dateKey].netIncome += current.netIncome;
+
+      return acc;
+    }, {} as Record<string, { revenue: number; expense: number; netIncome: number; date: string }>);
+
+    return Object.values(aggregatedData);
+  }, [savedExpenses, vouchers]);
+
+  const dynamicClosing = dashboardCards.map((card) => ({
+    ...card,
+    value: calculateDynamicValue(card,aggregatedSummaryData),
+  }));
+
+  useEffect(() => {
+    setLatestExpense(dynamicClosing);
+  }, [aggregatedSummaryData]);
+
 
   return (
     <PageContainer scrollable>
@@ -140,3 +198,4 @@ export default function OverViewPage() {
     </PageContainer>
   );
 }
+

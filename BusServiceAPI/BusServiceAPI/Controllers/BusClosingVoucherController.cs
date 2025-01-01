@@ -7,7 +7,6 @@ using BusServiceAPI.Models.DTOs;
 using BusServiceAPI.Common;
 using System.Reflection.Emit;
 
-
 namespace BusServiceAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -38,7 +37,7 @@ namespace BusServiceAPI.Controllers
                 Date = v.Date,
                 VoucherNumber = v.VoucherNumber,
                 DriverId = v.DriverId,
-                ConductorId = v.ConductorId ?? 0,
+                ConductorId = v.ConductorId,
                 BusId = v.BusId,
                 RouteId = v.RouteId,
                 Commission = v.Commission,
@@ -80,7 +79,7 @@ namespace BusServiceAPI.Controllers
                 Date = voucher.Date,
                 VoucherNumber = voucher.VoucherNumber,
                 DriverId = voucher.DriverId,
-                ConductorId = voucher.ConductorId ?? 0,
+                ConductorId = voucher.ConductorId,
                 BusId = voucher.BusId,
                 RouteId = voucher.RouteId,
                 Commission = voucher.Commission,
@@ -117,9 +116,9 @@ namespace BusServiceAPI.Controllers
             }
 
             // If ConductorId is provided, verify it exists
-            if (voucherDto.ConductorId != 0)
+            if (voucherDto.ConductorId.HasValue)
             {
-                var conductor = await _context.Employees.FindAsync(voucherDto.ConductorId);
+                var conductor = await _context.Employees.FindAsync(voucherDto.ConductorId.Value);
                 if (conductor == null)
                 {
                     return BadRequest("Invalid Conductor ID");
@@ -132,7 +131,7 @@ namespace BusServiceAPI.Controllers
                 VoucherNumber = voucherDto.VoucherNumber,
                 BusId = voucherDto.BusId,
                 DriverId = voucherDto.DriverId,
-                ConductorId = voucherDto.ConductorId == 0 ? null : voucherDto.ConductorId,
+                ConductorId = voucherDto.ConductorId,
                 RouteId = voucherDto.RouteId,
                 Commission = voucherDto.Commission,
                 Diesel = voucherDto.Diesel,
@@ -162,7 +161,7 @@ namespace BusServiceAPI.Controllers
                     Date = voucher.Date,
                     VoucherNumber = voucher.VoucherNumber,
                     DriverId = voucher.DriverId,
-                    ConductorId = voucher.ConductorId ?? 0,
+                    ConductorId = voucher.ConductorId,
                     BusId = voucher.BusId,
                     RouteId = voucher.RouteId,
                     Commission = voucher.Commission,
@@ -191,7 +190,6 @@ namespace BusServiceAPI.Controllers
             {
                 return BadRequest("Unable to save the voucher. Please verify all required fields.");
             }
-
         }
 
         // PUT: api/BusClosingVoucher/5
@@ -219,12 +217,22 @@ namespace BusServiceAPI.Controllers
                 return BadRequest("Invalid Bus, Driver, or Route ID");
             }
 
+            // If ConductorId is provided, verify it exists
+            if (voucherDto.ConductorId.HasValue)
+            {
+                var conductor = await _context.Employees.FindAsync(voucherDto.ConductorId.Value);
+                if (conductor == null)
+                {
+                    return BadRequest("Invalid Conductor ID");
+                }
+            }
+
             // Update voucher properties
             voucher.Date = voucherDto.Date;
             voucher.VoucherNumber = voucherDto.VoucherNumber;
             voucher.BusId = voucherDto.BusId;
             voucher.DriverId = voucherDto.DriverId;
-            voucher.ConductorId = voucherDto.ConductorId == 0 ? null : voucherDto.ConductorId;
+            voucher.ConductorId = voucherDto.ConductorId;
             voucher.RouteId = voucherDto.RouteId;
             voucher.Commission = voucherDto.Commission;
             voucher.Diesel = voucherDto.Diesel;
@@ -282,4 +290,3 @@ namespace BusServiceAPI.Controllers
         }
     }
 }
-

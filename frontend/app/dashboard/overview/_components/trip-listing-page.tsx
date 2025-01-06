@@ -342,7 +342,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
-            title={`Bus Closings (${totalTripExpense})`}
+            title={`Closing Expenses (${totalTripExpense})`}
             description=""
           />
           {/* <NewTripDialog /> */}

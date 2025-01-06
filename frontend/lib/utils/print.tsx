@@ -1,5 +1,5 @@
 'use client'
-import { RouteMetric } from '@/types/trip';
+import { RouteMetric, SearchFilters } from '@/types/trip';
 import { Route } from '@/lib/slices/route-slices';
 import { toast } from '@/hooks/use-toast';
 import { RouteDetails, VoucherPrintData } from '@/types/trip';
@@ -9,7 +9,27 @@ const isRouteDetails = (route: RouteDetails | 0): route is RouteDetails => {
   return route !== 0 && 'sourceCity' in route && 'destinationCity' in route;
 };
 
-export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], isCity: boolean) => {
+// Function to format date to DD_MM_YYYY
+const formatDate = (date: string) => {
+  // Try parsing the date
+  const newDate = new Date(date);
+  if (isNaN(newDate.getTime())) {
+    // Try manually parsing if the default date parsing fails (e.g., DD-MM-YYYY format)
+    const [day, month, year] = date.split('-');
+    const formattedDate = new Date(`${month}/${day}/${year}`);
+    if (isNaN(formattedDate.getTime())) {
+      return ''; // Return empty string if the date is invalid after attempting manual parsing
+    }
+    return `${day}_${month}_${year}`;
+  }
+
+  const dd = newDate.getDate().toString().padStart(2, '0');
+  const mm = (newDate.getMonth() + 1).toString().padStart(2, '0'); // January is 0!
+  const yyyy = newDate.getFullYear();
+  return `${dd}_${mm}_${yyyy}`;
+};
+
+export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], isCity: boolean, filters: SearchFilters) => {
   // Create a Map with proper typing
   const RouteMap = new Map<number | string, RouteDetails>(
     routes.map(({ id, sourceAdda, destinationAdda, destinationCity, sourceCity }) => [
@@ -41,10 +61,37 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
     return;
   }
 
+  // Function to render the filter information in the print layout
+  const filtersSection = (filters: SearchFilters) => {
+    let filterContent = '<p><strong>Applied Filters:</strong></p>';
+
+    if (filters.search) {
+      filterContent += `<p><strong>Search Term:</strong> ${filters.search}</p>`;
+    }
+    if (filters.dateRange) {
+      const [startDate, endDate] = filters.dateRange.split(' to '); // Assuming the date range is in format "startDate to endDate"
+      
+      // Format the start and end dates
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(endDate);
+
+      if (formattedStartDate && formattedEndDate) {
+        filterContent += `<p><strong>Date Range:</strong> ${formattedStartDate} to ${formattedEndDate}</p>`;
+      } else {
+        filterContent += `<p><strong>Date Range:</strong> Invalid Date</p>`;
+      }
+    }
+    if (filters.route) {
+      filterContent += `<p><strong>Route:</strong> ${filters.route}</p>`;
+    }
+
+    return filterContent;
+  };
+
   const content = `
     <html>
       <head>
-      <title>Bus Report - new Subhan (Bus Service)</title>
+        <title>Bus Report - new Subhan (Bus Service)</title>
         <style>
           body {
             font-family: Arial, sans-serif;
@@ -91,13 +138,13 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
           .text-left {
             text-align: left;
           }
-          .header-class{
+          .header-class {
             color: #2a5934;
             font-size: 20px;
             font-weight: 700;
             border-bottom: 1px solid #000;
             padding: 5px;
-            margin: 10px 0px ;
+            margin: 10px 0px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -105,10 +152,11 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
         </style>
       </head>
       <body>
-      <div class="header-class">
-      <div>Route Report</div>
-      <div>New Subhan</div>
-    </div>
+        <div class="header-class">
+          <div>Route Report</div>
+          <div>New Subhan</div>
+        </div>
+        ${filtersSection(filters)}
         <table>
           <thead>
             <tr>
@@ -123,7 +171,7 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
           </thead>
           <tbody>
             ${voucherData
-      .map(voucher => `
+              .map(voucher => `
                 <tr>
                   <td>${voucher.route}</td>
                   <td>${formatNumber(voucher.totalTrips)}</td>
@@ -134,7 +182,7 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
                   <td>${formatNumber(voucher.averagePassengers) || 0}</td>
                 </tr>
               `)
-      .join('')}
+              .join('')}
           </tbody>
         </table>
       </body>

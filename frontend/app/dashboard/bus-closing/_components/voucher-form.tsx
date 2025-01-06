@@ -445,10 +445,10 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             'commission',
             'diesel',
             'dieselLitres',
+            'alliedmor',
             'coilTechnician',
             'toll',
             'cleaning',
-            'alliedmor',
             'cityParchi',
             'refreshment',
             'repair',
@@ -471,12 +471,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           })}
 
 
-          {/* Revenue */}
-          <div>
-            <Label htmlFor="revenue">Revenue</Label>
-            <Input id="revenue" type="number" value={methods.watch('revenue')} disabled />
-          </div>
-          <div className='col-span-1'>
+          <div className='col-span-3'>
             <Label htmlFor="miscellaneousExplanation">Explanation</Label>
             <Input
               id="miscellaneousExplanation"
@@ -484,6 +479,12 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
               {...methods.register('explanation')}
             />
           </div>
+          {/* Revenue */}
+          <div>
+            <Label htmlFor="revenue">Revenue</Label>
+            <Input id="revenue" type="number" value={methods.watch('revenue')} disabled />
+          </div>
+
         </div>
 
         <NetExpenses tripRevenue={tripRevenue} TotalExpense={TotalExpense} />

@@ -33,7 +33,7 @@ import { setClosingExpense } from '@/lib/slices/fixed-closing-expense-slice'
 import useAccounting from '@/hooks/useAccounting'
 
 export default function TripInfoListingPage() {
-  const {formatNumber}  = useAccounting()
+  const { formatNumber } = useAccounting()
   const tripsInformation = useSelector<RootState, TripInformation[]>(allTripsInformation)
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const employees = useSelector<RootState, Employee[]>(allEmployees);
@@ -150,9 +150,9 @@ export default function TripInfoListingPage() {
 
 
 
-const totalUsers = filteredRoutes.length;
-const startIndex = (page - 1) * pageLimit;
-const paginatedRoutes = filteredRoutes.slice(startIndex, startIndex + pageLimit);
+  const totalUsers = filteredRoutes.length;
+  const startIndex = (page - 1) * pageLimit;
+  const paginatedRoutes = filteredRoutes.slice(startIndex, startIndex + pageLimit);
 
   const formatAmount = (amount: string | number) => {
     return Number(amount).toLocaleString('en-US');
@@ -256,7 +256,7 @@ const paginatedRoutes = filteredRoutes.slice(startIndex, startIndex + pageLimit)
           <Separator className='md:hidden' />
           <div className="relative">
             <div className="space-y-2">
-              <Heading title={`Closing Voucher`} description="" />
+              <Heading title={`Closing Expenses`} description="" />
               <Separator />
             </div>
             {!isVoucherShow && tripsInformation.length >= 0 ? (

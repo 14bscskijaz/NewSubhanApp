@@ -483,16 +483,7 @@ export default function NewTripInfoDialog({
               />
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="miscellaneousAmount" className='text-gradient'>Miscellaneous Amount</Label>
-              <Input
-                id="miscellaneousAmount"
-                type="number"
-                placeholder="Enter miscellaneous amount"
-                value={tripData.miscellaneousAmount?.toString()}
-                onChange={handleInputChange}
-              />
-            </div>
+
             <div className="grid gap-2">
               <Label htmlFor="checkerExpense" className="text-gradient">
                 Checker Expenses
@@ -507,17 +498,17 @@ export default function NewTripInfoDialog({
               />
             </div>
 
+           
             <div className="grid gap-2">
-              <Label htmlFor="actualRevenue" className='text-gradient'>Actual Revenue</Label>
+              <Label htmlFor="miscellaneousAmount" className='text-gradient'>Miscellaneous Expense</Label>
               <Input
-                id="actualRevenue"
+                id="miscellaneousAmount"
                 type="number"
-                placeholder="Actual revenue"
-                value={tripData.revenue?.toString()}
+                placeholder="Enter miscellaneous amount"
+                value={tripData.miscellaneousAmount?.toString()}
                 onChange={handleInputChange}
               />
             </div>
-
             <div className="grid gap-2">
               <Label htmlFor="revenueDiffExplanation" className='text-gradient'>
                 Miscellaneous Explanation
@@ -527,6 +518,16 @@ export default function NewTripInfoDialog({
                 type="text"
                 placeholder="Enter explanation for revenue difference"
                 value={tripData.revenueDiffExplanation}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="actualRevenue" className='text-gradient'>Actual Revenue</Label>
+              <Input
+                id="actualRevenue"
+                type="number"
+                placeholder="Actual revenue"
+                value={tripData.revenue?.toString()}
                 onChange={handleInputChange}
               />
             </div>

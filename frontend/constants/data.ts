@@ -261,6 +261,11 @@ export const navItems: NavItem[] = [
         title: 'Monthly Closing Report',
         url: '/dashboard/monthly-closing-report',
         icon: 'login'
+      },
+      {
+        title: 'Driver Report',
+        url: '/dashboard/driver-report',
+        icon: 'login'
       }
     ]
   },
@@ -283,7 +288,7 @@ export type dashboardCardsT = {
 export const dashboardCards: dashboardCardsT[] = [
   {
     id: 1,
-    title: "Revenue",
+    title: "Bus Earning",
     value: 0
   },
   {

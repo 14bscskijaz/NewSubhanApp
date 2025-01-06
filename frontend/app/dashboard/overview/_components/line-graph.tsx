@@ -35,6 +35,20 @@ interface WeekData {
     label: string
 }
 
+type Route = {
+    id: number;
+    sourceCity: string;
+    sourceAdda: string;
+    destinationCity: string;
+    destinationAdda: string;
+};
+
+interface RouteOption {
+    value: string;
+    label: string;
+    routeIds: number[];
+}
+
 const CustomTooltip: React.FC<{
     active?: boolean
     payload?: any[]
@@ -60,12 +74,49 @@ const CustomTooltip: React.FC<{
 
 export function LineGraph() {
     const tripInfo = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation)
+    const routes = useSelector<RootState, Route[]>(state => state.routes.routes)
     const [selectedDate, setSelectedDate] = React.useState<Date>(new Date())
     const [selectedWeek, setSelectedWeek] = React.useState<string>('')
+    const [selectedRoute, setSelectedRoute] = React.useState<string>('all')
     const [isYearView, setIsYearView] = React.useState<boolean>(false)
 
     const monthStart = React.useMemo(() => startOfMonth(selectedDate), [selectedDate])
     const monthEnd = React.useMemo(() => endOfMonth(selectedDate), [selectedDate])
+
+    const routeOptions = React.useMemo(() => {
+        // Map routes into options with their route IDs
+        const optionsMap = new Map<string, RouteOption>();
+        routes.forEach(route => {
+            const key = `${route.sourceCity}-${route.destinationCity}`;
+            if (!optionsMap.has(key)) {
+                optionsMap.set(key, {
+                    value: key,
+                    label: `${route.sourceCity} to ${route.destinationCity}`,
+                    routeIds: [route.id],
+                });
+            } else {
+                const existing = optionsMap.get(key)!;
+                existing.routeIds.push(route.id);
+            }
+        });
+
+        // Filter to only include options with available trips
+        const filteredOptions = Array.from(optionsMap.values()).filter(option => {
+            return tripInfo.some(trip => option.routeIds.includes(Number(trip.routeId)));
+        });
+
+        return filteredOptions;
+    }, [routes, tripInfo]);
+
+    const filteredTrips = React.useMemo(() => {
+        if (selectedRoute === 'all') return tripInfo;
+
+        const selectedRouteOption = routeOptions.find(option => option.value === selectedRoute);
+        if (!selectedRouteOption) return [];
+
+        return tripInfo.filter(trip => selectedRouteOption.routeIds.includes(Number(trip.routeId)));
+    }, [tripInfo, selectedRoute, routeOptions]);
+
 
     const weeklyData = React.useMemo(() => {
         const weeks: WeekData[] = eachWeekOfInterval(
@@ -86,7 +137,7 @@ export function LineGraph() {
     React.useEffect(() => {
         if (weeklyData.length > 0) {
             const currentDate = new Date();
-            const currentWeek = weeklyData.find(week => 
+            const currentWeek = weeklyData.find(week =>
                 isWithinInterval(currentDate, { start: week.startDate, end: week.endDate })
             );
             setSelectedWeek(currentWeek ? currentWeek.label : weeklyData[0].label);
@@ -94,24 +145,24 @@ export function LineGraph() {
     }, [weeklyData]);
 
     const dailyData = React.useMemo(() => {
-        if (!tripInfo?.length || !selectedWeek) return []
+        if (!selectedWeek) return []
 
         const selectedWeekData = weeklyData.find(week => week.label === selectedWeek)
         if (!selectedWeekData) return []
 
-        const dailyAggregation = new Map<string, number>()
-
+        // Get all days in the selected week
         const daysInWeek = eachDayOfInterval({
             start: selectedWeekData.startDate,
-            end: selectedWeekData.endDate
-        })
+            end: selectedWeekData.endDate,
+        }).map(day => format(day, 'MMM d'))
 
-        daysInWeek.forEach(day => {
-            const dateKey = format(day, 'MMM d')
-            dailyAggregation.set(dateKey, 0)
-        })
+        // Initialize daily data with 0 passenger counts
+        const dailyAggregation = new Map<string, number>(
+            daysInWeek.map(date => [date, 0])
+        )
 
-        tripInfo.forEach((trip) => {
+        // Add trip passenger counts to the corresponding dates
+        filteredTrips.forEach((trip) => {
             if (trip.passengerCount !== null && trip.date) {
                 const tripDate = parseISO(trip.date)
                 if (isWithinInterval(tripDate, { start: selectedWeekData.startDate, end: selectedWeekData.endDate })) {
@@ -121,13 +172,15 @@ export function LineGraph() {
             }
         })
 
+        // Convert the map to an array and sort by date
         return Array.from(dailyAggregation.entries())
             .map(([date, passengerCount]) => ({
                 date,
                 passengerCount,
             }))
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    }, [tripInfo, selectedWeek, weeklyData])
+    }, [filteredTrips, selectedWeek, weeklyData])
+
 
     const chartConfig = {
         passengerCount: {
@@ -238,21 +291,40 @@ export function LineGraph() {
                                     <ChevronRightIcon className="h-4 w-4" />
                                 </Button>
                             </div>
-                            <Select
-                                value={selectedWeek}
-                                onValueChange={setSelectedWeek}
-                            >
-                                <SelectTrigger className="w-[280px]">
-                                    <SelectValue placeholder="Select a week" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {weeklyData.map((week) => (
-                                        <SelectItem key={week.label} value={week.label}>
-                                            {week.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <div className="flex flex-col gap-2 w-full">
+
+                                <Select
+                                    value={selectedWeek}
+                                    onValueChange={setSelectedWeek}
+                                >
+                                    <SelectTrigger className="w-[280px]">
+                                        <SelectValue placeholder="Select a week" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {weeklyData.map((week) => (
+                                            <SelectItem key={week.label} value={week.label}>
+                                                {week.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Select
+                                    value={selectedRoute}
+                                    onValueChange={setSelectedRoute}
+                                >
+                                    <SelectTrigger className="w-[280px]">
+                                        <SelectValue placeholder="Select route" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Routes</SelectItem>
+                                        {routeOptions.map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                     </div>
                 </CardHeader>
@@ -298,4 +370,3 @@ export function LineGraph() {
         </div>
     )
 }
-

@@ -18,6 +18,7 @@ export const searchParams = {
   categories: parseAsString,
   date: parseAsString,
   dateRange: parseAsString,
+  driver: parseAsString,
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

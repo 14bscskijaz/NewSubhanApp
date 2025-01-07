@@ -283,6 +283,7 @@ export type dashboardCardsT = {
   id: number;
   title: string;
   value: number;
+  backgroundColor?:string;
 }
 
 export const dashboardCards: dashboardCardsT[] = [

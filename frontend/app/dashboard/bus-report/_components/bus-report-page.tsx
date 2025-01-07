@@ -151,8 +151,17 @@ export default function BusReportPage() {
   const busData = busMetrics();
 
   const handlePrint = useCallback(() => {
-    printExpenses(busData, buses);
-  }, [busData, buses]);
+    const dateRange = searchParams.get('date')?.split('|') || [];
+    const busNumberFilter = searchParams.get('busNumber') || '';
+    const busOwnerFilter = searchParams.get('busOwner') || '';
+
+    printExpenses(busData, buses, {
+        dateRange,
+        busNumber: busNumberFilter,
+        busOwner: busOwnerFilter,
+    });
+}, [busData, buses, searchParams]);
+
 
   const totalBusReport = busData.length;
   const startIndex = (page - 1) * pageLimit;

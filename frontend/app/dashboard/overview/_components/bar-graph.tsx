@@ -100,15 +100,15 @@ export function BarGraph() {
   }
 
   return (
-    <Card>
+    <Card className='border rounded-xl bg-gradient-border min-h-[570.41px]'>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-medium">Route Analysis</h3>
+          <h3 className="text-lg font-medium"><span className='text-gradient font-medium'>Route</span> Analysis</h3>
           <Select
             value={selectedRoute}
             onValueChange={setSelectedRoute}
           >
-            <SelectTrigger className="w-[280px]">
+            <SelectTrigger className="w-[320px] border bg-gradient-border ">
               <SelectValue placeholder="Select a route" />
             </SelectTrigger>
             <SelectContent>
@@ -121,14 +121,14 @@ export function BarGraph() {
           </Select>
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
-        <ChartContainer config={chartConfig} className="aspect-auto h-[390px] w-full">
+      <CardContent className="px-2 sm:p-4">
+        <ChartContainer config={chartConfig} className="aspect-auto h-[400px] w-full">
           <BarChart
             data={filteredData}
             margin={{
-              left: 10,
-              right: 12,
-              top: 10,
+              left: -10,
+              right: 36,
+              top: 0,
               bottom: 50
             }}
           >

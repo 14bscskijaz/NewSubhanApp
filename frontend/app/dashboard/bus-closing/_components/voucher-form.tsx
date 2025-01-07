@@ -182,7 +182,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
               padding: 0;
               background-color: #f9f9f9;
               color: #333;
-              font-size: 12px;
+              font-size: 14px;
             }
             h1, h2 {
               text-align: left;

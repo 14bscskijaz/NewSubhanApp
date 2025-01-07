@@ -97,8 +97,8 @@ export function DataTableView<TData, TValue>({
     });
 
     return (
-        <div className="space-y-4">
-            <ScrollArea className="w-[97%] overflow-x-auto rounded-md border">
+        <div className="space-y-4 ">
+            <ScrollArea className="w-[97%] overflow-x-auto rounded-md border ">
                 <Table className="relative">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

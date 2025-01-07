@@ -11,23 +11,16 @@ const isRouteDetails = (route: RouteDetails | 0): route is RouteDetails => {
 
 // Function to format date to DD_MM_YYYY
 const formatDate = (date: string) => {
-  // Try parsing the date
   const newDate = new Date(date);
-  if (isNaN(newDate.getTime())) {
-    // Try manually parsing if the default date parsing fails (e.g., DD-MM-YYYY format)
-    const [day, month, year] = date.split('-');
-    const formattedDate = new Date(`${month}/${day}/${year}`);
-    if (isNaN(formattedDate.getTime())) {
-      return ''; // Return empty string if the date is invalid after attempting manual parsing
-    }
-    return `${day}_${month}_${year}`;
-  }
+  if (isNaN(newDate.getTime())) return ''; // Invalid date, return empty string
 
   const dd = newDate.getDate().toString().padStart(2, '0');
-  const mm = (newDate.getMonth() + 1).toString().padStart(2, '0'); // January is 0!
+  const mm = (newDate.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
   const yyyy = newDate.getFullYear();
-  return `${dd}_${mm}_${yyyy}`;
+
+  return `${dd}-${mm}-${yyyy}`; // Use DD-MM-YYYY format
 };
+
 
 export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], isCity: boolean, filters: SearchFilters) => {
   // Create a Map with proper typing
@@ -63,30 +56,31 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
 
   // Function to render the filter information in the print layout
   const filtersSection = (filters: SearchFilters) => {
-    let filterContent = '<p><strong>Applied Filters:</strong></p>';
-
+    let filterContent = '';
+  
     if (filters.search) {
       filterContent += `<p><strong>Search Term:</strong> ${filters.search}</p>`;
     }
+  
     if (filters.dateRange) {
-      const [startDate, endDate] = filters.dateRange.split(' to '); // Assuming the date range is in format "startDate to endDate"
-      
-      // Format the start and end dates
+      const [startDate, endDate] = filters.dateRange.split('|'); // Assuming the date range is in ISO format separated by '|'
       const formattedStartDate = formatDate(startDate);
       const formattedEndDate = formatDate(endDate);
-
+  
       if (formattedStartDate && formattedEndDate) {
         filterContent += `<p><strong>Date Range:</strong> ${formattedStartDate} to ${formattedEndDate}</p>`;
       } else {
         filterContent += `<p><strong>Date Range:</strong> Invalid Date</p>`;
       }
     }
+  
     if (filters.route) {
       filterContent += `<p><strong>Route:</strong> ${filters.route}</p>`;
     }
-
+  
     return filterContent;
   };
+  
 
   const content = `
     <html>

@@ -59,8 +59,8 @@ export const calculateMetrics = (
         freePassengers: formatNumber(data.freePassengers),
         halfPassengers: formatNumber(data.halfPassengers),
         fullPassengers: formatNumber(data.fullPassengers),
-        averagePassengers: data.totalTrips ? 
-            formatNumber(Math.floor(data.totalPassengers / data.totalTrips)) : 
+        averagePassengers: data.totalTrips ?
+            formatNumber(Math.floor(data.totalPassengers / data.totalTrips)) :
             formatNumber(0),
         routeCount: formatNumber(data.routeIds.size),
         routeIds: Array.from(data.routeIds),

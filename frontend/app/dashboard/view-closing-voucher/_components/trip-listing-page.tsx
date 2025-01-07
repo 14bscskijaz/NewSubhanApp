@@ -186,14 +186,14 @@ export default function TripListingPage({ }: TTripListingPage) {
         { sourceAdda, sourceCity, destinationAdda, destinationCity },
       ])
     );
-
+  
     // Prepare the data for printing
     const voucherData = filteredVouchers.map((voucher) => {
       const route: any = RouteMap.get(voucher.routeId || 0) || {};
       const busNumber = BusNumberMap.get(Number(voucher?.busId) || 0) || 'N/A';
       const expenses = handleCalculateExpenses(voucher);
       const grossRevenue = Number(voucher.revenue) || 0 - expenses;
-
+  
       return {
         ...voucher,
         route: route.sourceCity && route.destinationCity
@@ -201,10 +201,34 @@ export default function TripListingPage({ }: TTripListingPage) {
           : 'N/A',
         busNumber,
         expenses,
-        grossRevenue
+        grossRevenue,
       };
     });
-
+  
+    // Helper function to format ISO date strings to DD-MM-YYYY
+    const formatDate = (isoDate: string) => {
+      const date = new Date(isoDate);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
+  const filtrs = dateFilter.split('|')
+    // Format the date range if provided
+    const formattedDateRange = filtrs && filtrs.length === 2
+      ? `${formatDate(filtrs[0])} to ${formatDate(filtrs[1])}`
+      : 'No date range applied';
+  
+    const filterDetails = `
+      <div style="margin-bottom: 20px;">
+        <ul style="list-style: none; padding: 0;">
+          ${formattedDateRange ? `<li><strong>Date Range:</strong> ${formattedDateRange}</li>` : ''}
+          ${busNumber ? `<li><strong>Bus Number:</strong> ${busNumber}</li>` : ''}
+          ${routeFilter ? `<li><strong>Route:</strong> ${routeFilter}</li>` : ''}
+        </ul>
+      </div>
+    `;
+  
     // Open print window
     const printWindow = window.open('', '_blank');
     if (printWindow) {
@@ -219,7 +243,6 @@ export default function TripListingPage({ }: TTripListingPage) {
                 color: #333;
                 margin: 0;
                 padding: 20px;
-                
               }
               table {
                 width: 100%;
@@ -273,10 +296,11 @@ export default function TripListingPage({ }: TTripListingPage) {
             </style>
           </head>
           <body>
-          <div class="header-class">
-          <div>Bus Closing Voucher</div>
-          <div>New Subhan</div>
-        </div>
+            <div class="header-class">
+              <div>Bus Closing Voucher</div>
+              <div>New Subhan</div>
+            </div>
+            ${filterDetails}
             <table>
               <thead>
                 <tr>
@@ -291,20 +315,20 @@ export default function TripListingPage({ }: TTripListingPage) {
               </thead>
               <tbody>
                 ${voucherData
-          .map(voucher => {
-            return `
-                      <tr>
-                        <td>${voucher?.date.split("T")[0]}</td>
-                        <td>${voucher.voucherNumber || 'N/A'}</td>
-                        <td>${voucher.busNumber}</td>
-                        <td>${voucher.route}</td>
-                        <td>${formatNumber(Number(voucher.revenue)) || 0}</td>
-                        <td>${formatNumber(voucher.expenses)}</td>
-                        <td>${formatNumber(voucher.grossRevenue) || 0}</td>
-                      </tr>
-                    `;
-          })
-          .join('')}
+        .map(voucher => {
+          return `
+                    <tr>
+                      <td>${voucher?.date.split("T")[0]}</td>
+                      <td>${voucher.voucherNumber || 'N/A'}</td>
+                      <td>${voucher.busNumber}</td>
+                      <td>${voucher.route}</td>
+                      <td>${formatNumber(Number(voucher.revenue)) || 0}</td>
+                      <td>${formatNumber(voucher.expenses)}</td>
+                      <td>${formatNumber(voucher.grossRevenue) || 0}</td>
+                    </tr>
+                  `;
+        })
+        .join('')}
               </tbody>
               <tfoot>
                 <tr>
@@ -318,7 +342,7 @@ export default function TripListingPage({ }: TTripListingPage) {
           </body>
         </html>
       `;
-
+  
       printWindow.document.write(content);
       printWindow.document.close();
       printWindow.focus();
@@ -335,6 +359,8 @@ export default function TripListingPage({ }: TTripListingPage) {
       });
     }
   };
+  
+  
 
 
   const totalTripExpense = filteredVouchers.length;

@@ -211,10 +211,10 @@ export function LineGraph() {
 
     return (
         <div className="space-y-4">
-            <Card>
+            <Card className='border rounded-xl bg-gradient-border min-h-[570.41px]'>
                 <CardHeader>
                     <div className="flex items-start justify-between">
-                        <h3 className="text-lg font-medium">Weekly Passenger Count</h3>
+                        <h3 className="text-lg font-medium"><span className='text-gradient'>Weekly</span> Passenger Count</h3>
                         <div className="flex flex-col items-center gap-4">
                             <div className="flex items-center">
                                 <Button
@@ -229,7 +229,7 @@ export function LineGraph() {
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant={"outline"}
-                                            className={`w-[200px] justify-start text-left font-normal mx-2`}
+                                            className={`w-[200px] border bg-gradient-border justify-start text-left font-normal mx-2`}
                                         >
                                             <CalendarIcon className="mr-2 h-4 w-4" />
                                             {format(selectedDate, isYearView ? "yyyy" : "MMMM yyyy")}
@@ -284,7 +284,7 @@ export function LineGraph() {
                                 </Popover>
                                 <Button
                                     variant="outline"
-                                    className='bg-gradient-2 text-white'
+                                    className='bg-gradient-2  text-white hover:border'
                                     size="icon"
                                     onClick={isYearView ? handleNextYear : handleNextMonth}
                                 >
@@ -297,7 +297,7 @@ export function LineGraph() {
                                     value={selectedWeek}
                                     onValueChange={setSelectedWeek}
                                 >
-                                    <SelectTrigger className="w-[280px]">
+                                    <SelectTrigger className="w-[280px] border bg-gradient-border">
                                         <SelectValue placeholder="Select a week" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -312,7 +312,7 @@ export function LineGraph() {
                                     value={selectedRoute}
                                     onValueChange={setSelectedRoute}
                                 >
-                                    <SelectTrigger className="w-[280px]">
+                                    <SelectTrigger className="w-[280px] border bg-gradient-border">
                                         <SelectValue placeholder="Select route" />
                                     </SelectTrigger>
                                     <SelectContent>

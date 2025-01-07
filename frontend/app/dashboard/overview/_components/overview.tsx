@@ -27,12 +27,23 @@ import { LineGraph } from './line-graph';
 import TripListingPage from './trip-listing-page';
 import { formatNumber } from 'accounting';
 
+// Define constant colors for the cards
+const cardColors = [
+  // '#F44336', // Red
+  '#2196F3', // Blue
+  // '#4CAF50', // Green
+  // '#FFEB3B', // Yellow
+  '#9C27B0', // Purple
+  // '#00BCD4', // Cyan
+  '#FF9800', // Orange
+  '#607D8B', // Blue Grey
+];
+
 // Helper function for calculating dynamic values
 const calculateDynamicValue = (
   card: dashboardCardsT,
   fetchedExpenses: any
 ): number => {
-
   switch (card.id) {
     case 1:
       return fetchedExpenses[0]?.revenue;
@@ -64,7 +75,6 @@ const calculateTotalExpenses = (voucher: any): number => {
     .reduce((sum, expense) => sum + (Number(expense) || 0), 0);
 };
 
-// OverViewPage Component
 export default function OverViewPage() {
   const savedExpenses = useSelector<RootState, Expense[]>(allSavedExpenses);
   const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
@@ -155,15 +165,15 @@ export default function OverViewPage() {
     return Object.values(aggregatedData);
   }, [savedExpenses, vouchers]);
 
-  const dynamicClosing = dashboardCards.map((card) => ({
+  const dynamicClosing = dashboardCards.map((card, index) => ({
     ...card,
-    value: calculateDynamicValue(card,aggregatedSummaryData),
+    value: calculateDynamicValue(card, aggregatedSummaryData),
+    backgroundColor: cardColors[index % cardColors.length], // Assign a constant color based on index
   }));
 
   useEffect(() => {
     setLatestExpense(dynamicClosing);
   }, [aggregatedSummaryData]);
-
 
   return (
     <PageContainer scrollable>
@@ -173,7 +183,11 @@ export default function OverViewPage() {
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {latestExpense.map((card) => (
-                <Card key={card.id}>
+                <Card
+                  key={card.id}
+                  style={{ backgroundColor: card?.backgroundColor }}
+                  className='text-white'
+                >
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
                   </CardHeader>
@@ -184,10 +198,10 @@ export default function OverViewPage() {
               ))}
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-8">
-              <div className="col-span-4">
+              <div className="col-span-4 ">
                 <BarGraph />
               </div>
-              <div className="col-span-4">
+              <div className="col-span-4 bg-gradient-border">
                 <LineGraph />
               </div>
             </div>
@@ -198,4 +212,3 @@ export default function OverViewPage() {
     </PageContainer>
   );
 }
-

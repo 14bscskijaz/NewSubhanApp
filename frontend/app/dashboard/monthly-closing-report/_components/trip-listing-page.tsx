@@ -167,18 +167,25 @@ export default function TripListingPage({ }: TTripListingPage) {
     // Prepare the data for printing
     const voucherData = filteredVouchers.map((voucher) => {
       const findedVoucher = vouchers.find(vou => vou.id === voucher.busClosingVoucherId);
-      console.log(voucher);
-
       const expenses = handleCalculateExpenses(findedVoucher);
       const grossRevenue = Number(findedVoucher?.revenue) || 0 - expenses;
-
+  
       return {
         ...voucher,
         expenses,
         grossRevenue
       };
     });
-
+  
+    // Extract month and year from the dateFilter if available
+    let filterDisplay = '';
+    if (dateFilter) {
+      const selectedDate = new Date(dateFilter);
+      const month = selectedDate.toLocaleString('default', { month: 'long' }); // Get the full month name
+      const year = selectedDate.getFullYear(); // Get the year
+      filterDisplay = `<div><strong>Date:</strong> ${month} ${year}</div>`;
+    }
+  
     // Open print window
     const printWindow = window.open('', '_blank');
     if (printWindow) {
@@ -193,7 +200,6 @@ export default function TripListingPage({ }: TTripListingPage) {
                 color: #333;
                 margin: 0;
                 padding: 20px;
-                
               }
               table {
                 width: 100%;
@@ -204,7 +210,7 @@ export default function TripListingPage({ }: TTripListingPage) {
                 border: 1px solid #333;
                 padding: 8px;
                 text-align: center;
-                font-size:12px;
+                font-size: 12px;
               }
               th {
                 text-align: center;
@@ -222,24 +228,16 @@ export default function TripListingPage({ }: TTripListingPage) {
                 border-bottom: 2px solid #333;
                 padding-bottom: 5px;
               }
-              tfoot th {
-                background-color: #2a5934;
-                color: #2a5934;
+              .text-left {
+                text-align: left;
               }
-              tfoot td {
-                font-weight: bold;
-                background-color: #d0e8d2;
-              }
-              .text-left{
-                text-align:left;
-              }
-              .header-class{
+              .header-class {
                 color: #2a5934;
                 font-size: 20px;
                 font-weight: 700;
                 border-bottom: 1px solid #000;
                 padding: 5px;
-                margin: 10px 0px ;
+                margin: 10px 0px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -247,10 +245,11 @@ export default function TripListingPage({ }: TTripListingPage) {
             </style>
           </head>
           <body>
-          <div class="header-class">
-          <div>Monthly Closing Report</div>
-          <div>New Subhan</div>
-        </div>
+            <div class="header-class">
+              <div>Monthly Closing Report</div>
+              <div>New Subhan</div>
+            </div>
+            ${filterDisplay ? filterDisplay : ''}
             <table>
               <thead>
                 <tr>
@@ -262,22 +261,21 @@ export default function TripListingPage({ }: TTripListingPage) {
               </thead>
               <tbody>
                 ${voucherData.map(voucher => {
-        return `
-                      <tr>
-                        <td>${voucher?.date.split("T")[0]}</td>
-                        <td>${formatNumber(Number(voucher.grossRevenue)) || 0}</td>
-                        <td>${formatNumber(Number(voucher.expenses+voucher.amount))}</td>
-                        <td>${formatNumber(Number(voucher.grossRevenue) - Number(voucher.expenses + voucher.amount)) || 0}</td>
-                      </tr>
-                    `;
-      })
-          .join('')}
+                  return `
+                    <tr>
+                      <td>${voucher?.date.split("T")[0]}</td>
+                      <td>${formatNumber(Number(voucher.grossRevenue)) || 0}</td>
+                      <td>${formatNumber(Number(voucher.expenses + voucher.amount))}</td>
+                      <td>${formatNumber(Number(voucher.grossRevenue) - Number(voucher.expenses + voucher.amount)) || 0}</td>
+                    </tr>
+                  `;
+                }).join('')}
               </tbody>
             </table>
           </body>
         </html>
       `;
-
+  
       printWindow.document.write(content);
       printWindow.document.close();
       printWindow.focus();
@@ -294,6 +292,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       });
     }
   };
+  
 
 
   const totalTripExpense = filteredVouchers.length;

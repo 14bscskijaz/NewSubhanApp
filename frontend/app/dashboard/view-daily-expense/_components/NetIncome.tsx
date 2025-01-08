@@ -19,7 +19,7 @@ const NetIncome: React.FC<VoucherProps> = ({ voucherId,amount }) => {
         foundVoucher?.alliedmor,
         foundVoucher?.cityParchi,
         foundVoucher?.cleaning,
-        foundVoucher?.coilTechnician,
+        foundVoucher?.cOilTechnician,
         foundVoucher?.commission,
         foundVoucher?.diesel,
         foundVoucher?.dieselLitres,

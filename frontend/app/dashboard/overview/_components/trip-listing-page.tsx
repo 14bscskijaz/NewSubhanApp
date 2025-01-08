@@ -100,7 +100,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       ? voucher.alliedmor?.toString().toLowerCase().includes(search.toLowerCase()) ||
       voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
       voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.coilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      voucher.cOilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
       voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
       voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
       : true;
@@ -147,7 +147,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       item.alliedmor,
       item.cityParchi,
       item.cleaning,
-      item.coilTechnician,
+      item.cOilTechnician,
       item.commission,
       item.diesel,
       item.dieselLitres,
@@ -166,7 +166,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       voucher?.alliedmor,
       voucher?.cityParchi,
       voucher?.cleaning,
-      voucher?.coilTechnician,
+      voucher?.cOilTechnician,
       voucher?.commission,
       voucher?.diesel,
       voucher?.dieselLitres,

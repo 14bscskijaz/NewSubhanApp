@@ -19,7 +19,7 @@ console.log(foundVoucher,'foundVoucher');
         foundVoucher?.alliedmor,
         foundVoucher?.cityParchi,
         foundVoucher?.cleaning,
-        foundVoucher?.coilTechnician,
+        foundVoucher?.cOilTechnician,
         foundVoucher?.commission,
         foundVoucher?.diesel,
         foundVoucher?.refreshment,

@@ -181,6 +181,43 @@ export function LineGraph() {
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     }, [filteredTrips, selectedWeek, weeklyData])
 
+    const currentWeekStats = React.useMemo(() => {
+        const currentWeekData = weeklyData.find(week => week.label === selectedWeek);
+        const previousWeekIndex = weeklyData.findIndex(week => week.label === selectedWeek) - 1;
+    
+        if (!currentWeekData || previousWeekIndex < 0) {
+            return { current: 0, previous: 0, difference: 0 };
+        }
+    
+        // Calculate current week passenger count
+        const currentWeekTrips = filteredTrips.filter(trip => {
+            if (!trip.date) return false; // Ensure trip.date is defined
+            const tripDate = parseISO(trip.date);
+            return isWithinInterval(tripDate, {
+                start: currentWeekData.startDate,
+                end: currentWeekData.endDate,
+            });
+        });
+        const currentTotal = currentWeekTrips.reduce((acc, trip) => acc + (trip.passengerCount || 0), 0);
+    
+        // Calculate previous week passenger count
+        const previousWeekData = weeklyData[previousWeekIndex];
+        const previousWeekTrips = filteredTrips.filter(trip => {
+            if (!trip.date) return false; // Ensure trip.date is defined
+            const tripDate = parseISO(trip.date);
+            return isWithinInterval(tripDate, {
+                start: previousWeekData.startDate,
+                end: previousWeekData.endDate,
+            });
+        });
+        const previousTotal = previousWeekTrips.reduce((acc, trip) => acc + (trip.passengerCount || 0), 0);
+    
+        const difference = currentTotal - previousTotal;
+    
+        return { current: currentTotal, previous: previousTotal, difference };
+    }, [filteredTrips, selectedWeek, weeklyData]);
+    
+
 
     const chartConfig = {
         passengerCount: {
@@ -214,7 +251,34 @@ export function LineGraph() {
             <Card className='border rounded-xl bg-gradient-border min-h-[570.41px]'>
                 <CardHeader>
                     <div className="flex items-start justify-between">
-                        <h3 className="text-lg font-medium"><span className='text-gradient'>Weekly</span> Passenger Count</h3>
+                        <div className='flex flex-col gap-2'>
+                            <h3 className="text-lg font-medium"><span className='text-gradient'>Weekly</span> Passenger Count</h3>
+                            <Select
+                                value={selectedRoute}
+                                onValueChange={setSelectedRoute}
+                            >
+                                <SelectTrigger className="w-[280px] border bg-gradient-border">
+                                    <SelectValue placeholder="Select route" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Routes</SelectItem>
+                                    {routeOptions.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                            {option.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <div className="flex items-center justify-between space-x-2 mt-2">
+                                <span className="text-sm font-medium">
+                                    Week Progress:
+                                </span>
+                                <span className={`flex items-center ${currentWeekStats.difference >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                                    {currentWeekStats.difference >= 0 ? '▲' : '▼'} {Math.abs(currentWeekStats.difference)} passengers
+                                </span>
+                            </div>
+
+                        </div>
                         <div className="flex flex-col items-center gap-4">
                             <div className="flex items-center">
                                 <Button
@@ -308,22 +372,7 @@ export function LineGraph() {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <Select
-                                    value={selectedRoute}
-                                    onValueChange={setSelectedRoute}
-                                >
-                                    <SelectTrigger className="w-[280px] border bg-gradient-border">
-                                        <SelectValue placeholder="Select route" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Routes</SelectItem>
-                                        {routeOptions.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+
                             </div>
                         </div>
                     </div>

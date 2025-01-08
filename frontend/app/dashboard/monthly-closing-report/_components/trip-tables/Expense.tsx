@@ -20,7 +20,7 @@ const Expense: React.FC<VoucherProps> = ({ voucherId,amount }) => {
         foundVoucher?.alliedmor,
         foundVoucher?.cityParchi,
         foundVoucher?.cleaning,
-        foundVoucher?.coilTechnician, // Corrected field name
+        foundVoucher?.cOilTechnician, // Corrected field name
         foundVoucher?.commission,
         foundVoucher?.diesel,
         foundVoucher?.dieselLitres,

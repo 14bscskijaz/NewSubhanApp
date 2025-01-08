@@ -20,12 +20,14 @@ const Expense: React.FC<VoucherProps> = ({ voucherId,amount }) => {
         foundVoucher?.alliedmor,
         foundVoucher?.cityParchi,
         foundVoucher?.cleaning,
-        foundVoucher?.coilTechnician, // Corrected field name
+        foundVoucher?.cOilTechnician,
         foundVoucher?.commission,
         foundVoucher?.diesel,
-        foundVoucher?.dieselLitres,
         foundVoucher?.refreshment,
         foundVoucher?.toll,
+        foundVoucher?.generator,
+        foundVoucher?.repair,
+        foundVoucher?.miscellaneousExpense,
     ]
         // Convert all values to numbers
         .map(Number)

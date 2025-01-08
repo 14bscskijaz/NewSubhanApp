@@ -77,7 +77,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       voucher?.alliedmor,
       voucher?.cityParchi,
       voucher?.cleaning,
-      voucher?.coilTechnician,
+      voucher?.cOilTechnician,
       voucher?.commission,
       voucher?.diesel,
       voucher?.dieselLitres,

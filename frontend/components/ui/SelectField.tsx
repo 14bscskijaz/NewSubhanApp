@@ -64,7 +64,7 @@ export default function SelectField({
                         <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full  p-0 !z-50">
+                <PopoverContent className="w-full p-0 !z-50">
                     <Command>
                         <Input
                             placeholder="Search..."

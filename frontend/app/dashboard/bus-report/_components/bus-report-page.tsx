@@ -55,7 +55,7 @@ export default function BusReportPage() {
     const expenses = [
       voucher.commission,
       voucher.diesel,
-      voucher.coilTechnician,
+      voucher.cOilTechnician,
       voucher.toll,
       voucher.cleaning,
       voucher.alliedmor,

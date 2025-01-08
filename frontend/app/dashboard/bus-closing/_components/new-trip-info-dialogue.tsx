@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import {
   FixedTripExpense,
@@ -246,6 +247,7 @@ export default function NewTripInfoDialog({
         checkerExpense: Number(tripData.checkerExpense),
         date: date
       };
+console.log(tripData.rewardCommission);
 
       dispatch(addTripInformation(newTripData));
 
@@ -351,7 +353,7 @@ export default function NewTripInfoDialog({
           <Plus className="mr-2 h-4 w-4" /> Add Trip
         </Button>
       </DialogTrigger>
-      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto sm:max-w-[900px]">
+      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto sm:max-w-[1024px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
@@ -498,7 +500,7 @@ export default function NewTripInfoDialog({
               />
             </div>
 
-           
+
             <div className="grid gap-2">
               <Label htmlFor="miscellaneousAmount" className='text-gradient'>Miscellaneous Expense</Label>
               <Input
@@ -509,18 +511,7 @@ export default function NewTripInfoDialog({
                 onChange={handleInputChange}
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="revenueDiffExplanation" className='text-gradient'>
-                Miscellaneous Explanation
-              </Label>
-              <Input
-                id="revenueDiffExplanation"
-                type="text"
-                placeholder="Enter explanation for revenue difference"
-                value={tripData.revenueDiffExplanation}
-                onChange={handleInputChange}
-              />
-            </div>
+            
             <div className="grid gap-2">
               <Label htmlFor="actualRevenue" className='text-gradient'>Actual Revenue</Label>
               <Input
@@ -529,6 +520,21 @@ export default function NewTripInfoDialog({
                 placeholder="Actual revenue"
                 value={tripData.revenue?.toString()}
                 onChange={handleInputChange}
+              />
+            </div>
+            <div className="grid gap-2 col-span-2">
+              <Label htmlFor="revenueDiffExplanation" className="text-gradient">Revenue Difference Explanation</Label>
+              <Textarea
+                id="revenueDiffExplanation"
+                className='placeholder:text-gray-200'
+                placeholder="Explain any revenue differences"
+                value={tripData.revenueDiffExplanation}
+                onChange={(e) =>
+                  setTripData((prev) => ({
+                    ...prev,
+                    revenueDiffExplanation: e.target.value,
+                  }))
+                }
               />
             </div>
           </div>

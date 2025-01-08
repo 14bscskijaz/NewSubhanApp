@@ -48,15 +48,14 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
   //     <SourceStationDestinationStation routeId={row?.original?.routeId || 1} />
   //   )
   // },
+ 
   {
-    id:"revenue",
-    header:"revenue",
-    accessorKey: 'revenue',
-    cell:(
-      {row}
-    )=><FormatedRevenue revenue={row?.original?.revenue}/>
+    id: 'actual-revenue',
+    header: 'Gross Revenue',
+    cell: (
+      { row }
+    ) => <Revenue voucherId={Number(row.original.id)}  />
   },
-
   {
     id: 'expense',
     header: 'Expense',
@@ -64,12 +63,14 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
       { row }
     ) => <Expense voucherId={Number(row.original.id)}  />
   },
+ 
   {
-    id: 'actual-revenue',
-    header: 'Gross Revenue',
-    cell: (
-      { row }
-    ) => <Revenue voucherId={Number(row.original.id)} />
+    id:"revenue",
+    header:"Gross Revenue",
+    accessorKey: 'revenue',
+    cell:(
+      {row}
+    )=><FormatedRevenue revenue={row?.original?.revenue}/>
   },
   // {
   //   accessorKey: 'dcParchi',

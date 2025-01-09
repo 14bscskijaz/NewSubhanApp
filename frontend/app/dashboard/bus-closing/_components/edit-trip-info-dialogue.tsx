@@ -112,6 +112,7 @@ export default function EditRouteDialog({
     remaining -= Number(updatedData.refreshmentExpense) || 0;
     remaining += Number(updatedData.loadEarning) || 0;
     remaining -= Number(updatedData.rewardCommission) || 0;
+    remaining -= Number(updatedData.checkerExpense) || 0;
 
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
       remaining -= expenseForThisRouteId.routeCommission;

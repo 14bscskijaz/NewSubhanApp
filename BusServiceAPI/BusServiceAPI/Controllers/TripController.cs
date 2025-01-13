@@ -39,7 +39,8 @@ namespace BusServiceAPI.Controllers
                   Revenue = t.Revenue,
                   RevenueDiffExplanation = t.RevenueDiffExplanation,
                   Date = t.Date,
-                  CheckerExpense = t.CheckerExpense
+                  CheckerExpense = t.CheckerExpense,
+                  Reference = t.Reference
               }).ToList();
 
             return Ok(trips);
@@ -66,7 +67,8 @@ namespace BusServiceAPI.Controllers
                    Revenue = t.Revenue,
                    RevenueDiffExplanation = t.RevenueDiffExplanation,
                    Date = t.Date,
-                   CheckerExpense = t.CheckerExpense
+                   CheckerExpense = t.CheckerExpense,
+                   Reference = t.Reference
                })
                 .FirstOrDefault(t => t.Id == id);
 
@@ -97,7 +99,8 @@ namespace BusServiceAPI.Controllers
                 Revenue = tripDto.Revenue,
                 RevenueDiffExplanation = tripDto.RevenueDiffExplanation,
                 Date = tripDto.Date,
-                CheckerExpense = tripDto.CheckerExpense
+                CheckerExpense = tripDto.CheckerExpense,
+                Reference = tripDto.Reference
             };
 
             _context.Trips.Add(trip);
@@ -118,7 +121,8 @@ namespace BusServiceAPI.Controllers
                 Revenue = trip.Revenue,
                 RevenueDiffExplanation = trip.RevenueDiffExplanation,
                 Date = trip.Date,
-                CheckerExpense = trip.CheckerExpense
+                CheckerExpense = trip.CheckerExpense,
+                Reference = trip.Reference
             };
 
             return CreatedAtAction(nameof(GetTrip), new { id = createdTrip.Id }, createdTrip);
@@ -145,6 +149,7 @@ namespace BusServiceAPI.Controllers
             trip.RevenueDiffExplanation = tripDto.RevenueDiffExplanation;
             trip.Date = tripDto.Date;
             trip.CheckerExpense = tripDto.CheckerExpense;
+            trip.Reference = tripDto.Reference;
             _context.SaveChanges();
 
             return NoContent();

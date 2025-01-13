@@ -115,32 +115,20 @@ export default function TripListingPage({ }: TTripListingPage) {
     return matchesSearch && matchesDateRange;
   });
 
-  const filterVoucher = (id: number | null | undefined) => {
-    return vouchers.find(voucher => voucher.id === id);
-  }
+  const uniqueExpenses = Array.from(
+    new Map(filteredVouchers.map((expense) => [expense.id, expense])).values()
+  );
 
-  const totalRevenue = filteredVouchers.reduce((sum: number, item: Expense) => sum + (filterVoucher(item.busClosingVoucherId)?.revenue || 0), 0);
+  const filteredExpense = uniqueExpenses.filter((expense) => {
+    const matchesSearch = search
+      ? expense.amount.toString().includes(search.toLowerCase()) ||
+      expense.date.toString().includes(search.toLowerCase()) ||
+      expense.description.toString().includes(search.toLowerCase()) ||
+      expense.type.toString().includes(search.toLowerCase())
+      : true;
 
-  const totalExpense = filteredVouchers.reduce((acc: any, item: Expense) => {
-    const findedVoucher = filterVoucher(item.busClosingVoucherId);
-    const expenses = [
-      findedVoucher?.alliedmor,
-      findedVoucher?.cityParchi,
-      findedVoucher?.cleaning,
-      findedVoucher?.cOilTechnician,
-      findedVoucher?.commission,
-      findedVoucher?.diesel,
-      findedVoucher?.refreshment,
-      findedVoucher?.toll,
-      findedVoucher?.miscellaneousExpense,
-      findedVoucher?.repair,
-      findedVoucher?.generator,
-    ]
-      .map(Number)
-      .reduce((sum, val) => sum + (isNaN(val) ? 0 : val), 0);
-
-    return acc + expenses;
-  }, 0)
+    return matchesSearch;
+  });
 
   const handleCalculateExpenses = (voucher: any) => {
     // Sum all expenses, ensuring proper field names and valid numeric conversions
@@ -151,17 +139,67 @@ export default function TripListingPage({ }: TTripListingPage) {
       voucher?.cOilTechnician,
       voucher?.commission,
       voucher?.diesel,
+      voucher?.dieselLitres,
       voucher?.refreshment,
       voucher?.toll,
-      voucher?.miscellaneousExpense,
-      voucher?.repair,
-      voucher?.generator,
     ]
       .map(Number) // Convert all values to numbers
       .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
 
     return allExpenses;
   };
+
+  // Group expenses by date
+  // Group expenses by date
+  const groupedExpenses = filteredExpense.reduce((acc, expense) => {
+    if (!acc[expense.date]) {
+      acc[expense.date] = { revenue: 0, expense: 0, netIncome: 0, date: expense.date };
+    }
+
+    // Find the voucher data associated with the current expense
+    const voucher = vouchers.find(
+      (voucher) => voucher.id === expense.busClosingVoucherId
+    );
+    const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount)
+
+    console.log(expenseCalc, "expenseCalc");
+
+    // Accumulate revenue, expense, and calculate net income
+    const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher))
+    console.log(sum, "sum");
+
+    if (voucher) {
+      acc[expense.date].revenue += sum || 0;
+    }
+
+    acc[expense.date].expense += expenseCalc;
+    acc[expense.date].netIncome = Number(acc[expense.date].revenue) - Number(acc[expense.date].expense);
+
+    return acc;
+  }, {} as Record<string, { revenue: number, expense: number, netIncome: number, date: string }>);
+
+  // Convert groupedExpenses object back to an array
+  const summaryData = Object.values(groupedExpenses);
+  // Summing up values with the same date
+  const aggregatedData = summaryData.reduce((acc, current) => {
+    // Extract the date without the time
+    const dateKey = current.date.split('T')[0];
+
+    if (!acc[dateKey]) {
+      acc[dateKey] = { revenue: 0, expense: 0, netIncome: 0, date: dateKey };
+    }
+
+    // Aggregate the revenue, expense, and netIncome
+    acc[dateKey].revenue += current.revenue;
+    acc[dateKey].expense += current.expense;
+    acc[dateKey].netIncome += current.netIncome;
+
+    return acc;
+  }, {} as Record<string, { revenue: number; expense: number; netIncome: number; date: string }>);
+
+  // Convert the aggregated data object back to an array
+  const aggregatedSummaryData = Object.values(aggregatedData);
+  
 
   const printExpenses = () => {
     // Prepare the data for printing
@@ -299,7 +337,7 @@ export default function TripListingPage({ }: TTripListingPage) {
 
   const startIndex = (page - 1) * pageLimit;
   const endIndex = startIndex + pageLimit;
-  const paginatedTrips = filteredVouchers.slice(startIndex, endIndex);
+  const paginatedTrips = aggregatedSummaryData.slice(startIndex, endIndex);
 
   return (
     <PageContainer scrollable>
@@ -312,7 +350,7 @@ export default function TripListingPage({ }: TTripListingPage) {
           {/* <NewTripDialog /> */}
         </div>
         <Separator />
-        <TripTable data={paginatedTrips} totalData={totalTripExpense} totalRevenue={totalRevenue} totalExpense={totalExpense} printExpenses={printExpenses} />
+        <TripTable data={paginatedTrips} totalData={totalTripExpense} printExpenses={printExpenses} />
       </div>
     </PageContainer>
   );

@@ -1,16 +1,9 @@
 // columns.tsx
 'use client';
-import { BusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { ColumnDef } from '@tanstack/react-table';
-import BusNumber from './BusNumber';
-import Expenses from './Expense';
-import NetIncome from './Revenue';
-import SourceDestination from './SourceDestination';
-import FormatedRevenue from './FormatedRevenue';
-import Revenue from '@/app/dashboard/view-daily-expense/_components/trip-tables/filtersData/Revenue';
-import { Expense } from '@/lib/slices/saved-expenses';
+import { formatNumber } from 'accounting';
 
-export const columns: ColumnDef<Expense>[] = [
+export const columns:ColumnDef<any>[] = [
   {
     id: 'serial_no',
     header: 'S.No',
@@ -51,25 +44,25 @@ export const columns: ColumnDef<Expense>[] = [
   //   )
   // },
   {
-    id: 'revenue',
+    accessorKey: 'revenue',
     header: 'Gross Revenue',
     cell: (
       { row } // Parent component usage
-    ) => <Revenue voucherId={Number(row.original.busClosingVoucherId)} />
+    ) => <div>{formatNumber(row.original.revenue)}</div>
   },
   {
-    id: 'expense',
-    header: 'Expense',
+    accessorKey: 'expense',
+    header: 'TotalExpense',
     cell: (
-      { row }
-    ) => <Expenses voucherId={Number(row.original.busClosingVoucherId)} amount={row.original.amount} />
+      { row } // Parent component usage
+    ) => <div>{formatNumber(row.original.expense)}</div>
   },
   {
-    id: 'actual-revenue',
+    accessorKey: 'netIncome',
     header: 'Net Income',
     cell: (
-      { row }
-    ) => <NetIncome voucherId={Number(row.original.busClosingVoucherId)} amount={row.original.amount} />
+      { row } // Parent component usage
+    ) => <div>{formatNumber(row.original.netIncome)}</div>
   },
   // {
   //   accessorKey: 'dcParchi',

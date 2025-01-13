@@ -15,14 +15,10 @@ import { Expense } from '@/lib/slices/expenses-slices';
 export default function RouteTable({
   data,
   totalData,
-  totalRevenue,
-  totalExpense,
   printExpenses
 }: {
-  data: Expense[];
+  data: any;
   totalData: number;
-  totalExpense: number;
-  totalRevenue: number;
   printExpenses: () => void;
 }) {
   const {
@@ -79,7 +75,7 @@ export default function RouteTable({
           </Button>
         </div>
       </div>
-      <DataTableView columns={columns} data={data} totalItems={totalData} totalRevenue={totalRevenue} totalExpense={totalExpense} />
+      <DataTableView columns={columns} data={data} totalItems={totalData} />
     </div>
   );
 }

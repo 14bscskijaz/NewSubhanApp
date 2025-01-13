@@ -29,8 +29,6 @@ interface DataTableProps<TData, TValue> {
     data: any;
     totalItems: number;
     pageSizeOptions?: number[];
-    totalExpense: number;
-    totalRevenue: number;
 }
 
 export function DataTableView<TData, TValue>({
@@ -38,8 +36,6 @@ export function DataTableView<TData, TValue>({
     data,
     totalItems,
     pageSizeOptions = [10, 20, 30, 40],
-    totalRevenue,
-    totalExpense
 }: DataTableProps<TData, TValue>) {
     const { formatNumber } = useAccounting();
     const path = usePathname();
@@ -78,9 +74,6 @@ export function DataTableView<TData, TValue>({
         setPageSize(pagination.pageSize);
     };
 
-    // Calculate totals for Revenue, Expense, and Gross Revenue from all rows
-
-    const totalGrossRevenue = formatNumber(Number(totalRevenue)-Number(totalExpense));
 
     const table = useReactTable({
         data,

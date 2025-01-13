@@ -139,7 +139,7 @@ export default function TripListingPage({ }: TTripListingPage) {
 
 
 
-  const totalRevenue = filteredVouchers.reduce((sum: number, item: any) => sum + (item.revenue || 0), 0);
+  
   const totalExpense = filteredVouchers.reduce((acc: any, item: any) => {
     const expenses = [
       item.alliedmor,
@@ -159,6 +159,8 @@ export default function TripListingPage({ }: TTripListingPage) {
 
     return acc + expenses; // Accumulate the total expense
   }, 0)
+
+  const totalRevenue = filteredVouchers.reduce((sum: number, item: any) => sum + (item.revenue || 0), 0) + totalExpense;
 
   const handleCalculateExpenses = (voucher: any) => {
     // Sum all expenses, ensuring proper field names and valid numeric conversions

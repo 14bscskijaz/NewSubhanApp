@@ -7,6 +7,7 @@ import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import useAccounting from '@/hooks/useAccounting';
 import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
 import { setTicketRaw } from '@/lib/slices/pricing-slices';
@@ -17,8 +18,6 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
-import NewTripDialog from '../../trip-expense/_components/new-trip-dialogue';
-import useAccounting from '@/hooks/useAccounting';
 
 type TTripListingPage = {};
 

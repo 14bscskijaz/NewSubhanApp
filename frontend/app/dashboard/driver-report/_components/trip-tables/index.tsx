@@ -22,6 +22,12 @@ export default function RouteTable({
     isAnyFilterActive,
     resetFilters,
     DRIVER_OPTIONS,
+    BUS_BRAND_OPTIONS,
+    ROUTE_OPTIONS,
+    busBrandFilter,
+    setBusBrandFilter,
+    routeFilter,
+    setRouteFilter,
     driverFilter,
     setDriverFilter,
     page,
@@ -46,6 +52,20 @@ export default function RouteTable({
               options={DRIVER_OPTIONS}
               setFilterValue={setDriverFilter}
               filterValue={driverFilter}
+            />
+            <DataTableFilterBoxView
+              filterKey="busBrand"
+              title="Bus Brand"
+              options={BUS_BRAND_OPTIONS}
+              setFilterValue={setBusBrandFilter}
+              filterValue={busBrandFilter}
+            />
+            <DataTableFilterBoxView
+              filterKey="route"
+              title="Route"
+              options={ROUTE_OPTIONS}
+              setFilterValue={setRouteFilter}
+              filterValue={routeFilter}
             />
             <DateFilterBox
               filterKey="date"

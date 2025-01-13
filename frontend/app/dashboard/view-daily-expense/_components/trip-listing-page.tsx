@@ -91,7 +91,6 @@ export default function TripListingPage({ }: TTripListingPage) {
   };
 
   // Group expenses by date
-  // Group expenses by date
   const groupedExpenses = filteredExpense.reduce((acc, expense) => {
     if (!acc[expense.date]) {
       acc[expense.date] = { revenue: 0, expense: 0, netIncome: 0, date: expense.date };
@@ -103,11 +102,8 @@ export default function TripListingPage({ }: TTripListingPage) {
     );
     const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount)
 
-    console.log(expenseCalc, "expenseCalc");
-
     // Accumulate revenue, expense, and calculate net income
     const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher))
-    console.log(sum, "sum");
 
     if (voucher) {
       acc[expense.date].revenue += sum || 0;
@@ -121,8 +117,16 @@ export default function TripListingPage({ }: TTripListingPage) {
 
   // Convert groupedExpenses object back to an array
   const summaryData = Object.values(groupedExpenses);
+
+  // Sort the aggregated summary data by date in descending order (latest first)
+  const sortedAggregatedData = summaryData.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime(); // Sorting in descending order
+  });
+
   // Summing up values with the same date
-  const aggregatedData = summaryData.reduce((acc, current) => {
+  const aggregatedData = sortedAggregatedData.reduce((acc, current) => {
     // Extract the date without the time
     const dateKey = current.date.split('T')[0];
 
@@ -141,14 +145,12 @@ export default function TripListingPage({ }: TTripListingPage) {
   // Convert the aggregated data object back to an array
   const aggregatedSummaryData = Object.values(aggregatedData);
 
-  console.log(aggregatedSummaryData);
-
-
-  // Pagination logic
+  // Pagination logic after sorting
   const startIndex = (page - 1) * pageLimit;
   const endIndex = startIndex + pageLimit;
   const paginatedExpense = aggregatedSummaryData.slice(startIndex, endIndex);
 
+  // Get the total count of the trip expenses
   const totalTripExpense = aggregatedSummaryData.length;
 
   return (

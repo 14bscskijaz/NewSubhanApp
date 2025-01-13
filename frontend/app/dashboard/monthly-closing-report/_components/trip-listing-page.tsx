@@ -32,7 +32,6 @@ export default function TripListingPage({ }: TTripListingPage) {
   const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const buses = useSelector<RootState, Buses[]>(allBuses);
-  // const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -47,20 +46,18 @@ export default function TripListingPage({ }: TTripListingPage) {
     try {
       const fetchBusClosingExpense = await getAllBusClosingVouchers();
       const dailyClosings = await getAllExpenses();
-      dispatch(setSavedExpenses(dailyClosings))
+      dispatch(setSavedExpenses(dailyClosings));
       dispatch(setBusClosingVoucher(fetchBusClosingExpense));
       const tickets = await getAllTicketPrices();
       dispatch(setTicketRaw(tickets));
-
     } catch (error: any) {
       console.error(error.message);
-
       toast({
-        title: "Error",
+        title: 'Error',
         description: error.message,
-        variant: "destructive",
-        duration: 1000
-      })
+        variant: 'destructive',
+        duration: 1000,
+      });
     }
   };
 
@@ -81,13 +78,11 @@ export default function TripListingPage({ }: TTripListingPage) {
     let startDate = 0;
     let endDate = 0;
 
-    // If a date filter is provided, filter vouchers by the selected month
     if (dateFilter) {
       const selectedDate = new Date(dateFilter);
       const selectedYear = selectedDate.getFullYear();
       const selectedMonth = selectedDate.getMonth();
 
-      // Calculate the first and last date of the selected month
       const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1);
       const lastDayOfMonth = new Date(selectedYear, selectedMonth + 1, 0);
 
@@ -95,43 +90,34 @@ export default function TripListingPage({ }: TTripListingPage) {
       endDate = lastDayOfMonth.setHours(23, 59, 59, 999);
     }
 
-    // Normalize voucher date to remove the time part for comparison
     const voucherDate = voucher.date ? new Date(voucher.date).getTime() : 0;
 
-    // Match search filter
     const matchesSearch = search
       ? voucher.amount?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.description?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
-      voucher.type?.toString().toLowerCase().includes(search.toLowerCase())
+        voucher.description?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.type?.toString().toLowerCase().includes(search.toLowerCase())
       : true;
 
-    // Match date range filter if set
-    const matchesDateRange = startDate && endDate
-      ? voucherDate >= startDate && voucherDate <= endDate
-      : true;
+    const matchesDateRange = startDate && endDate ? voucherDate >= startDate && voucherDate <= endDate : true;
 
-    // Return combined match result
     return matchesSearch && matchesDateRange;
   });
 
-  const uniqueExpenses = Array.from(
-    new Map(filteredVouchers.map((expense) => [expense.id, expense])).values()
-  );
+  const uniqueExpenses = Array.from(new Map(filteredVouchers.map((expense) => [expense.id, expense])).values());
 
   const filteredExpense = uniqueExpenses.filter((expense) => {
     const matchesSearch = search
       ? expense.amount.toString().includes(search.toLowerCase()) ||
-      expense.date.toString().includes(search.toLowerCase()) ||
-      expense.description.toString().includes(search.toLowerCase()) ||
-      expense.type.toString().includes(search.toLowerCase())
+        expense.date.toString().includes(search.toLowerCase()) ||
+        expense.description.toString().includes(search.toLowerCase()) ||
+        expense.type.toString().includes(search.toLowerCase())
       : true;
 
     return matchesSearch;
   });
 
   const handleCalculateExpenses = (voucher: any) => {
-    // Sum all expenses, ensuring proper field names and valid numeric conversions
     const allExpenses = [
       voucher?.alliedmor,
       voucher?.cityParchi,
@@ -143,30 +129,21 @@ export default function TripListingPage({ }: TTripListingPage) {
       voucher?.refreshment,
       voucher?.toll,
     ]
-      .map(Number) // Convert all values to numbers
+      .map(Number)
       .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
 
     return allExpenses;
   };
 
-  // Group expenses by date
-  // Group expenses by date
   const groupedExpenses = filteredExpense.reduce((acc, expense) => {
     if (!acc[expense.date]) {
       acc[expense.date] = { revenue: 0, expense: 0, netIncome: 0, date: expense.date };
     }
 
-    // Find the voucher data associated with the current expense
-    const voucher = vouchers.find(
-      (voucher) => voucher.id === expense.busClosingVoucherId
-    );
-    const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount)
+    const voucher = vouchers.find((voucher) => voucher.id === expense.busClosingVoucherId);
+    const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount);
 
-    console.log(expenseCalc, "expenseCalc");
-
-    // Accumulate revenue, expense, and calculate net income
-    const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher))
-    console.log(sum, "sum");
+    const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher));
 
     if (voucher) {
       acc[expense.date].revenue += sum || 0;
@@ -176,20 +153,17 @@ export default function TripListingPage({ }: TTripListingPage) {
     acc[expense.date].netIncome = Number(acc[expense.date].revenue) - Number(acc[expense.date].expense);
 
     return acc;
-  }, {} as Record<string, { revenue: number, expense: number, netIncome: number, date: string }>);
+  }, {} as Record<string, { revenue: number; expense: number; netIncome: number; date: string }>);
 
-  // Convert groupedExpenses object back to an array
   const summaryData = Object.values(groupedExpenses);
-  // Summing up values with the same date
+
   const aggregatedData = summaryData.reduce((acc, current) => {
-    // Extract the date without the time
     const dateKey = current.date.split('T')[0];
 
     if (!acc[dateKey]) {
       acc[dateKey] = { revenue: 0, expense: 0, netIncome: 0, date: dateKey };
     }
 
-    // Aggregate the revenue, expense, and netIncome
     acc[dateKey].revenue += current.revenue;
     acc[dateKey].expense += current.expense;
     acc[dateKey].netIncome += current.netIncome;
@@ -197,33 +171,35 @@ export default function TripListingPage({ }: TTripListingPage) {
     return acc;
   }, {} as Record<string, { revenue: number; expense: number; netIncome: number; date: string }>);
 
-  // Convert the aggregated data object back to an array
   const aggregatedSummaryData = Object.values(aggregatedData);
-  
+
+  // Sorting the aggregated summary data by date (ascending)
+  const sortedAggregatedSummaryData = aggregatedSummaryData.sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    return dateB - dateA; // Sort ascending by date (oldest first)
+  });
 
   const printExpenses = () => {
-    // Prepare the data for printing
     const voucherData = filteredVouchers.map((voucher) => {
-      const findedVoucher = vouchers.find(vou => vou.id === voucher.busClosingVoucherId);
+      const findedVoucher = vouchers.find((vou) => vou.id === voucher.busClosingVoucherId);
       const expenses = handleCalculateExpenses(findedVoucher);
       const grossRevenue = Number(findedVoucher?.revenue) || 0 - expenses;
-  
+
       return {
         ...voucher,
         expenses,
-        grossRevenue
+        grossRevenue,
       };
     });
-  
-    // Extract month and year from the dateFilter if available
+
     let filterDisplay = '';
     if (dateFilter) {
       const selectedDate = new Date(dateFilter);
-      const month = selectedDate.toLocaleString('default', { month: 'long' }); // Get the full month name
-      const year = selectedDate.getFullYear(); // Get the year
+      const month = selectedDate.toLocaleString('default', { month: 'long' });
+      const year = selectedDate.getFullYear();
       filterDisplay = `<div><strong>Date:</strong> ${month} ${year}</div>`;
     }
-  
     // Open print window
     const printWindow = window.open('', '_blank');
     if (printWindow) {
@@ -298,13 +274,13 @@ export default function TripListingPage({ }: TTripListingPage) {
                 </tr>
               </thead>
               <tbody>
-                ${voucherData.map(voucher => {
+                ${sortedAggregatedSummaryData.map(voucher => {
                   return `
                     <tr>
                       <td>${voucher?.date.split("T")[0]}</td>
-                      <td>${formatNumber(Number(voucher.grossRevenue)) || 0}</td>
-                      <td>${formatNumber(Number(voucher.expenses + voucher.amount))}</td>
-                      <td>${formatNumber(Number(voucher.grossRevenue) - Number(voucher.expenses + voucher.amount)) || 0}</td>
+                      <td>${formatNumber(Number(voucher.revenue)) || 0}</td>
+                      <td>${formatNumber(Number(voucher.expense))}</td>
+                      <td>${formatNumber(Number(voucher.netIncome)) || 0}</td>
                     </tr>
                   `;
                 }).join('')}
@@ -333,11 +309,11 @@ export default function TripListingPage({ }: TTripListingPage) {
   
 
 
-  const totalTripExpense = filteredVouchers.length;
+  const totalTripExpense = sortedAggregatedSummaryData.length;
 
   const startIndex = (page - 1) * pageLimit;
   const endIndex = startIndex + pageLimit;
-  const paginatedTrips = aggregatedSummaryData.slice(startIndex, endIndex);
+  const paginatedTrips = sortedAggregatedSummaryData.slice(startIndex, endIndex);
 
   return (
     <PageContainer scrollable>

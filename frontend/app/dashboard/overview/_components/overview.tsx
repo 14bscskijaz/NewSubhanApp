@@ -133,78 +133,83 @@ export default function OverViewPage() {
     return allExpenses;
   };
 
-  // Group expenses by date
-  const aggregatedSummaryData = useMemo(() => {
-    const groupedExpenses = savedExpenses.reduce((acc, expense) => {
-      if (!acc[expense.date]) {
-        acc[expense.date] = { 
-          revenue: 0, 
-          expense: 0, 
-          netIncome: 0, 
-          date: expense.date, 
-          expenseIds: [] // Add expenseIds array
-        };
-      }
-  
-      const voucher = vouchers.find(
-        (voucher) => voucher.id === expense.busClosingVoucherId
-      );
-      const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount);
-  
-      const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher));
-  
-      if (voucher) {
-        acc[expense.date].revenue += sum || 0;
-      }
-  
-      acc[expense.date].expense += expenseCalc;
-      acc[expense.date].netIncome =
-        Number(acc[expense.date].revenue) - Number(acc[expense.date].expense);
-      
-      acc[expense.date].expenseIds.push(expense?.id.toString());
-  
-      return acc;
-    }, {} as Record<string, { 
-      revenue: number; 
-      expense: number; 
-      netIncome: number; 
-      date: string; 
-      expenseIds: string[]; // Include IDs
-    }>);
-  
-    const summaryData = Object.values(groupedExpenses);
-  
-    const aggregatedData = summaryData.reduce((acc, current) => {
-      const dateKey = current.date.split('T')[0];
-  
-      if (!acc[dateKey]) {
-        acc[dateKey] = { 
-          revenue: 0, 
-          expense: 0, 
-          netIncome: 0, 
-          date: dateKey, 
-          expenseIds: [] 
-        };
-      }
-  
-      acc[dateKey].revenue += current.revenue;
-      acc[dateKey].expense += current.expense;
-      acc[dateKey].netIncome += current.netIncome;
-  
-      // Merge expenseIds from the current entry
-      acc[dateKey].expenseIds = [...acc[dateKey].expenseIds, ...current.expenseIds];
-  
-      return acc;
-    }, {} as Record<string, { 
-      revenue: number; 
-      expense: number; 
-      netIncome: number; 
-      date: string; 
-      expenseIds: string[]; 
-    }>);
-  
-    return Object.values(aggregatedData);
-  }, [savedExpenses, vouchers]);
+// Group expenses by date
+const aggregatedSummaryData = useMemo(() => {
+  const groupedExpenses = savedExpenses.reduce((acc, expense) => {
+    if (!acc[expense.date]) {
+      acc[expense.date] = { 
+        revenue: 0, 
+        expense: 0, 
+        netIncome: 0, 
+        date: expense.date, 
+        expenseIds: [] // Add expenseIds array
+      };
+    }
+
+    const voucher = vouchers.find(
+      (voucher) => voucher.id === expense.busClosingVoucherId
+    );
+    const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount);
+
+    const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher));
+
+    if (voucher) {
+      acc[expense.date].revenue += sum || 0;
+    }
+
+    acc[expense.date].expense += expenseCalc;
+    acc[expense.date].netIncome =
+      Number(acc[expense.date].revenue) - Number(acc[expense.date].expense);
+    
+    acc[expense.date].expenseIds.push(expense?.id.toString());
+
+    return acc;
+  }, {} as Record<string, { 
+    revenue: number; 
+    expense: number; 
+    netIncome: number; 
+    date: string; 
+    expenseIds: string[]; // Include IDs
+  }>);
+
+  const summaryData = Object.values(groupedExpenses);
+
+  const aggregatedData = summaryData.reduce((acc, current) => {
+    const dateKey = current.date.split('T')[0];
+
+    if (!acc[dateKey]) {
+      acc[dateKey] = { 
+        revenue: 0, 
+        expense: 0, 
+        netIncome: 0, 
+        date: dateKey, 
+        expenseIds: [] 
+      };
+    }
+
+    acc[dateKey].revenue += current.revenue;
+    acc[dateKey].expense += current.expense;
+    acc[dateKey].netIncome += current.netIncome;
+
+    // Merge expenseIds from the current entry
+    acc[dateKey].expenseIds = [...acc[dateKey].expenseIds, ...current.expenseIds];
+
+    return acc;
+  }, {} as Record<string, { 
+    revenue: number; 
+    expense: number; 
+    netIncome: number; 
+    date: string; 
+    expenseIds: string[]; 
+  }>);
+
+  // Sort the aggregated data by date in descending order (latest first)
+  const sortedAggregatedData = Object.values(aggregatedData).sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  return sortedAggregatedData;
+}, [savedExpenses, vouchers]);
   
 
   const handleCardClick = (card: dashboardCardsT) => {

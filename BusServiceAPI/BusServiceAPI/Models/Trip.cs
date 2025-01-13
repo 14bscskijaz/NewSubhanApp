@@ -13,6 +13,8 @@ namespace BusServiceAPI.Models
         public int? RefreshmentExpense {  get; set; }
         public int? RewardCommission { get; set; }
         public int? LoadEarning {  get; set; }
+        public string? Reference { get; set; }
+
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal? Revenue { get; set; }

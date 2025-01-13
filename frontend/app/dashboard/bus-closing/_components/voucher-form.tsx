@@ -101,7 +101,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       dieselLitres: null,
       cOilTechnician: getExpenseValue('cOilExpense'),
       toll: getExpenseValue('tollTax'),
-      cleaning: null,
+      cleaning: (getExpenseValue("halfSafai") ?? 0) + (getExpenseValue("fullSafai") ?? 0),
       alliedmor: getExpenseValue('alliedMorde'),
       cityParchi: getExpenseValue('dcPerchi'),
       refreshment: getExpenseValue('refreshmentRate'),

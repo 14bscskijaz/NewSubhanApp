@@ -30,38 +30,45 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export default function NewTripDialog() {
   const [open, setOpen] = useState(false);
-  const [routeId, setRouteId] = useState<string | ''>("");
+  const [routeId, setRouteId] = useState<string | ''>('');
+  const [routeError, setRouteError] = useState<string | null>(null); // Track route validation error
   const [routeCommission, setRouteCommission] = useState<number | ''>('');
   const [rewardCommission, setRewardCommission] = useState<number | ''>('');
   const [steward, setSteward] = useState<number | ''>('');
   const [counter, setCounter] = useState<number | ''>('');
   const [dcParchi, setDcParchi] = useState<number | ''>('');
   const [refreshment, setRefreshment] = useState<number | ''>('');
-  // const [driverCommission, setDriverCommission] = useState<string>('');
   const [isPercentage, setIsPercentage] = useState<boolean>(true);
-  const {toast} = useToast();
+  const { toast } = useToast();
 
   const dispatch = useDispatch();
 
-  // Fetch all routes and tickets from the Redux state
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
 
-  // Filter routes that exist in ticketsRaw
   const filteredRoutes = routes.filter((route) =>
     ticketsRaw.some((ticket) => ticket.routeId === route.id)
   );
 
   const handleRouteChange = (selectedRouteId: string) => {
     setRouteId(selectedRouteId);
+    if (selectedRouteId) {
+      setRouteError(null); 
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Validate route
+    if (!routeId) {
+      setRouteError("Please select a route.");
+      return;
+    }
+
     try {
-      
-      event.preventDefault();
-      const filterRouteCommission = isPercentage?Number(routeCommission)/100:Number(routeCommission)
-      const newTrip: Omit<FixedTripExpense, "id"> = {
+      const filterRouteCommission = isPercentage ? Number(routeCommission) / 100 : Number(routeCommission);
+      const newTrip = {
         routeId: Number(routeId) ?? 0,
         routeCommission: filterRouteCommission,
         rewardCommission: Number(rewardCommission),
@@ -69,42 +76,39 @@ export default function NewTripDialog() {
         counter: Number(counter),
         dcParchi: Number(dcParchi),
         refreshment: Number(refreshment),
-        // driverCommission: Number(driverCommission),
-        // isPercentage 
       };
+
       await createFixedTripExpense(newTrip);
-      const fixedExpenses = await getAllFixedTripExpenses()
+      const fixedExpenses = await getAllFixedTripExpenses();
       dispatch(setFixedTripExpense(fixedExpenses));
-      // dispatch(addFixedTripExpense(newTrip));
+
       toast({
-        title:"Success",
-        description:"New Fixed Trip Expense Added successfully",
-        variant:"default",
-        duration:1000
-      })
+        title: "Success",
+        description: "New Fixed Trip Expense added successfully.",
+        variant: "default",
+        duration: 1000,
+      });
+
       setOpen(false);
       resetForm();
-    } catch (error:any) {
-      console.error(error.message);
-      
+    } catch (error: any) {
       toast({
-        title:"Error",
-        description:error.message,
-        variant:"destructive",
-        duration:1000
-      })
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 1000,
+      });
     }
   };
 
   const resetForm = () => {
-    setRouteId("");
+    setRouteId('');
     setRouteCommission('');
     setRewardCommission('');
     setSteward('');
     setCounter('');
     setDcParchi('');
     setRefreshment('');
-    // setDriverCommission('');
     setIsPercentage(true);
   };
 
@@ -128,18 +132,21 @@ export default function NewTripDialog() {
           </DialogHeader>
           <div className="grid grid-cols-1 gap-12 py-6 md:grid-cols-2">
             {/* Route Selection */}
-            <SelectField
-              id="route"
-              label="Select Route"
-              value={routeId}
-              onChange={handleRouteChange}
-              placeholder="Select Route"
-              options={routes.map((route) => ({
-                value: route.id.toString(),
-                label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
-              }))}
-              className="flex-col !items-start !space-x-0"
-            />
+            <div>
+              <SelectField
+                label='Select Route'
+                id="route"
+                value={routeId}
+                onChange={handleRouteChange}
+                placeholder="Select Route"
+                options={filteredRoutes.map((route) => ({
+                  value: route.id.toString(),
+                  label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+                }))}
+                className="flex-col !items-start !space-x-0"
+              />
+              {routeError && <p className="text-red-500 text-sm">{routeError}</p>}
+            </div>
             {/* Route Commission */}
             {/* <div className="grid gap-2">
               <Label htmlFor="routeCommission" className="text-gradient">
@@ -254,7 +261,7 @@ export default function NewTripDialog() {
                   }
                   value={routeCommission}
                   onChange={(e) => {
-                    const value = e.target.value; 
+                    const value = e.target.value;
                     if (isPercentage) {
                       if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
                         setRouteCommission(Number(value));
@@ -268,7 +275,7 @@ export default function NewTripDialog() {
                 <Select
                   onValueChange={(value) => {
                     setIsPercentage(value === "true");
-                    setRouteCommission(""); 
+                    setRouteCommission("");
                   }}
                   defaultValue={isPercentage.toString()}
                 >

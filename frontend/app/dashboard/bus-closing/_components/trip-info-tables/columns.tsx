@@ -3,6 +3,7 @@ import { TripInformation } from '@/lib/slices/trip-information';
 import { ColumnDef } from '@tanstack/react-table';
 import SourceDestination from './SourceDestination';
 import { CellAction } from './cell-action';
+import { formatNumber } from 'accounting';
 
 export const columns: ColumnDef<TripInformation>[] = [
   {
@@ -14,11 +15,13 @@ export const columns: ColumnDef<TripInformation>[] = [
   },
   {
     accessorKey: 'passengerCount',
-    header: 'Passengers'
+    header: 'Passengers (Free Tickets)',
+    cell:({row})=><div>{`${row.original.passengerCount} (${row.original.freeTicketCount})`}</div>
   },
   {
     accessorKey: 'revenue',
-    header: 'Revenue'
+    header: 'Revenue',
+    cell: ({ row }) => <div>{formatNumber(Number(row.original.revenue))}</div>
   },
 
   {

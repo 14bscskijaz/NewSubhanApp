@@ -85,26 +85,26 @@ export default function TripListingPage({ }: TTripListingPage) {
     // Parse date range filter
     let startDate = 0;
     let endDate = 0;
-  
+
     if (dateFilter.includes('|')) {
       const [start, end] = dateFilter.split('|');
       startDate = new Date(start).setHours(0, 0, 0, 0); // Normalize start date
       endDate = new Date(end).setHours(23, 59, 59, 999); // Normalize end date
     }
-  
+
     // Normalize voucher date to remove the time part for comparison
     const voucherDate = voucher.date ? new Date(voucher.date).getTime() : 0;
-  
+
     // Match search filter
     const matchesSearch = search
       ? voucher.alliedmor?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.coilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
+      voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      voucher.cOilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
       : true;
-  
+
     // Find corresponding bus and route data
     const busData = buses.find(
       (bus) => bus.id.toString().trim() === voucher.busId.toString().trim()
@@ -112,31 +112,31 @@ export default function TripListingPage({ }: TTripListingPage) {
     const routeData = routes.find(
       (route) => route.id.toString().trim() === voucher.routeId?.toString().trim()
     );
-  
+
     // Create route key for filtering
     const routeToBeFilter = routeData
       ? `${routeData.sourceCity.trim()}-${routeData.destinationCity.trim()}`
       : '';
-  
+
     // Match busNumber filter
     const matchesBusNumber = busNumber
       ? busData?.busNumber?.toString().trim().toLowerCase() === busNumber.toLowerCase()
       : true;
-  
+
     // Match route filter
     const matchesRouteFilter = routeFilter
       ? routeToBeFilter.toLowerCase() === routeFilter.toLowerCase()
       : true;
-  
+
     // Match date range filter
     const matchesDateRange = startDate && endDate
       ? voucherDate >= startDate && voucherDate <= endDate
       : true;
-  
+
     // Return combined match result
     return matchesSearch && matchesBusNumber && matchesRouteFilter && matchesDateRange;
   });
-  
+
 
 
   const totalRevenue = filteredVouchers.reduce((sum: number, item: any) => sum + (item.revenue || 0), 0);
@@ -145,12 +145,14 @@ export default function TripListingPage({ }: TTripListingPage) {
       item.alliedmor,
       item.cityParchi,
       item.cleaning,
-      item.coilTechnician,
+      item.cOilTechnician,
       item.commission,
       item.diesel,
-      item.dieselLitres,
       item.refreshment,
       item.toll,
+      item?.generator,
+      item?.repair,
+      item?.miscellaneousExpense,
     ]
       .map(Number) // Convert all values to numbers
       .reduce((sum, val) => sum + (isNaN(val) ? 0 : val), 0); // Sum the values, treating NaN as 0
@@ -164,19 +166,22 @@ export default function TripListingPage({ }: TTripListingPage) {
       voucher?.alliedmor,
       voucher?.cityParchi,
       voucher?.cleaning,
-      voucher?.coilTechnician,
+      voucher?.cOilTechnician,
       voucher?.commission,
       voucher?.diesel,
       voucher?.dieselLitres,
       voucher?.refreshment,
       voucher?.toll,
+      voucher?.generator,
+      voucher?.repair,
+      voucher?.miscellaneousExpense,
     ]
       .map(Number) // Convert all values to numbers
       .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
-  
+
     return allExpenses;
   };
-  
+
   const printExpenses = () => {
     // Create Maps for quick lookups
     const BusNumberMap = new Map(buses.map(({ id, busNumber }) => [id, busNumber]));
@@ -186,14 +191,14 @@ export default function TripListingPage({ }: TTripListingPage) {
         { sourceAdda, sourceCity, destinationAdda, destinationCity },
       ])
     );
-  
+
     // Prepare the data for printing
     const voucherData = filteredVouchers.map((voucher) => {
-      const route:any = RouteMap.get(voucher.routeId || 0) || {};
+      const route: any = RouteMap.get(voucher.routeId || 0) || {};
       const busNumber = BusNumberMap.get(Number(voucher?.busId) || 0) || 'N/A';
       const expenses = handleCalculateExpenses(voucher);
       const grossRevenue = Number(voucher.revenue) || 0 - expenses;
-  
+
       return {
         ...voucher,
         route: route.sourceCity && route.destinationCity
@@ -201,17 +206,41 @@ export default function TripListingPage({ }: TTripListingPage) {
           : 'N/A',
         busNumber,
         expenses,
-        grossRevenue
+        grossRevenue,
       };
     });
-  
+
+    // Helper function to format ISO date strings to DD-MM-YYYY
+    const formatDate = (isoDate: string) => {
+      const date = new Date(isoDate);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
+    const filtrs = dateFilter.split('|')
+    // Format the date range if provided
+    const formattedDateRange = filtrs && filtrs.length === 2
+      ? `${formatDate(filtrs[0])} to ${formatDate(filtrs[1])}`
+      : 'No date range applied';
+
+    const filterDetails = `
+      <div style="margin-bottom: 20px;">
+        <ul style="list-style: none; padding: 0;">
+          ${formattedDateRange ? `<li><strong>Date Range:</strong> ${formattedDateRange}</li>` : ''}
+          ${busNumber ? `<li><strong>Bus Number:</strong> ${busNumber}</li>` : ''}
+          ${routeFilter ? `<li><strong>Route:</strong> ${routeFilter}</li>` : ''}
+        </ul>
+      </div>
+    `;
+
     // Open print window
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       const content = `
         <html>
           <head>
-            <title>Expenses Report</title>
+            <title>Expenses Report - New Subhan (Bus Service)</title>
             <style>
               body {
                 font-family: Arial, sans-serif;
@@ -219,7 +248,6 @@ export default function TripListingPage({ }: TTripListingPage) {
                 color: #333;
                 margin: 0;
                 padding: 20px;
-                
               }
               table {
                 width: 100%;
@@ -259,10 +287,25 @@ export default function TripListingPage({ }: TTripListingPage) {
               .text-left{
                 text-align:left;
               }
+              .header-class{
+                color: #2a5934;
+                font-size: 20px;
+                font-weight: 700;
+                border-bottom: 1px solid #000;
+                padding: 5px;
+                margin: 10px 0px ;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              }
             </style>
           </head>
           <body>
-            <h1>Bus Closing Voucher</h1>
+            <div class="header-class">
+              <div>Bus Closing Voucher</div>
+              <div>New Subhan</div>
+            </div>
+            ${filterDetails}
             <table>
               <thead>
                 <tr>
@@ -277,34 +320,34 @@ export default function TripListingPage({ }: TTripListingPage) {
               </thead>
               <tbody>
                 ${voucherData
-                  .map(voucher => {
-                    return `
-                      <tr>
-                        <td>${voucher?.date.split("T")[0]}</td>
-                        <td>${voucher.voucherNumber || 'N/A'}</td>
-                        <td>${voucher.busNumber}</td>
-                        <td>${voucher.route}</td>
-                        <td>${formatNumber(Number(voucher.revenue)) || 0}</td>
-                        <td>${formatNumber(voucher.expenses)}</td>
-                        <td>${formatNumber(voucher.grossRevenue) || 0}</td>
-                      </tr>
-                    `;
-                  })
-                  .join('')}
+          .map(voucher => {
+            return `
+                    <tr>
+                      <td>${voucher?.date.split("T")[0]}</td>
+                      <td>${voucher.voucherNumber || 'N/A'}</td>
+                      <td>${voucher.busNumber}</td>
+                      <td>${voucher.route}</td>
+                      <td>${formatNumber(Number(voucher.revenue)) || 0}</td>
+                      <td>${formatNumber(voucher.expenses)}</td>
+                      <td>${formatNumber(voucher.grossRevenue) || 0}</td>
+                    </tr>
+                  `;
+          })
+          .join('')}
               </tbody>
               <tfoot>
                 <tr>
                   <th colspan="4" class="text-left">Total</th>
                   <td>${formatNumber(Number(totalRevenue))}</td>
                   <td>${formatNumber(Number(totalExpense))}</td>
-                  <td>${formatNumber(Number(totalRevenue)-Number(totalExpense))}</td>
+                  <td>${formatNumber(Number(totalRevenue) - Number(totalExpense))}</td>
                 </tr>
               </tfoot>
             </table>
           </body>
         </html>
       `;
-  
+
       printWindow.document.write(content);
       printWindow.document.close();
       printWindow.focus();
@@ -321,13 +364,21 @@ export default function TripListingPage({ }: TTripListingPage) {
       });
     }
   };
-  
+
+
+
 
   const totalTripExpense = filteredVouchers.length;
-
+  // Reverse the filteredRoutes array
+  const sortedRoutes = filteredVouchers.sort((a, b) => {
+    // Replace with appropriate comparison logic, e.g., if you're sorting numbers or strings
+    return b.id - a.id; // For numerical sorting
+    // or
+    // return b.someProperty.localeCompare(a.someProperty); // For string sorting
+  });
   const startIndex = (page - 1) * pageLimit;
   const endIndex = startIndex + pageLimit;
-  const paginatedTrips = filteredVouchers.slice(startIndex, endIndex);
+  const paginatedTrips = sortedRoutes.slice(startIndex, endIndex);
 
   return (
     <PageContainer scrollable>

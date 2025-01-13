@@ -12,7 +12,7 @@ export default function RouteTable({
   data,
   totalData
 }: {
-  data: Expense[];
+  data: any;
   totalData: number;
 }) {
   const {

@@ -99,9 +99,9 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       commission: getExpenseValue('driverCommission'),
       diesel: null,
       dieselLitres: null,
-      coilTechnician: getExpenseValue('cOilExpense'),
+      cOilTechnician: getExpenseValue('cOilExpense'),
       toll: getExpenseValue('tollTax'),
-      cleaning: null,
+      cleaning: (getExpenseValue("halfSafai") ?? 0) + (getExpenseValue("fullSafai") ?? 0),
       alliedmor: getExpenseValue('alliedMorde'),
       cityParchi: getExpenseValue('dcPerchi'),
       refreshment: getExpenseValue('refreshmentRate'),
@@ -119,7 +119,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
     const totalExpense =
       (Number(data.commission) || 0) +
       (Number(data.diesel) || 0) +
-      (Number(data.coilTechnician) || 0) +
+      (Number(data.cOilTechnician) || 0) +
       (Number(data.toll) || 0) +
       (Number(data.cleaning) || 0) +
       (Number(data.alliedmor) || 0) +
@@ -174,7 +174,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
     const printContent = `
       <html>
         <head>
-          <title>Bus Closing Voucher and Trip Information</title>
+          <title>Bus Closing Voucher - New Subhan (Bus Service) </title>
           <style>
             body {
               font-family: Arial, sans-serif;
@@ -182,7 +182,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
               padding: 0;
               background-color: #f9f9f9;
               color: #333;
-              font-size: 12px;
+              font-size: 14px;
             }
             h1, h2 {
               text-align: left;
@@ -243,10 +243,28 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             .margin-top{
               margin-top:14px;
             }
+            .header-class{
+              color: #2a5934;
+              font-size: 20px;
+              font-weight: 700;
+              border-bottom: 1px solid #000;
+              padding: 5px;
+              margin: 10px 0px ;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+
+            .text-bold{
+              font-weight:700;
+            }
           </style>
         </head>
         <body>
-          <h1 class="margin-top">Bus Closing Voucher</h1>
+        <div class="header-class">
+        <div>Bus Closing Voucher</div>
+        <div>New Subhan</div>
+      </div>
           <div class="grid-data">
             <p><strong>Date : </strong> ${date ? new Date(date).toLocaleDateString() : 'All Dates'}</p>
             <p><strong>Bus : </strong> ${filterBus?.busNumber || '-'}</p>
@@ -262,7 +280,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           <thead>
           <tr>
           <th>Route</th>
-          <th>Passengers</th>
+          <th>Passengers (Free)</th>
           <th>Ticket Fare</th>
           <th>Revenue</th>
           </tr>
@@ -275,7 +293,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
       return `
               <tbody>
               <td>${sourceAdda + "-" + destinationAdda}</td>
-              <td>${trip.passengerCount || '-'}</td>
+              <td>${`${trip.passengerCount}(${trip.freeTicketCount})` || '-'}</td>
               <td>${TicketMap.get(Number(trip?.routeId)) || '-'}</td>
               <td>${trip.revenue || '-'}</td>
               </tbody>
@@ -286,7 +304,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           </div>
           </div>
           <div>
-          <h2>Voucher</h2>
+          <h2>Expenses</h2>
           <table>
             <tr><th>Type</th><td class="th-heading">Amount</td></tr>
             <tr><td>Commission</td><td>${formatNumber(data.commission) || '-'}</td></tr>
@@ -299,7 +317,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             <tr><td>Alliedmor</td><td>${formatNumber(data.alliedmor) || '-'}</td></tr>
             <tr><td>Cleaning</td><td>${formatNumber(data.cleaning) || '-'}</td></tr>
             <tr><td>Toll</td><td>${formatNumber(data.toll) || '-'}</td></tr>
-            <tr><td>Coil Technician</td><td>${formatNumber(data.coilTechnician) || '-'}</td></tr>
+            <tr><td>Coil Technician</td><td>${formatNumber(data.cOilTechnician) || '-'}</td></tr>
             <tr><td>Diesel</td><td>${formatNumber(data.diesel) || '-'}</td></tr>
           </table>
           <div class="flex-right">
@@ -308,11 +326,11 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           <h2>Summary</h2>
           <table>
           <tr>
-            <td>Total Revenue</td>
+            <td class="text-bold">Total Revenue</td>
             <td>${formatNumber(Number(tripRevenue))}</td>
           </tr>
           <tr>
-            <td>Total Expenses</td>
+            <td class="text-bold">Total Expenses</td>
             <td>${formatNumber(Number(TotalExpense))}</td>
           </tr>
           <tr>
@@ -354,14 +372,14 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         commission: Number(data.commission) || 0,
         diesel: Number(data.diesel) || 0,
         dieselLitres: Number(data.dieselLitres) || 0,
-        coilTechnician: Number(data.coilTechnician) || 0,
+        cOilTechnician: Number(data.cOilTechnician) || 0,
         toll: Number(data.toll) || 0,
         cleaning: Number(data.cleaning) || 0,
         alliedmor: Number(data.alliedmor) || 0,
         cityParchi: Number(data.cityParchi) || 0,
         refreshment: Number(data.refreshment) || 0,
         repair: Number(data.repair) || 0,
-        challan: Number(data.challan) || 0,
+        generator: Number(data.challan) || 0,
         miscellaneousExpense: Number(data.miscellaneousExpense) || 0,
         explanation: data.explanation,
         revenue: Number(data.revenue) || 0,
@@ -431,10 +449,10 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             'commission',
             'diesel',
             'dieselLitres',
-            'coilTechnician',
+            'alliedmor',
+            'cOilTechnician',
             'toll',
             'cleaning',
-            'alliedmor',
             'cityParchi',
             'refreshment',
             'repair',
@@ -457,12 +475,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           })}
 
 
-          {/* Revenue */}
-          <div>
-            <Label htmlFor="revenue">Revenue</Label>
-            <Input id="revenue" type="number" value={methods.watch('revenue')} disabled />
-          </div>
-          <div className='col-span-1'>
+          <div className='col-span-3'>
             <Label htmlFor="miscellaneousExplanation">Explanation</Label>
             <Input
               id="miscellaneousExplanation"
@@ -470,6 +483,12 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
               {...methods.register('explanation')}
             />
           </div>
+          {/* Revenue */}
+          <div>
+            <Label htmlFor="revenue">Revenue</Label>
+            <Input id="revenue" type="number" value={methods.watch('revenue')} disabled />
+          </div>
+
         </div>
 
         <NetExpenses tripRevenue={tripRevenue} TotalExpense={TotalExpense} />

@@ -17,7 +17,6 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { FixedTripExpense } from '@/lib/slices/fixed-trip-expense';
-import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
 import { RootState } from '@/lib/store';
 import { Pen } from 'lucide-react';
@@ -25,6 +24,8 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { InputField } from '../_components/ui/InputField';
 import { Input } from '@/components/ui/input';
+import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
+import SelectField from '@/components/ui/SelectField';
 
 type EditTripDialogProps = {
   trip: FixedTripExpense;
@@ -39,6 +40,7 @@ export default function EditTripDialog({
   const [formData, setFormData] = useState({ ...trip });
   const [driverCommission, setDriverCommission] = useState<any>();
   const [isPercentage, setIsPercentage] = useState(true);
+  const [routeError, setRouteError] = useState<string>(''); // State for route validation error
 
   useEffect(() => {
     setFormData({ ...trip });
@@ -74,18 +76,25 @@ export default function EditTripDialog({
     }
   };
 
-
   const handleInputChange = (id: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleRouteChange = (routeId: number) => {
     setFormData((prev) => ({ ...prev, routeId }));
+    setRouteError(''); // Reset error when route is selected
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const filterRouteCommission = isPercentage ? Number(driverCommission) / 100 : Number(driverCommission)
+
+    // Validation for route field
+    if (!formData.routeId) {
+      setRouteError('Please select a route');
+      return; // Prevent form submission if route is not selected
+    }
+
+    const filterRouteCommission = isPercentage ? Number(driverCommission) / 100 : Number(driverCommission);
     const updatedFormData = {
       ...formData,
       routeCommission: filterRouteCommission,
@@ -113,37 +122,23 @@ export default function EditTripDialog({
           </DialogHeader>
           <div className="grid gap-10 py-4 md:grid-cols-2">
             {/* Route Selection */}
-            <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="route" className="text-gradient">
-                Route
-              </Label>
-              <Select
-                value={formData.routeId?.toString() || trip.routeId.toString()} // Bind the selected value
-                onValueChange={(value) => handleRouteChange(Number(value))} // Update state on selection
-              >
-                <SelectTrigger id="route">
-                  <SelectValue placeholder="Select route" />
-                </SelectTrigger>
-                <SelectContent>
-                  {filteredRoutes.map((route) => (
-                    <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
-                      {`${route.destinationCity} (${route.destinationAdda})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div>
+              <SelectField
+                label='Select Route'
+                id="route"
+                value={formData.routeId?.toString() || trip.routeId.toString()} 
+                onChange={(value) => handleRouteChange(Number(value))}
+                placeholder="Select Route"
+                options={filteredRoutes.map((route) => ({
+                  value: route.id.toString(),
+                  label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+                }))}
+                className="flex-col !items-start !space-x-0"
+              />
+              {routeError && <p className="text-red-500 text-sm">{routeError}</p>}
             </div>
 
-            {/* Reusable Input Fields */}
-            {/* <InputField
-              id="routeCommission"
-              label="Route Commission"
-              type="number"
-              value={formData.routeCommission.toString() || ''}
-              onChange={handleInputChange}
-              placeholder="Enter route commission"
-            /> */}
+            {/* Other Input Fields */}
             <InputField
               id="rewardCommission"
               label="Reward Commission"
@@ -192,11 +187,7 @@ export default function EditTripDialog({
                 <Input
                   id="standCommission"
                   type="number"
-                  placeholder={
-                    isPercentage
-                      ? 'Enter Stand Commission (max 100)'
-                      : 'Enter Stand Commission'
-                  }
+                  placeholder={isPercentage ? 'Enter Stand Commission (max 100)' : 'Enter Stand Commission'}
                   value={driverCommission}
                   onChange={(e) => handleDriverCommissionChange(e.target.value)}
                 />

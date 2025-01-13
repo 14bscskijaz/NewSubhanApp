@@ -77,7 +77,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
         .map((voucher) => {
           return {
             busId: Number(voucher.busId),
-            voucherId: voucher.id,
+            busClosingVoucherId: voucher.id,
             date: voucher.date,
             description: '',
             amount: 0,
@@ -127,7 +127,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const totalGeneralExpenses = generalExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
 
   const totalRevenue = expenses.reduce((sum, expense) => {
-    const foundVoucher = busClosingVouchers.find(v => v.id === expense.voucherId);
+    const foundVoucher = busClosingVouchers.find(v => v.id === expense.busClosingVoucherId);
     if (foundVoucher) {
       return sum + (foundVoucher.revenue || 0);
     }
@@ -158,7 +158,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
       const content = `
         <html>
           <head>
-            <title>Expenses Report</title>
+            <title>Expenses Report - New Subhan(Bus Service)</title>
             <style>
               body {
                 font-family: Arial, sans-serif;
@@ -200,10 +200,25 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
                 font-weight: bold;
                 background-color: #d0e8d2;
               }
+
+              .header-class{
+                color: #2a5934;
+                font-size: 20px;
+                font-weight: 700;
+                border-bottom: 1px solid #000;
+                padding: 5px;
+                margin: 10px 0px ;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              }
             </style>
           </head>
           <body>
-            <h1>Daily Closing Report</h1>
+          <div class="header-class">
+          <div>Daily Closing Report</div>
+          <div>New Subhan</div>
+        </div>
             <p><strong>Date:</strong> ${selectedDate ? selectedDate.toLocaleDateString() : 'All Dates'}</p>
 
             <h2>Bus Expenses</h2>
@@ -221,7 +236,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               <tbody>
                 ${busExpenses
           .map(expense => {
-            const voucher: any = VoucherMap.get(Number(expense?.voucherId) || 0) || {};
+            const voucher: any = VoucherMap.get(Number(expense?.busClosingVoucherId) || 0) || {};
             const {
               sourceCity = 'N/A',
               sourceAdda = 'N/A',
@@ -266,7 +281,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
             expense => `
                     <tr>
                       <td>${expense.description || 'N/A'}</td>
-                      <td>${formatNumber(expense.amount )|| 0}</td>
+                      <td>${formatNumber(expense.amount) || 0}</td>
                     </tr>
                   `
           )

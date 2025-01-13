@@ -12,7 +12,7 @@ export type BusClosingVoucher = {
   commission: number | null;
   diesel: number | null;
   dieselLitres: number | null;
-  coilTechnician: number | null;
+  cOilTechnician: number | null;
   toll: number | null;
   cleaning: number | null;
   alliedmor: number | null;

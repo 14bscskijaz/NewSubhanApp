@@ -143,8 +143,9 @@ export default function TripListingPage() {
   }, [filteredVouchers, page, pageLimit]);
 
   const handlePrint = useCallback(() => {
-    printExpenses(filteredVouchers, routes,isCityTab);
-  }, [filteredVouchers, routes]);
+    printExpenses(filteredVouchers, routes, isCityTab, searchFilters);  
+  }, [filteredVouchers, routes, isCityTab, searchFilters]);
+  
 
   return (
     <PageContainer scrollable>

@@ -1,5 +1,5 @@
 'use client'
-import { RouteMetric } from '@/types/trip';
+import { RouteMetric, SearchFilters } from '@/types/trip';
 import { Route } from '@/lib/slices/route-slices';
 import { toast } from '@/hooks/use-toast';
 import { RouteDetails, VoucherPrintData } from '@/types/trip';
@@ -9,7 +9,20 @@ const isRouteDetails = (route: RouteDetails | 0): route is RouteDetails => {
   return route !== 0 && 'sourceCity' in route && 'destinationCity' in route;
 };
 
-export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], isCity: boolean) => {
+// Function to format date to DD_MM_YYYY
+const formatDate = (date: string) => {
+  const newDate = new Date(date);
+  if (isNaN(newDate.getTime())) return ''; // Invalid date, return empty string
+
+  const dd = newDate.getDate().toString().padStart(2, '0');
+  const mm = (newDate.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+  const yyyy = newDate.getFullYear();
+
+  return `${dd}-${mm}-${yyyy}`; // Use DD-MM-YYYY format
+};
+
+
+export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], isCity: boolean, filters: SearchFilters) => {
   // Create a Map with proper typing
   const RouteMap = new Map<number | string, RouteDetails>(
     routes.map(({ id, sourceAdda, destinationAdda, destinationCity, sourceCity }) => [
@@ -41,10 +54,38 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
     return;
   }
 
+  // Function to render the filter information in the print layout
+  const filtersSection = (filters: SearchFilters) => {
+    let filterContent = '';
+  
+    if (filters.search) {
+      filterContent += `<p><strong>Search Term:</strong> ${filters.search}</p>`;
+    }
+  
+    if (filters.dateRange) {
+      const [startDate, endDate] = filters.dateRange.split('|'); // Assuming the date range is in ISO format separated by '|'
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(endDate);
+  
+      if (formattedStartDate && formattedEndDate) {
+        filterContent += `<p><strong>Date Range:</strong> ${formattedStartDate} to ${formattedEndDate}</p>`;
+      } else {
+        filterContent += `<p><strong>Date Range:</strong> Invalid Date</p>`;
+      }
+    }
+  
+    if (filters.route) {
+      filterContent += `<p><strong>Route:</strong> ${filters.route}</p>`;
+    }
+  
+    return filterContent;
+  };
+  
+
   const content = `
     <html>
       <head>
-        <title>Route Report</title>
+        <title>Bus Report - new Subhan (Bus Service)</title>
         <style>
           body {
             font-family: Arial, sans-serif;
@@ -91,10 +132,25 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
           .text-left {
             text-align: left;
           }
+          .header-class {
+            color: #2a5934;
+            font-size: 20px;
+            font-weight: 700;
+            border-bottom: 1px solid #000;
+            padding: 5px;
+            margin: 10px 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
         </style>
       </head>
       <body>
-        <h1>Route Report</h1>
+        <div class="header-class">
+          <div>Route Report</div>
+          <div>New Subhan</div>
+        </div>
+        ${filtersSection(filters)}
         <table>
           <thead>
             <tr>

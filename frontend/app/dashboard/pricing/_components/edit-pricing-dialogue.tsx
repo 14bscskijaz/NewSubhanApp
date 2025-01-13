@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +15,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
@@ -38,20 +38,31 @@ export default function EditPricingDialog({
   const routes = useSelector<RootState, Route[]>(allRoutes); // Get all routes from Redux
   const ticketRoutes = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
 
-  const [busType, setBusType] = useState(ticket.busType);
-  const [routeId, setRouteId] = useState<number | undefined>(ticket?.routeId);
   const [formData, setFormData] = useState({
     ...ticket,
+    ticketPrice: ticket.ticketPrice || 0,
+    busType: ticket.busType || '',
+    routeId: ticket.routeId || undefined,
+  });
+  const [errors, setErrors] = useState({
+    routeId: '',
+    ticketPrice: '',
+    busType: '',
   });
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setFormData({
       ...ticket,
+      ticketPrice: ticket.ticketPrice || 0,
+      busType: ticket.busType || '',
+      routeId: ticket.routeId || undefined,
     });
-    if (!routeId && ticket.routeId) {
-      setRouteId(ticket.routeId);
-    }
+    setErrors({
+      routeId: '',
+      ticketPrice: '',
+      busType: '',
+    });
   }, [ticket]);
 
   // Filter routes based on ticketRoutes (only include routes with matching IDs)
@@ -59,39 +70,37 @@ export default function EditPricingDialog({
     ticketRoutes.some((ticket) => ticket.routeId === route.id)
   );
 
-  // Handle input changes
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: id === "ticketPrice" ? parseFloat(value) : value,
-    }));
-  };
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = { routeId: '', ticketPrice: '', busType: '' };
 
-  const handleRouteChange = (routeId: string) => {
-    const selectedRouteId = Number(routeId);
-    setRouteId(selectedRouteId);
-    setFormData((prev) => ({
-      ...prev,
-      routeId: selectedRouteId,
-    }));
-  };
+    if (!formData.routeId) {
+      valid = false;
+      newErrors.routeId = 'Please select a route.';
+    }
+    if (Number(formData.ticketPrice) <= 0) {
+      valid = false;
+      newErrors.ticketPrice = 'Ticket price must be greater than 0.';
+    }
+    if (!formData.busType) {
+      valid = false;
+      newErrors.busType = 'Please select a bus type.';
+    }
 
-  const handleBusTypeChange = (newBusType: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      busType: newBusType,
-    }));
+    setErrors(newErrors);
+    return valid;
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (!validateForm()) {
+      return;
+    }
+
     const updatedFormData = {
       ...formData,
-      ticketPrice:Number(formData.ticketPrice),
+      ticketPrice: Number(formData.ticketPrice),
       routeId: formData.routeId !== undefined ? formData.routeId : 0,
     };
 
@@ -118,8 +127,8 @@ export default function EditPricingDialog({
             <SelectField
               id="route"
               label="Select Route"
-              value={formData.routeId?.toString() || ""}
-              onChange={handleRouteChange}
+              value={formData.routeId?.toString() || ''}
+              onChange={(value) => setFormData((prev) => ({ ...prev, routeId: Number(value) }))}
               placeholder="Select Route"
               options={filteredRoutes.map((route) => ({
                 value: route.id.toString(),
@@ -127,21 +136,30 @@ export default function EditPricingDialog({
               }))}
               className="flex-col !items-start !space-x-0"
             />
+            {errors.routeId && <p className="text-red-500 text-sm">{errors.routeId}</p>}
+
             <div className="grid gap-2">
               <Label htmlFor="ticketPrice">Ticket Price</Label>
               <Input
                 id="ticketPrice"
                 type="number"
-                value={formData.ticketPrice || ""}
-                onChange={handleInputChange}
+                value={formData.ticketPrice || ''}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    ticketPrice: parseFloat(e.target.value) || 0,
+                  }))
+                }
                 placeholder="Enter ticket price"
               />
+              {errors.ticketPrice && <p className="text-red-500 text-sm">{errors.ticketPrice}</p>}
             </div>
+
             <div className="grid gap-2">
               <Label htmlFor="busType">Bus Type</Label>
               <Select
                 value={formData.busType}
-                onValueChange={handleBusTypeChange}
+                onValueChange={(value) => setFormData((prev) => ({ ...prev, busType: value }))}
               >
                 <SelectTrigger id="busType">
                   <SelectValue placeholder="Select Bus Type" />
@@ -151,6 +169,7 @@ export default function EditPricingDialog({
                   <SelectItem value="Business">Business</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.busType && <p className="text-red-500 text-sm">{errors.busType}</p>}
             </div>
           </div>
           <DialogFooter>
@@ -161,4 +180,3 @@ export default function EditPricingDialog({
     </Dialog>
   );
 }
-

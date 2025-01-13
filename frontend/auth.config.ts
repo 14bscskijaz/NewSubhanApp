@@ -1,4 +1,4 @@
-import { NextAuthConfig } from 'next-auth';
+import { NextAuthConfig, User } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';
 
@@ -10,33 +10,27 @@ const authConfig = {
     }),
     CredentialProvider({
       credentials: {
-        email: {
-          type: 'email'
-        },
-        password: {
-          type: 'password'
-        }
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        const user = {
-          id: '1',
-          name: 'John',
-          email: credentials?.email as string
-        };
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
+        const hardcodedEmail = process.env.NEXT_PUBLIC_HARDCODED_EMAIL;
+        const hardcodedPassword = process.env.NEXT_PUBLIC_HARDCODED_PASSWORD;
+
+        if (
+          credentials?.email == hardcodedEmail &&
+          credentials?.password == hardcodedPassword
+        ) {
+          const user: User = { id: '1', name: 'John Doe', email: credentials.email as string };
           return user;
         } else {
-          // If you return null then an error will be displayed advising the user to check their details.
           return null;
-
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
       }
     })
   ],
   pages: {
-    signIn: '/' //sigin page
+    signIn: '/' 
   }
 } satisfies NextAuthConfig;
 

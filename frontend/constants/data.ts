@@ -99,9 +99,9 @@ type Employee = {
   employee_type: string
   address: string
   mobile_number: string
-  hire_date: Date | null 
+  hire_date: Date | null
   employee_status: string
-  dob: Date | null 
+  dob: Date | null
   notes: string
 }
 
@@ -120,32 +120,39 @@ export type Product = {
 
 export const navItems: NavItem[] = [
   {
+    title: 'Dashboard',
+    url: '/dashboard/overview',
+    icon: 'dashboard',
+    isActive: false,
+    items: []
+  },
+  {
     title: 'Employee',
     url: '/dashboard/employee',
     icon: 'dashboard',
     isActive: false,
-    items: [] 
+    items: []
   },
   {
     title: 'Bus',
     url: '/dashboard/bus',
     icon: 'bus',
     isActive: false,
-    items: [] 
+    items: []
   },
   {
     title: 'Route',
     url: '/dashboard/route',
     icon: 'route',
     isActive: false,
-    items: [] 
+    items: []
   },
   {
     title: 'Ticket Pricing',
     url: '/dashboard/pricing',
     icon: 'price',
     isActive: false,
-    items: [] 
+    items: []
   },
   // {
   //   title: 'Bus Closing',
@@ -210,7 +217,8 @@ export const navItems: NavItem[] = [
         title: 'View Daily Closing',
         url: '/dashboard/view-daily-expense',
         icon: 'login'
-      }
+      },
+
     ]
   },
   {
@@ -248,10 +256,20 @@ export const navItems: NavItem[] = [
         title: 'Bus Report',
         url: '/dashboard/bus-report',
         icon: 'userPen'
+      },
+      {
+        title: 'Monthly Closing Report',
+        url: '/dashboard/monthly-closing-report',
+        icon: 'login'
+      },
+      {
+        title: 'Driver Report',
+        url: '/dashboard/driver-report',
+        icon: 'login'
       }
     ]
   },
-  
+
   // {
   //   title: 'Kanban',
   //   url: '/dashboard/kanban',
@@ -260,3 +278,28 @@ export const navItems: NavItem[] = [
   //   items: [] // No child items
   // }
 ];
+
+export type dashboardCardsT = {
+  id: number;
+  title: string;
+  value: number;
+  backgroundColor?:string;
+}
+
+export const dashboardCards: dashboardCardsT[] = [
+  {
+    id: 1,
+    title: "Bus Earning",
+    value: 0
+  },
+  {
+    id: 2,
+    title: "Expense",
+    value: 0
+  },
+  {
+    id: 3,
+    title: "Profit",
+    value: 0
+  },
+]

@@ -36,7 +36,7 @@ export function DataTableSearch({
       placeholder={`Search ...`}
       value={searchQuery ?? ''}
       onChange={(e) => handleSearch(e.target.value)}
-      className={cn('w-full bg-gradient-border md:max-w-sm placeholder:text-gray-300', isLoading && 'animate-pulse')}
+      className={cn('w-full bg-gradient-border md:w-[24rem] placeholder:text-gray-300', isLoading && 'animate-pulse')}
     />
   );
 }

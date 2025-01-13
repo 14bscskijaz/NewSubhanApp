@@ -26,14 +26,14 @@ export const BusExpensecolumns: ColumnDef<Expense>[] = [
     header: 'Voucher Number',
     cell: (
       { row } // Parent component usage
-    ) => <VoucherNumber voucherId={Number(row.original.voucherId)} />
+    ) => <VoucherNumber voucherId={Number(row.original.busClosingVoucherId)} />
   },
   {
     id: 'revenue',
     header: 'Revenue',
     cell: (
       { row } // Parent component usage
-    ) => <Revenue voucherId={Number(row.original.voucherId)} />
+    ) => <Revenue voucherId={Number(row.original.busClosingVoucherId)} />
   },
   {
     id: 'route',

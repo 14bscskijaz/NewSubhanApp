@@ -58,6 +58,7 @@ export default function EditRouteDialog({
       )?.destinationAdda ?? ''
   });
 
+
   const calcTicketEarnings = (
     fullCount: number,
     halfCount: number,
@@ -111,6 +112,7 @@ export default function EditRouteDialog({
     remaining -= Number(updatedData.refreshmentExpense) || 0;
     remaining += Number(updatedData.loadEarning) || 0;
     remaining -= Number(updatedData.rewardCommission) || 0;
+    remaining -= Number(updatedData.checkerExpense) || 0;
 
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
       remaining -= expenseForThisRouteId.routeCommission;
@@ -208,23 +210,24 @@ export default function EditRouteDialog({
       return newData;
     });
   };
-
+ 
   useEffect(() => {
-    if (!isRefreshmentExpenseCustom) {
+    
+    if (!tripData.refreshmentExpense) {
       const calculatedExpense = calculateRefreshmentExpense();
       setTripData((prev) => ({
         ...prev,
         refreshmentExpense: Number(calculatedExpense)
       }));
     }
-    if (!isRewardCommissionCustom) {
+    if (!tripData.rewardCommission) {
       const calculatedCommission = calculateRewardCommission();
       setTripData((prev) => ({
         ...prev,
         rewardCommission: Number(calculatedCommission)
       }));
     }
-  }, [tripData.routeId, tripData.passengerCount, fixedTripExpenses, isRefreshmentExpenseCustom, isRewardCommissionCustom]);
+  }, [tripData.routeId, tripData.passengerCount, fixedTripExpenses]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -259,7 +262,7 @@ export default function EditRouteDialog({
           <Pen className="h-4 w-4" />
         </span>
       </DialogTrigger>
-      <DialogContent className="custom-scrollbar max-h-[570px] overflow-y-auto sm:max-w-[940px]">
+      <DialogContent className="custom-scrollbar max-h-[90vh] overflow-y-auto sm:max-w-[1024px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
@@ -404,8 +407,22 @@ export default function EditRouteDialog({
             </div>
 
             <div className="grid gap-2">
+              <Label htmlFor="checkerExpense" className="text-gradient">
+                Checker Expenses
+              </Label>
+              <Input
+                id="checkerExpense"
+                type="number"
+                placeholder="Enter checker expenses"
+                value={tripData.checkerExpense?.toString()}
+                onChange={handleInputChange}
+                min={0}
+              />
+            </div>
+
+            <div className="grid gap-2">
               <Label htmlFor="miscellaneousAmount" className="text-gradient">
-                Miscellaneous Amount
+                Miscellaneous Expense
               </Label>
               <Input
                 id="miscellaneousAmount"

@@ -28,6 +28,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { createFixedBusClosingExpense, getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action';
 import { useToast } from '@/hooks/use-toast';
+import SelectField from '@/components/ui/SelectField';
 
 export default function NewExpenseDialog() {
   const [open, setOpen] = useState(false);
@@ -40,8 +41,9 @@ export default function NewExpenseDialog() {
   const [refreshmentRate, setRefreshmentRate] = useState<number | ''>('');
   const [dcParchi, setDcParchi] = useState<number | ''>('');
   const [alliedMorde, setAlliedMorde] = useState<number | ''>('');
-  const { toast } = useToast();
+  const [routeError, setRouteError] = useState<string>('');
 
+  const { toast } = useToast()
   const dispatch = useDispatch();
 
   const routes = useSelector<RootState, Route[]>(allRoutes);
@@ -54,53 +56,51 @@ export default function NewExpenseDialog() {
 
   const handleRouteChange = (selectedRouteId: string) => {
     setRouteId(Number(selectedRouteId));
+    setRouteError(''); // Reset the error when user selects a route
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Check if routeId is valid before submitting
+    if (routeId === null || routeId === 0) {
+      setRouteError('Please select a valid route.');
+      return;
+    }
+
+    const newExpense: Omit<ClosingExpense, "id"> = {
+      routeId: Number(routeId) ?? 0,
+      driverCommission: Number(driverCommission),
+      cOilExpense: Number(cOilExpense),
+      tollTax: Number(tollTax),
+      halfSafai: Number(halfSafai),
+      fullSafai: Number(fullSafai),
+      refreshmentRate: Number(refreshmentRate),
+      dcPerchi: Number(dcParchi),
+      alliedMorde: Number(alliedMorde)
+    };
+
     try {
-
-      event.preventDefault();
-      // Check if routeId is valid before submitting
-      if (routeId === null || routeId === 0) {
-        alert('Please select a valid route.');
-        return;
-      }
-
-      const newExpense: Omit<ClosingExpense, "id"> = {
-        routeId: Number(routeId) ?? 0,
-        driverCommission: Number(driverCommission),
-        cOilExpense: Number(cOilExpense),
-        tollTax: Number(tollTax),
-        halfSafai: Number(halfSafai),
-        fullSafai: Number(fullSafai),
-        refreshmentRate: Number(refreshmentRate),
-        dcPerchi: Number(dcParchi),
-        alliedMorde: Number(alliedMorde)
-      };
-
-      await createFixedBusClosingExpense(newExpense)
+      await createFixedBusClosingExpense(newExpense);
       const closingExpenses = await getAllFixedBusClosingExpenses();
-      dispatch(setClosingExpense(closingExpenses))
+      dispatch(setClosingExpense(closingExpenses));
       toast({
         title: "Success",
         description: "Fixed Route Close Expense Added successfully",
         variant: "default",
         duration: 1000
-      })
-      // dispatch(addClosingExpense(newExpense))
+      });
       setOpen(false);
       resetForm();
     } catch (error: any) {
       console.error(error.message);
-
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
         duration: 1000
-      })
+      });
     }
-
   };
 
   const resetForm = () => {
@@ -113,6 +113,7 @@ export default function NewExpenseDialog() {
     setRefreshmentRate('');
     setDcParchi('');
     setAlliedMorde('');
+    setRouteError('');
   };
 
   return (
@@ -134,23 +135,20 @@ export default function NewExpenseDialog() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 gap-12 py-6 md:grid-cols-2">
-            <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="route" className="text-gradient">
-                Route
-              </Label>
-              <Select onValueChange={handleRouteChange}>
-                <SelectTrigger id="route">
-                  <SelectValue placeholder="Select route" />
-                </SelectTrigger>
-                <SelectContent>
-                  {filteredRoutes.map((route) => (
-                    <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
-                      {`${route.destinationCity} (${route.destinationAdda})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div>
+              <SelectField
+                label='Select Route'
+                id="route"
+                value={routeId?.toString()}
+                onChange={handleRouteChange}
+                placeholder="Select Route"
+                options={filteredRoutes.map((route) => ({
+                  value: route.id.toString(),
+                  label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+                }))}
+                className="flex-col !items-start !space-x-0"
+              />
+              {routeError && <p className="text-red-500 text-sm">{routeError}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="driverCommission" className="text-gradient">

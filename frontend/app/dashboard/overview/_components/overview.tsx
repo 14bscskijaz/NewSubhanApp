@@ -29,11 +29,28 @@ import TripListingPage from './trip-listing-page';
 
 // Define constant colors for the cards
 const cardColors = [
-  '#2196F3', // Blue
-  '#9C27B0', // Purple
-  '#FF9800', // Orange
-  '#607D8B', // Blue Grey
+  '#178F74',
+  '#607D8B', 
+  '#090909', 
+  '#FF9800', 
 ];
+// const cardColors = [
+//   '#001625', 
+//   '#104e4a',
+//   '#1b2f33', 
+// ];
+// const cardColors = [
+//   // '#272640', 
+//   '#001609', 
+//   '#104e4a',
+//   // '#444441', 
+//   '#617a6e', 
+// ];
+// const cardColors = [
+//   '#0b2c24', 
+//   '#178F74',
+//   '#607D8B', 
+// ];
 
 // Helper function for calculating dynamic values
 const calculateDynamicValue = (card: dashboardCardsT, fetchedExpenses: any): number => {

@@ -258,6 +258,91 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
             .text-bold{
               font-weight:700;
             }
+
+            @media print {
+              body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f9f9f9;
+                color: #333;
+                font-size: 14px;
+              }
+              h1, h2 {
+                text-align: left;
+                border-bottom: 2px solid #333;
+                color: #2a5934;
+              }
+              table {
+                width: 98%;
+                margin: 20px auto;
+                border-collapse: collapse;
+                background-color: #fff;
+                font-size: 12px;
+              }
+              th, td {
+                border: 1px solid #ddd;
+                padding: 12px 4px;
+                text-align: left;
+              }
+              th {
+                background-color: #e8f5e9;
+                color: #2a5934;
+                text-transform: capitalize;
+                letter-spacing: 1px;
+              }
+              .th-heading {
+                font-weight:700;
+                background-color: #e8f5e9;
+                color: #2a5934;
+                text-transform: capitalize;
+                letter-spacing: 1px;
+              }
+              tr:nth-child(even) {
+                background-color: #f2f2f2;
+              }
+              tr:hover {
+                background-color: #f1f1f1;
+              }
+              .grid-data{
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+              }
+              .report-grid{
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap:18px;
+              }
+              .voucher{
+                grid-column: span 2 / span 2;
+              }
+              .flex-right{
+                margin-right:9px;
+                display:flex;
+                justify-content:end;
+              }
+              .text-color{
+                color:#2a5934;
+              }
+              .margin-top{
+                margin-top:14px;
+              }
+              .header-class{
+                color: #2a5934;
+                font-size: 20px;
+                font-weight: 700;
+                border-bottom: 1px solid #000;
+                padding: 5px;
+                margin: 10px 0px ;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              }
+  
+              .text-bold{
+                font-weight:700;
+              }
+            }
           </style>
         </head>
         <body>

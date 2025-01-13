@@ -64,7 +64,8 @@ export default function NewTripInfoDialog({
     loadEarning: null,
     rewardCommission: null,
     refreshmentExpense: null,
-    checkerExpense: null, // New field
+    reference:"",
+    checkerExpense: null,
     date: date
   });
 
@@ -179,6 +180,7 @@ export default function NewTripInfoDialog({
       'halfTicketCount',
       'freeTicketCount',
       'revenue',
+      'reference',
       'refreshmentExpense',
       'rewardCommission',
       "checkerExpense"
@@ -240,6 +242,7 @@ export default function NewTripInfoDialog({
         freeTicketCount: Number(tripData.freeTicketCount),
         miscellaneousAmount: Number(tripData.miscellaneousAmount),
         revenue: Number(tripData.revenue),
+        reference:tripData.reference,
         revenueDiffExplanation: tripData.revenueDiffExplanation,
         refreshmentExpense: Number(tripData.refreshmentExpense),
         loadEarning: Number(tripData.loadEarning),
@@ -280,6 +283,7 @@ console.log(tripData.rewardCommission);
       sourceStation: '',
       destinationStation: '',
       loadEarning: null,
+      reference:"",
       rewardCommission: null,
       refreshmentExpense: null,
       checkerExpense: null,
@@ -430,6 +434,17 @@ console.log(tripData.rewardCommission);
                 type="number"
                 placeholder="Enter free ticket count"
                 value={tripData.freeTicketCount?.toString()}
+                onChange={handleInputChange}
+                min={0}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="reference" className='text-gradient'>Reference</Label>
+              <Input
+                id="reference"
+                type="text"
+                placeholder="Enter the reference"
+                value={tripData.reference?.toString()}
                 onChange={handleInputChange}
                 min={0}
               />

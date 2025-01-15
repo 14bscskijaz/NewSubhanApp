@@ -28,10 +28,12 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   totalItems: number;
   pageSizeOptions?: number[];
+  date:any
 }
 
 export function DataTableExpense<TData, TValue>({
   columns,
+  date,
   data,
   totalItems,
   pageSizeOptions = [10, 20, 30, 40]
@@ -143,7 +145,7 @@ export function DataTableExpense<TData, TValue>({
           </TableRow> */}
           <TableRow>
             <TableCell colSpan={columns.length} className="text-left">
-              <NewExpensesDialog />
+              <NewExpensesDialog date={date} />
             </TableCell>
           </TableRow>
           

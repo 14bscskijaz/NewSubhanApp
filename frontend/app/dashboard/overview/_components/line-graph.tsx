@@ -250,14 +250,14 @@ export function LineGraph() {
         <div className="space-y-4">
             <Card className='border rounded-xl bg-gradient-border min-h-[570.41px]'>
                 <CardHeader>
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start flex-wrap gap-2 relative justify-between">
                         <div className='flex flex-col gap-2'>
                             <h3 className="text-lg font-medium"><span className='text-gradient'>Weekly</span> Passenger Count</h3>
                             <Select
                                 value={selectedRoute}
                                 onValueChange={setSelectedRoute}
                             >
-                                <SelectTrigger className="w-[280px] border bg-gradient-border">
+                                <SelectTrigger className="max-w-[280px] mt-[8.1px] border bg-gradient-border">
                                     <SelectValue placeholder="Select route" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -279,7 +279,7 @@ export function LineGraph() {
                             </div>
 
                         </div>
-                        <div className="flex flex-col items-center gap-4">
+                        <div className="flex flex-col items-center gap-2">
                             <div className="flex items-center">
                                 <Button
                                     variant="outline"
@@ -377,7 +377,7 @@ export function LineGraph() {
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="px-2 sm:p-6">
+                <CardContent className="px-2 sm:p-2">
                     <ChartContainer config={chartConfig} className="aspect-auto h-[340px] w-full">
                         <LineChart
                             data={dailyData}

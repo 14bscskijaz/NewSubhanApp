@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BarGraph } from './bar-graph';
 import { LineGraph } from './line-graph';
 import TripListingPage from './trip-listing-page';
+import { Buses, allBuses } from '@/lib/slices/bus-slices';
 
 // Define constant colors for the cards
 const cardColors = [
@@ -86,6 +87,7 @@ const calculateTotalExpenses = (voucher: any): number => {
 
 export default function OverViewPage() {
   const savedExpenses = useSelector<RootState, Expense[]>(allSavedExpenses);
+  const buses = useSelector<RootState, Buses[]>(allBuses);
   const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const dispatch = useDispatch();
   const [latestExpense, setLatestExpense] = useState<dashboardCardsT[]>(dashboardCards);
@@ -223,7 +225,7 @@ const aggregatedSummaryData = useMemo(() => {
         return {
           date: summary.date,
           expenses: relatedExpenses.map((expense) => ({
-            busNumber: expense.busId,
+            busNumber: buses.find(bus=>bus.id===expense.busId)?.busNumber,
             amount: expense.amount,
             description: expense.description,
           })),

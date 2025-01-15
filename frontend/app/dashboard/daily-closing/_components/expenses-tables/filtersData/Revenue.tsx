@@ -15,10 +15,27 @@ const Revenue: React.FC<VoucherProps> = ({ voucherId }) => {
     // Find the voucher with the given VoucherId
     const foundVoucher = vouchers.find((voucher) => voucher.id === voucherId);
 
+    const allExpenses = [
+        foundVoucher?.alliedmor,
+        foundVoucher?.cityParchi,
+        foundVoucher?.cleaning,
+        foundVoucher?.cOilTechnician,
+        foundVoucher?.commission,
+        foundVoucher?.diesel,
+        foundVoucher?.refreshment,
+        foundVoucher?.toll,
+        foundVoucher?.generator,
+        foundVoucher?.repair,
+        foundVoucher?.miscellaneousExpense,
+    ]
+        .map(Number)
+        .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
+
+
     return (
         <div>
             {foundVoucher ? (
-                <p>{formatNumber(Number(foundVoucher.revenue))}</p>
+                <p>{formatNumber(Number(foundVoucher.revenue)+allExpenses)}</p>
             ) : (
                 <p>N/A</p>
             )}

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditExpensesDialog from '../edit-expenses-dialogue';
+import { deleteExpense } from '@/app/actions/expenses.action';
 
 interface CellActionProps {
   // data: TicketPrice;
@@ -21,8 +22,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
-      // await re(data.id);
-      dispatch(removeExpense(data.id));
+      if(data?.originalId){
+        console.log('hello',data?.id);
+        
+        await deleteExpense(data.originalId);
+        dispatch(removeExpense(data.id));
+      }
+      else{
+        dispatch(removeExpense(data.id));
+      }
       setOpen(false);
     } catch (error) {
       console.error('Failed to delete route:', error);

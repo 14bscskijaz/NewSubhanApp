@@ -18,7 +18,7 @@ import { Plus } from "lucide-react"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-export default function NewExpensesDialog() {
+export default function NewExpensesDialog({ date }: { date: any }) {
   const [open, setOpen] = useState(false);
   const expenses = useSelector<RootState, Expense[]>(allExpenses);
   const [tab, setTab] = useState<"bus" | "general">("general")
@@ -62,7 +62,7 @@ export default function NewExpensesDialog() {
 
     try {
       const newExpense: Omit<Expense, 'id'> = {
-        date: new Date().toISOString(),
+        date: new Date(date).toISOString(),
         description,
         amount: Number(amount),
         busId: busId !== "" ? Number(busId) : undefined,

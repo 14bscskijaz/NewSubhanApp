@@ -66,8 +66,6 @@ const savedExpenseSlice = createSlice({
       // Manually add id and type for each expense in the filtered data
       state.expenses = action.payload.map((expense, index) => ({
         ...expense,
-        id: index + 1,
-        type: 'bus',
         busClosingVoucherId: expense.busClosingVoucherId ?? null,
       }));
     }

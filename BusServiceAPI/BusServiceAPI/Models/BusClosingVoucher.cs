@@ -5,6 +5,7 @@ namespace BusServiceAPI.Models
     public class BusClosingVoucher
     {
         public int Id { get; set; } // Primary key, auto-incremented
+        public bool IsSubmitted { get; set; } = false;
         public DateTime? Date { get; set; }
         public int? VoucherNumber { get; set; }
         public int? Commission { get; set; }

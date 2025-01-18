@@ -10,9 +10,17 @@
         public int? DcParchi { get; set; } // Route-wise only from Fsd as source
         public int? Refreshment { get; set; }
 
+        public RouteCommissionT? RouteCommissionType { get; set; }
+
         // Navigation properties
         public Route? Route { get; set; }
         public int? RouteId { get; set; }
+    }
+
+    public enum RouteCommissionT
+    {
+        Standard,
+        Business
     }
 
 }

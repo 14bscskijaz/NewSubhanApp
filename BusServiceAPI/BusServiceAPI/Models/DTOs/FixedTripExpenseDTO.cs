@@ -10,6 +10,8 @@
         public int? Counter { get; set; } // Int
         public int? DcParchi { get; set; } // Int
         public int? Refreshment { get; set; } // Int
+        public string? CommissionType { get; set; }
+
     }
 
 }

@@ -32,7 +32,8 @@ namespace BusServiceAPI.Controllers
                     Steward = e.Steward,
                     Counter = e.Counter,
                     DcParchi = e.DcParchi,
-                    Refreshment = e.Refreshment
+                    Refreshment = e.Refreshment,
+                    CommissionType = e.RouteCommissionType.ToString(),
                 }).ToList();
 
             return Ok(expenses);
@@ -53,7 +54,8 @@ namespace BusServiceAPI.Controllers
                     Steward = e.Steward,
                     Counter = e.Counter,
                     DcParchi = e.DcParchi,
-                    Refreshment = e.Refreshment
+                    Refreshment = e.Refreshment,
+                    CommissionType = e.RouteCommissionType.ToString()
                 })
                 .FirstOrDefault(e => e.Id == id);
 
@@ -78,7 +80,8 @@ namespace BusServiceAPI.Controllers
                 Steward = expenseDto.Steward,
                 Counter = expenseDto.Counter,
                 DcParchi = expenseDto.DcParchi,
-                Refreshment = expenseDto.Refreshment
+                Refreshment = expenseDto.Refreshment,
+                RouteCommissionType = (RouteCommissionT)Enum.Parse(typeof(RouteCommissionT), expenseDto.CommissionType)
             };
 
             _context.FixedTripExpenses.Add(expense);
@@ -93,7 +96,9 @@ namespace BusServiceAPI.Controllers
                 Steward = expense.Steward,
                 Counter = expense.Counter,
                 DcParchi = expense.DcParchi,
-                Refreshment = expense.Refreshment
+                Refreshment = expense.Refreshment,
+                CommissionType = expense.RouteCommissionType.ToString()
+
             };
 
             return CreatedAtAction(nameof(GetFixedTripExpense), new { id = createdExpense.Id }, createdExpense);
@@ -114,6 +119,8 @@ namespace BusServiceAPI.Controllers
             expense.Counter = expenseDto.Counter;
             expense.DcParchi = expenseDto.DcParchi;
             expense.Refreshment = expenseDto.Refreshment;
+            expense.RouteCommissionType = (RouteCommissionT)Enum.Parse(typeof(RouteCommissionT), expenseDto.CommissionType);
+
 
             _context.SaveChanges();
 

@@ -5,6 +5,7 @@ namespace BusServiceAPI.Models.DTOs
     public class BusClosingVoucherDTO
     {
         public int Id { get; set; } // Serial
+        public bool IsSubmitted { get; set; } = false;
         public DateTime? Date { get; set; } // Date
         public int? DriverId { get; set; } // FK to Employee
         public int? ConductorId { get; set; } // FK to Employee

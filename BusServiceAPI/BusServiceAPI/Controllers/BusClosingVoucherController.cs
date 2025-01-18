@@ -34,6 +34,7 @@ namespace BusServiceAPI.Controllers
             return vouchers.Select(v => new BusClosingVoucherDTO
             {
                 Id = v.Id,
+                IsSubmitted = v.IsSubmitted,
                 Date = v.Date,
                 VoucherNumber = v.VoucherNumber,
                 DriverId = v.DriverId,
@@ -76,6 +77,7 @@ namespace BusServiceAPI.Controllers
             var voucherDto = new BusClosingVoucherDTO
             {
                 Id = voucher.Id,
+                IsSubmitted = voucher.IsSubmitted,
                 Date = voucher.Date,
                 VoucherNumber = voucher.VoucherNumber,
                 DriverId = voucher.DriverId,
@@ -127,6 +129,7 @@ namespace BusServiceAPI.Controllers
 
             var voucher = new BusClosingVoucher
             {
+                IsSubmitted = voucherDto.IsSubmitted,
                 Date = voucherDto.Date,
                 VoucherNumber = voucherDto.VoucherNumber,
                 BusId = voucherDto.BusId,
@@ -158,6 +161,7 @@ namespace BusServiceAPI.Controllers
                 var createdVoucherDto = new BusClosingVoucherDTO
                 {
                     Id = voucher.Id,
+                    IsSubmitted = voucher.IsSubmitted,
                     Date = voucher.Date,
                     VoucherNumber = voucher.VoucherNumber,
                     DriverId = voucher.DriverId,
@@ -231,6 +235,7 @@ namespace BusServiceAPI.Controllers
             voucher.Date = voucherDto.Date;
             voucher.VoucherNumber = voucherDto.VoucherNumber;
             voucher.BusId = voucherDto.BusId;
+            voucher.IsSubmitted=voucherDto.IsSubmitted;
             voucher.DriverId = voucherDto.DriverId;
             voucher.ConductorId = voucherDto.ConductorId;
             voucher.RouteId = voucherDto.RouteId;

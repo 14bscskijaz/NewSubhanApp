@@ -35,7 +35,7 @@ export function DataTableView<TData, TValue>({
     columns,
     data,
     totalItems,
-    pageSizeOptions = [10, 20, 30, 40],
+    pageSizeOptions = [5, 10, 15, 20],
 }: DataTableProps<TData, TValue>) {
     const { formatNumber } = useAccounting();
     const path = usePathname();
@@ -50,7 +50,7 @@ export function DataTableView<TData, TValue>({
         'limit',
         parseAsInteger
             .withOptions({ shallow: false, history: 'push' })
-            .withDefault(20)
+            .withDefault(10)
     );
 
     const paginationState = {

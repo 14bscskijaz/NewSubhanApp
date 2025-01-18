@@ -38,7 +38,7 @@ export default function TripListingPage({ }: TTripListingPage) {
   const [busNumber, setSetBusNumber] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [routeFilter, setRouteFilter] = useState('');
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
   const dispatch = useDispatch();
   const { toast } = useToast();
 
@@ -66,7 +66,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const dateParam = searchParams.get('date') || '';
-    const limitParam = searchParams.get('limit') || '20';
+    const limitParam = searchParams.get('limit') || '10';
 
     setPage(Number(pageParam));
     setSearch(searchParam);

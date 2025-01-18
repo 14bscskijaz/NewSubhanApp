@@ -35,7 +35,7 @@ const Revenue: React.FC<VoucherProps> = ({ voucherId }) => {
     return (
         <div>
             {foundVoucher ? (
-                <p>{formatNumber(Number(foundVoucher.revenue)+allExpenses)}</p>
+                <p>{formatNumber(Number(foundVoucher.revenue))}</p>
             ) : (
                 <p>N/A</p>
             )}

@@ -197,7 +197,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
               font-size: 12px;
             }
             th, td {
-              border: 1px solid #ddd;
+              border: 1px solid black;
               padding: 12px 4px;
               text-align: left;
             }
@@ -281,7 +281,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
                 font-size: 12px;
               }
               th, td {
-                border: 1px solid #ddd;
+                border: 1px solid black;
                 padding: 12px 4px;
                 text-align: left;
               }

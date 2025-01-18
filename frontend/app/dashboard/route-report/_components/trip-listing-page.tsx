@@ -31,7 +31,7 @@ export default function TripListingPage() {
 
   const [isCityTab, setIsCityTab] = useState(true);
   const [page, setPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
 
   // Memoize search parameters
   const searchFilters = useMemo<SearchFilters>(() => ({
@@ -39,7 +39,7 @@ export default function TripListingPage() {
     busNumber: searchParams.get('busNumber') || '',
     dateRange: searchParams.get('date') || '',
     route: searchParams.get('route') || '',
-    limit: Number(searchParams.get('limit')) || 20,
+    limit: Number(searchParams.get('limit')) || 10,
     page: Number(searchParams.get('page')) || 1,
   }), [searchParams]);
 

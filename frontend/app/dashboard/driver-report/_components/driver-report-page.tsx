@@ -31,7 +31,7 @@ export default function DriverReportPage() {
 
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
   const dispatch = useDispatch();
   const busBrandFilter = searchParams.get('busBrand');
   const routeFilter = searchParams.get('route');

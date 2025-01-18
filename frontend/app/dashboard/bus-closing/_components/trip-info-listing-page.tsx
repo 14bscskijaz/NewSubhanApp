@@ -47,7 +47,7 @@ export default function TripInfoListingPage() {
   const [driverId, setDriverId] = useState<string>(busClosing ? busClosing[0]?.driverId : '')
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
-  const [pageLimit, setPageLimit] = useState(20)
+  const [pageLimit, setPageLimit] = useState(10)
   const [busId, setBusId] = useState<string>(busClosing ? busClosing[0]?.busId : '')
   const [isVoucherShow, setIsVoucherShow] = useState(false)
   const [tripRevenue, setTripRevenue] = useState<string>('')
@@ -95,7 +95,7 @@ export default function TripInfoListingPage() {
   useEffect(() => {
     const pageParam = searchParams.get('page') || '1'
     const searchParam = searchParams.get('q') || ''
-    const limitParam = searchParams.get('limit') || '20'
+    const limitParam = searchParams.get('limit') || '10'
 
     setPage(Number(pageParam))
     setSearch(searchParam)

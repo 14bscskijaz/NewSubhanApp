@@ -24,7 +24,7 @@ export default function TripListingPage({ }: TTripListingPage) {
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
   const dispatch = useDispatch();
   const { toast } = useToast();
 
@@ -50,7 +50,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     fetchFixedTripExpense();
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
-    const limitParam = searchParams.get('limit') || '20';
+    const limitParam = searchParams.get('limit') || '10';
 
     setPage(Number(pageParam));
     setSearch(searchParam);
@@ -101,10 +101,10 @@ export default function TripListingPage({ }: TTripListingPage) {
     const voucher = vouchers.find(
       (voucher) => voucher.id === expense.busClosingVoucherId
     );
-    const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount)
+    const expenseCalc = Number(expense.amount)
 
     // Accumulate revenue, expense, and calculate net income
-    const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher))
+    const sum = Number(voucher?.revenue)
 
     if (voucher) {
       acc[expense.date].revenue += sum || 0;

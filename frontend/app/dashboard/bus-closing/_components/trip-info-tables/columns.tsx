@@ -15,8 +15,8 @@ export const columns: ColumnDef<TripInformation>[] = [
   },
   {
     accessorKey: 'passengerCount',
-    header: 'Passengers (Free Tickets)',
-    cell:({row})=><div>{`${row.original.passengerCount} (${row.original.freeTicketCount})`}</div>
+    header: 'Passengers',
+    cell:({row})=><div>{`${row.original.passengerCount}`}</div>
   },
   {
     accessorKey: 'revenue',

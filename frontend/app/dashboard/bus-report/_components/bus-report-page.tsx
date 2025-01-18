@@ -28,7 +28,7 @@ export default function BusReportPage() {
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
   const dispatch = useDispatch();
 
   useEffect(() => {

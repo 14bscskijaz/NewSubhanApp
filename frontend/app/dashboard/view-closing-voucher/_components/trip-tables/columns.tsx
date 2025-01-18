@@ -7,6 +7,7 @@ import Expense from './Expense';
 import Revenue from './Revenue';
 import SourceDestination from './SourceDestination';
 import FormatedRevenue from './FormatedRevenue';
+import { format } from 'date-fns';
 
 export const columns: ColumnDef<BusClosingVoucher>[] = [
   {
@@ -20,7 +21,8 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
     header: 'Date',
     cell: ({ row }) =>
       row.original.date
-        ? new Date(row.original.date).toISOString().split("T")[0]
+        // ? new Date(row.original.date).toISOString().split("T")[0]
+        ? format(new Date(row.original.date), 'yyyy-MM-dd')
         : ''
   },
   {
@@ -51,7 +53,7 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
  
   {
     id: 'actual-revenue',
-    header: 'Gross Revenue',
+    header: 'Revenue',
     cell: (
       { row }
     ) => <Revenue voucherId={Number(row.original.id)}  />

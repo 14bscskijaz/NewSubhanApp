@@ -10,10 +10,12 @@ import {
 
 export default function RouteTable({
   data,
-  totalData
+  totalData,
+  date
 }: {
   data: Expense[];
   totalData: number;
+  date:any
 }) {
   const {
     isAnyFilterActive,
@@ -41,7 +43,7 @@ export default function RouteTable({
           onReset={resetFilters}
         />
       </div>
-      <DataTableExpense columns={columns} data={data} totalItems={totalData} />
+      <DataTableExpense columns={columns} data={data} totalItems={totalData} date={date} />
       
     </div>
   );

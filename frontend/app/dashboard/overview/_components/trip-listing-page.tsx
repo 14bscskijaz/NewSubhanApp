@@ -7,6 +7,7 @@ import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import useAccounting from '@/hooks/useAccounting';
 import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
 import { setTicketRaw } from '@/lib/slices/pricing-slices';
@@ -17,8 +18,6 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
-import NewTripDialog from '../../trip-expense/_components/new-trip-dialogue';
-import useAccounting from '@/hooks/useAccounting';
 
 type TTripListingPage = {};
 
@@ -36,7 +35,7 @@ export default function TripListingPage({ }: TTripListingPage) {
   const [busNumber, setSetBusNumber] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [routeFilter, setRouteFilter] = useState('');
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
   const dispatch = useDispatch();
   const { toast } = useToast();
 
@@ -71,7 +70,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     const busNumberParam = searchParams.get('busNumber') || '';
     const dateParam = searchParams.get('date') || '';
     const routeParam = searchParams.get('route') || '';
-    const limitParam = searchParams.get('limit') || '20';
+    const limitParam = searchParams.get('limit') || '10';
 
     setPage(Number(pageParam));
     setSearch(searchParam);

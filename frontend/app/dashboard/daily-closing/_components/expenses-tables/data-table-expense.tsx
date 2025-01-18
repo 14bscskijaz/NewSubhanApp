@@ -28,13 +28,15 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   totalItems: number;
   pageSizeOptions?: number[];
+  date:any
 }
 
 export function DataTableExpense<TData, TValue>({
   columns,
+  date,
   data,
   totalItems,
-  pageSizeOptions = [10, 20, 30, 40]
+  pageSizeOptions = [5, 10, 15, 20]
 }: DataTableProps<TData, TValue>) {
   const { open } = useSidebar();
   const [currentPage, setCurrentPage] = useQueryState(
@@ -45,7 +47,7 @@ export function DataTableExpense<TData, TValue>({
     'generalLimit',
     parseAsInteger
       .withOptions({ shallow: false, history: 'push' })
-      .withDefault(20 )
+      .withDefault(10 )
   );
 
   const paginationState = {
@@ -143,7 +145,7 @@ export function DataTableExpense<TData, TValue>({
           </TableRow> */}
           <TableRow>
             <TableCell colSpan={columns.length} className="text-left">
-              <NewExpensesDialog />
+              <NewExpensesDialog date={date} />
             </TableCell>
           </TableRow>
           

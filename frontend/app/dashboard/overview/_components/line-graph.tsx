@@ -60,7 +60,7 @@ const CustomTooltip: React.FC<{
         <div className="rounded-lg border bg-background p-2 shadow-sm">
             <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col">
-                    <span className="text-[0.70rem] uppercase text-muted-foreground">Date</span>
+                    <span className="text-[0.70rem] uppercase text-muted-foreground">Day</span>
                     <span className="font-bold">{data.date}</span>
                 </div>
                 <div className="flex flex-col">
@@ -71,6 +71,7 @@ const CustomTooltip: React.FC<{
         </div>
     )
 }
+
 
 export function LineGraph() {
     const tripInfo = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation)
@@ -146,40 +147,39 @@ export function LineGraph() {
 
     const dailyData = React.useMemo(() => {
         if (!selectedWeek) return []
-
+    
         const selectedWeekData = weeklyData.find(week => week.label === selectedWeek)
         if (!selectedWeekData) return []
-
-        // Get all days in the selected week
+    
         const daysInWeek = eachDayOfInterval({
             start: selectedWeekData.startDate,
             end: selectedWeekData.endDate,
-        }).map(day => format(day, 'MMM d'))
-
-        // Initialize daily data with 0 passenger counts
+        }).map(day => ({
+            date: format(day, 'EEE'), // Format to get the day name (e.g., Mon, Tue)
+            fullDate: format(day, 'MMM d'), // For tooltip or other use cases
+        }))
+    
         const dailyAggregation = new Map<string, number>(
-            daysInWeek.map(date => [date, 0])
+            daysInWeek.map(({ date }) => [date, 0])
         )
-
-        // Add trip passenger counts to the corresponding dates
+    
         filteredTrips.forEach((trip) => {
             if (trip.passengerCount !== null && trip.date) {
                 const tripDate = parseISO(trip.date)
                 if (isWithinInterval(tripDate, { start: selectedWeekData.startDate, end: selectedWeekData.endDate })) {
-                    const dateKey = format(tripDate, 'MMM d')
-                    dailyAggregation.set(dateKey, (dailyAggregation.get(dateKey) || 0) + trip.passengerCount)
+                    const dayName = format(tripDate, 'EEE')
+                    dailyAggregation.set(dayName, (dailyAggregation.get(dayName) || 0) + trip.passengerCount)
                 }
             }
         })
-
-        // Convert the map to an array and sort by date
+    
         return Array.from(dailyAggregation.entries())
             .map(([date, passengerCount]) => ({
                 date,
                 passengerCount,
             }))
-            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     }, [filteredTrips, selectedWeek, weeklyData])
+    
 
     const currentWeekStats = React.useMemo(() => {
         const currentWeekData = weeklyData.find(week => week.label === selectedWeek);
@@ -250,14 +250,14 @@ export function LineGraph() {
         <div className="space-y-4">
             <Card className='border rounded-xl bg-gradient-border min-h-[570.41px]'>
                 <CardHeader>
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start flex-wrap gap-2 relative justify-between">
                         <div className='flex flex-col gap-2'>
                             <h3 className="text-lg font-medium"><span className='text-gradient'>Weekly</span> Passenger Count</h3>
                             <Select
                                 value={selectedRoute}
                                 onValueChange={setSelectedRoute}
                             >
-                                <SelectTrigger className="w-[280px] border bg-gradient-border">
+                                <SelectTrigger className="max-w-[280px] mt-[8.1px] border bg-gradient-border">
                                     <SelectValue placeholder="Select route" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -279,7 +279,7 @@ export function LineGraph() {
                             </div>
 
                         </div>
-                        <div className="flex flex-col items-center gap-4">
+                        <div className="flex flex-col items-center gap-2">
                             <div className="flex items-center">
                                 <Button
                                     variant="outline"
@@ -377,13 +377,13 @@ export function LineGraph() {
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="px-2 sm:p-6">
+                <CardContent className="px-2 sm:p-2">
                     <ChartContainer config={chartConfig} className="aspect-auto h-[340px] w-full">
                         <LineChart
                             data={dailyData}
                             margin={{
                                 left: 10,
-                                right: 12,
+                                right: 25,
                             }}
                         >
                             <CartesianGrid vertical={false} />
@@ -396,8 +396,8 @@ export function LineGraph() {
                                 tickLine={false}
                                 axisLine={true}
                                 tickMargin={8}
-                                angle={-45}
-                                textAnchor="end"
+                                angle={20}
+                                textAnchor="center"
                                 height={60}
                             />
                             <Line

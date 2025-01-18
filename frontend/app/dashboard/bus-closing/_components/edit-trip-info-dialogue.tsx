@@ -176,6 +176,7 @@ export default function EditRouteDialog({
       'halfTicketCount',
       'freeTicketCount',
       'revenue',
+      'reference',
       'refreshmentExpense',
       'rewardCommission'
     ];
@@ -243,6 +244,7 @@ export default function EditRouteDialog({
       freeTicketCount: Number(tripData.freeTicketCount),
       miscellaneousAmount: Number(tripData.miscellaneousAmount),
       revenue: Number(tripData.revenue),
+      reference:tripData.reference,
       revenueDiffExplanation: tripData.revenueDiffExplanation,
       refreshmentExpense: Number(tripData.refreshmentExpense),
       loadEarning: Number(tripData.loadEarning),
@@ -344,6 +346,17 @@ export default function EditRouteDialog({
                 value={tripData.freeTicketCount?.toString()}
                 onChange={handleInputChange}
                 placeholder="Enter Free Ticket Count"
+                min={0}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="reference" className='text-gradient'>Reference</Label>
+              <Input
+                id="reference"
+                type="text"
+                placeholder="Enter the reference"
+                value={tripData.reference?.toString()}
+                onChange={handleInputChange}
                 min={0}
               />
             </div>

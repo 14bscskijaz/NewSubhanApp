@@ -9,7 +9,7 @@ export type driverDataT = {
   diesel: number;
 }
 
-export const printExpenses = (driverData: driverDataT[], driverFilter: Employee | undefined, dateFilter: string | undefined) => {
+export const printExpenses = (driverData: driverDataT[], driverFilter: Employee | undefined, dateFilter: string | undefined,routeFilter?:string,busBrandFilter?:string) => {
 
   const printWindow = window.open('', '_blank');
   if (!printWindow) {
@@ -36,9 +36,15 @@ export const printExpenses = (driverData: driverDataT[], driverFilter: Employee 
   const dateInfo = formattedDate 
     ? `<div><strong>Date</strong>: ${formattedDate}</div>` 
     : '';
+  const routeInfo = routeFilter 
+    ? `<div><strong>Route</strong>: ${routeFilter}</div>` 
+    : '';
+  const busBrandInfo = busBrandFilter 
+    ? `<div><strong>Bus Brand</strong>: ${busBrandFilter}</div>` 
+    : '';
 
   // Add padding to the filter section (driverInfo and dateInfo)
-  const filters = `${driverInfo}${dateInfo}`.trim();
+  const filters = `${driverInfo}${dateInfo}${routeInfo}${busBrandInfo}`.trim();
   
   const content = `
     <html>

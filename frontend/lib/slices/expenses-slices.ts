@@ -3,15 +3,17 @@ import { RootState } from '../store';
 
 // Define the Expense type based on the updated schema
 export type Expense = {
-  id: number; // Serial
-  date: string; // Date
+  id: number;
+  date: string;
   type: 'bus' | 'general';
-  busClosingVoucherId?: number | null; // Foreign key
+  busClosingVoucherId?: number | null;
   busId?: number;
-  routeId?:number; // Foreign key
-  amount: number; // Integer
-  description: string; // Varchar(255)
+  routeId?: number;
+  amount: number;
+  description: string;
+  originalId?: number; // Make sure originalId is included
 };
+
 
 // Define the state interface
 interface ExpenseState {
@@ -62,12 +64,12 @@ const expenseSlice = createSlice({
     },
 
     // Action to set the entire state
-    setExpenses: (state, action: PayloadAction<Omit<Expense, 'id' | 'type'>[]>) => {
+    setExpenses: (state, action: PayloadAction<Omit<Expense, 'id'>[]>) => {
       // Manually add id and type for each expense in the filtered data
       state.expenses = action.payload.map((expense, index) => ({
         ...expense,
         id: index + 1,
-        type: 'bus'
+        originalId: expense.originalId,
       }));
     }
   }

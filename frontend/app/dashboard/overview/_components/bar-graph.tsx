@@ -122,7 +122,7 @@ export function BarGraph() {
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-4">
-        <ChartContainer config={chartConfig} className="aspect-auto h-[400px] w-full">
+        <ChartContainer config={chartConfig} className="aspect-auto h-[450px] w-full">
           <BarChart
             data={filteredData}
             margin={{
@@ -140,7 +140,7 @@ export function BarGraph() {
               axisLine={true} 
               tickMargin={8} 
               minTickGap={32}
-              angle={30} 
+              angle={20} 
               textAnchor="center"
             />
             <Bar 

@@ -19,6 +19,7 @@ export const searchParams = {
   date: parseAsString,
   dateRange: parseAsString,
   driver: parseAsString,
+  busBrand: parseAsString,
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

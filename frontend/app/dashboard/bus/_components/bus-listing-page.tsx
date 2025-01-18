@@ -20,7 +20,7 @@ export default function BusListingPage({ }: TBusListingPage) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState(''); // Change gender to status
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
   const {toast} = useToast();
 
   const dispatch = useDispatch();
@@ -44,7 +44,7 @@ export default function BusListingPage({ }: TBusListingPage) {
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
     const statusParam = searchParams.get('status') || '';
-    const limitParam = searchParams.get('limit') || '20';
+    const limitParam = searchParams.get('limit') || '10';
 
     setPage(Number(pageParam));
     setSearch(searchParam);

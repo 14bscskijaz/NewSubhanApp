@@ -14,6 +14,7 @@ import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action
 import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { useToast } from '@/hooks/use-toast';
 import TripTable from "./trip-tables"
+import { format } from 'date-fns';
 
 type TTripListingPage = {};
 
@@ -23,7 +24,7 @@ export default function TripListingPage({ }: TTripListingPage) {
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [pageLimit, setPageLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
   const dispatch = useDispatch();
   const { toast } = useToast();
 
@@ -49,7 +50,7 @@ export default function TripListingPage({ }: TTripListingPage) {
     fetchFixedTripExpense();
     const pageParam = searchParams.get('page') || '1';
     const searchParam = searchParams.get('q') || '';
-    const limitParam = searchParams.get('limit') || '20';
+    const limitParam = searchParams.get('limit') || '10';
 
     setPage(Number(pageParam));
     setSearch(searchParam);
@@ -91,7 +92,6 @@ export default function TripListingPage({ }: TTripListingPage) {
   };
 
   // Group expenses by date
-  // Group expenses by date
   const groupedExpenses = filteredExpense.reduce((acc, expense) => {
     if (!acc[expense.date]) {
       acc[expense.date] = { revenue: 0, expense: 0, netIncome: 0, date: expense.date };
@@ -101,13 +101,10 @@ export default function TripListingPage({ }: TTripListingPage) {
     const voucher = vouchers.find(
       (voucher) => voucher.id === expense.busClosingVoucherId
     );
-    const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount)
-
-    console.log(expenseCalc, "expenseCalc");
+    const expenseCalc = Number(expense.amount)
 
     // Accumulate revenue, expense, and calculate net income
-    const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher))
-    console.log(sum, "sum");
+    const sum = Number(voucher?.revenue)
 
     if (voucher) {
       acc[expense.date].revenue += sum || 0;
@@ -121,10 +118,20 @@ export default function TripListingPage({ }: TTripListingPage) {
 
   // Convert groupedExpenses object back to an array
   const summaryData = Object.values(groupedExpenses);
+
+  // Sort the aggregated summary data by date in descending order (latest first)
+  const sortedAggregatedData = summaryData.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime(); // Sorting in descending order
+  });
+
   // Summing up values with the same date
-  const aggregatedData = summaryData.reduce((acc, current) => {
+  const aggregatedData = sortedAggregatedData.reduce((acc, current) => {
     // Extract the date without the time
-    const dateKey = current.date.split('T')[0];
+    // const dateKey = current.date.split('T')[0];
+    const dateKey = format(new Date(current.date), 'yyyy-MM-dd');
+    // console.log("dateKey: -------------", dateKey);
 
     if (!acc[dateKey]) {
       acc[dateKey] = { revenue: 0, expense: 0, netIncome: 0, date: dateKey };
@@ -141,14 +148,12 @@ export default function TripListingPage({ }: TTripListingPage) {
   // Convert the aggregated data object back to an array
   const aggregatedSummaryData = Object.values(aggregatedData);
 
-  console.log(aggregatedSummaryData);
-
-
-  // Pagination logic
+  // Pagination logic after sorting
   const startIndex = (page - 1) * pageLimit;
   const endIndex = startIndex + pageLimit;
   const paginatedExpense = aggregatedSummaryData.slice(startIndex, endIndex);
 
+  // Get the total count of the trip expenses
   const totalTripExpense = aggregatedSummaryData.length;
 
   return (

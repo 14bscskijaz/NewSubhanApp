@@ -14,6 +14,7 @@ export type TripInformation = {
   miscellaneousAmount: number | null;
   revenueDiffExplanation: string;
   loadEarning: number | null,
+  reference: string | null,
   rewardCommission: number | null,
   refreshmentExpense: number | null,
   checkerExpense: number | null,

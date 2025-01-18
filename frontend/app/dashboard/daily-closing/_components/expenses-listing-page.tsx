@@ -10,7 +10,7 @@ import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '
 import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
 import { Expense, allExpenses, setExpenses } from '@/lib/slices/expenses-slices';
 import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
-import { addSavedExpense } from '@/lib/slices/saved-expenses';
+import { addSavedExpense, allSavedExpenses, setSavedExpenses } from '@/lib/slices/saved-expenses';
 import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
@@ -22,7 +22,7 @@ import NetExpenses from './net-expense';
 import { getAllBuses } from '@/app/actions/bus.action';
 import { getAllRoutes } from '@/app/actions/route.action';
 import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
-import { createExpense } from '@/app/actions/expenses.action';
+import { createExpense, getAllExpenses, updateExpense } from '@/app/actions/expenses.action';
 import useAccounting from '@/hooks/useAccounting';
 
 type TExpensesListingPage = {};
@@ -32,6 +32,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const busClosingVouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const [loading, setLoading] = useState(false);
   const expenses = useSelector<RootState, Expense[]>(allExpenses);
+  const savedExpenses = useSelector<RootState, Expense[]>(allSavedExpenses);
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const savedTrips = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
@@ -39,8 +40,8 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const [page, setPage] = useState(1);
   const [generalPage, setGeneralPage] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [pageLimit, setPageLimit] = useState(5);
-  const [pageGeneralLimit, setPageGeneralLimit] = useState(20);
+  const [pageLimit, setPageLimit] = useState(10);
+  const [pageGeneralLimit, setPageGeneralLimit] = useState(10);
   const { toast } = useToast();
 
   const dispatch = useDispatch();
@@ -49,8 +50,11 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
     const allBusesData = await getAllBuses();
     const allRoutes = await getAllRoutes();
     const allVouchers = await getAllBusClosingVouchers()
+    const allExpenses = await getAllExpenses()
+    // console.log(allExpenses,'allExpenses');
 
     dispatch(setBus(allBusesData))
+    dispatch(setSavedExpenses(allExpenses))
     dispatch(setRoute(allRoutes))
     dispatch(setBusClosingVoucher(allVouchers))
   }
@@ -61,44 +65,65 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
         ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
         : undefined;
 
-      const filteredData: Omit<Expense, 'id'>[] = busClosingVouchers
-        .filter((voucher) => {
-          if (!normalizedSelectedDate) return true;
+      const savedExpensesForDate = savedExpenses.filter((expense) => {
+        const expenseDate = new Date(expense.date);
+        const normalizedExpenseDate = new Date(expenseDate.getFullYear(), expenseDate.getMonth(), expenseDate.getDate());
 
-          const voucherDate = new Date(voucher.date);
-          const normalizedVoucherDate = new Date(
-            voucherDate.getFullYear(),
-            voucherDate.getMonth(),
-            voucherDate.getDate()
-          );
+        return normalizedExpenseDate.getTime() === normalizedSelectedDate?.getTime();
+      });
 
-          return normalizedVoucherDate.getTime() === normalizedSelectedDate.getTime();
-        })
-        .map((voucher) => {
-          return {
-            busId: Number(voucher.busId),
-            busClosingVoucherId: voucher.id,
-            date: voucher.date,
-            description: '',
-            amount: 0,
-            type: 'bus',
-            routeId: voucher.routeId,
-          };
-        });
+      if (savedExpensesForDate.length > 0) {
+        // Set the expenses while preserving the original IDs
+        console.log(savedExpensesForDate, 'savedExpenseDate');
 
-      dispatch(setExpenses(filteredData));
+        const updatedExpenses = savedExpensesForDate.map((expense, index) => ({
+          ...expense,
+          originalId: expense.id,  // Save the original ID
+        }));
+        dispatch(setExpenses(updatedExpenses));
+      } else {
+        const filteredData: Omit<Expense, 'id'>[] = busClosingVouchers
+          .filter((voucher) => {
+            if (!normalizedSelectedDate) return true;
+
+            const voucherDate = new Date(voucher.date);
+            const normalizedVoucherDate = new Date(
+              voucherDate.getFullYear(),
+              voucherDate.getMonth(),
+              voucherDate.getDate()
+            );
+
+            return normalizedVoucherDate.getTime() === normalizedSelectedDate.getTime();
+          })
+          .map((voucher) => {
+            return {
+              busId: Number(voucher.busId),
+              busClosingVoucherId: voucher.id,
+              date: voucher.date,
+              description: '',
+              amount: 0,
+              type: 'bus',
+              routeId: voucher.routeId,
+              originalId: undefined,
+            };
+          });
+
+        dispatch(setExpenses(filteredData));
+      }
     };
 
     fetchFilteredData();
-  }, [selectedDate, busClosingVouchers, dispatch]);
+  }, [selectedDate, busClosingVouchers, savedExpenses, dispatch]);
+
+
 
   // Effect to handle pagination parameters from the URL
   useEffect(() => {
     fetchData();
     const pageParam = searchParams.get('page') || '1';
     const pageGeneralParam = searchParams.get('generalPage') || '1';
-    const limitParam = searchParams.get('limit') || '5';
-    const limitGeneralParam = searchParams.get('generalLimit') || '20';
+    const limitParam = searchParams.get('limit') || '10';
+    const limitGeneralParam = searchParams.get('generalLimit') || '10';
 
     setGeneralPage(Number(pageGeneralParam));
     setPageGeneralLimit(Number(limitGeneralParam));
@@ -125,17 +150,33 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   // Calculate the total amount for bus and general expenses
   const totalBusExpenses = busExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalGeneralExpenses = generalExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+  
+  const TotalExpense = totalBusExpenses + totalGeneralExpenses;
 
   const totalRevenue = expenses.reduce((sum, expense) => {
     const foundVoucher = busClosingVouchers.find(v => v.id === expense.busClosingVoucherId);
+    const allExpenses = [
+      foundVoucher?.alliedmor,
+      foundVoucher?.cityParchi,
+      foundVoucher?.cleaning,
+      foundVoucher?.cOilTechnician,
+      foundVoucher?.commission,
+      foundVoucher?.diesel,
+      foundVoucher?.refreshment,
+      foundVoucher?.toll,
+      foundVoucher?.generator,
+      foundVoucher?.repair,
+      foundVoucher?.miscellaneousExpense,
+  ]
+      .map(Number)
+      .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
     if (foundVoucher) {
-      return sum + (foundVoucher.revenue || 0);
+      return sum + (Number(foundVoucher?.revenue) + Number(allExpenses) || 0);
     }
     return sum;
   }, 0);
 
   // Calculate total revenue (sum of bus and general expenses)
-  const TotalExpense = totalBusExpenses + totalGeneralExpenses;
 
   const printExpenses = () => {
     // Create Maps for quick lookups
@@ -335,9 +376,23 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const handleSubmitExpenses = async () => {
     setLoading(true);
     try {
-      const expensePromises = expenses.map(async (expense) => {
-        await createExpense(expense);
+      const expensePromises = expenses?.map(async (expense) => {
+        // Check if expense has an id to determine whether to update or create
+        if (Number(expense?.originalId) > 0) {
+          // Call your update action here if the id exists
+          console.log(expense, 'expenses');
+
+          await updateExpense(Number(expense?.originalId), expense);
+        } else {
+
+          // Call your create action here if the id doesn't exist
+          await createExpense(expense)
+        }
       });
+
+      // const expensePromises = expenses.map(async (expense) => {
+      //   await createExpense(expense);
+      // });
 
       await Promise.all(expensePromises);
 
@@ -394,16 +449,15 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               <Heading title={`General Expenses (${generalExpenses.length})`} description="" />
             </div>
             <Separator />
-            <RouteTable data={generalExpensesPaginated} totalData={generalExpenses.length} />
+            <RouteTable data={generalExpensesPaginated} totalData={generalExpenses.length} date={selectedDate} />
 
           </div>
         </div>
-        <div className='flex justify-end mt-4'>
+        <div className="flex justify-end mt-4">
           <Button
             onClick={handleSubmitExpenses}
-            disabled={loading}
-            className={`${loading ? 'cursor-not-allowed opacity-50' : ''
-              }`}
+            disabled={loading || expenses?.length < 0}
+            className={`${loading || expenses?.length < 0 ? 'cursor-not-allowed opacity-50' : ''}`}
           >
             {loading ? 'Submitting...' : 'Submit'}
           </Button>

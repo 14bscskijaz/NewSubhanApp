@@ -2,6 +2,7 @@
 import { formatNumber } from '@/lib/utils/accounting';
 import { ColumnDef } from '@tanstack/react-table';
 import SerialNo from './SerialNo';
+import { format } from 'date-fns';
 
 
 export const columns: ColumnDef<any>[] = [
@@ -15,7 +16,9 @@ export const columns: ColumnDef<any>[] = [
     header: 'Date',
     cell: ({ row }) =>
       row.original.date
-        ? new Date(row.original.date).toISOString().split("T")[0]
+        ? row.original.date
+        // ? new Date(row.original.date).toISOString().split("T")[0]
+        // ? format(new Date(row.original.date), 'dd/MM/yyyy')
         : ''
   },
   // {

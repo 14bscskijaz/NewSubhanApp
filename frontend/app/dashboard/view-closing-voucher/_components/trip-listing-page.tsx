@@ -79,6 +79,8 @@ export default function TripListingPage({ }: TTripListingPage) {
     setDateFilter(dateParam);
     setRouteFilter(routeParam);
     setPageLimit(Number(limitParam));
+
+    // console.log("filteredVouchers data -----------:", filteredVouchers);
   }, [searchParams, dispatch]);
 
   const filteredVouchers = vouchers.filter((voucher) => {

@@ -14,6 +14,7 @@ import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action
 import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { useToast } from '@/hooks/use-toast';
 import TripTable from "./trip-tables"
+import { format } from 'date-fns';
 
 type TTripListingPage = {};
 
@@ -128,7 +129,9 @@ export default function TripListingPage({ }: TTripListingPage) {
   // Summing up values with the same date
   const aggregatedData = sortedAggregatedData.reduce((acc, current) => {
     // Extract the date without the time
-    const dateKey = current.date.split('T')[0];
+    // const dateKey = current.date.split('T')[0];
+    const dateKey = format(new Date(current.date), 'yyyy-MM-dd');
+    // console.log("dateKey: -------------", dateKey);
 
     if (!acc[dateKey]) {
       acc[dateKey] = { revenue: 0, expense: 0, netIncome: 0, date: dateKey };

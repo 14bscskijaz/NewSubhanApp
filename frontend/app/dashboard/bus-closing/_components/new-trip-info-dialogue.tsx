@@ -345,6 +345,7 @@ console.log(tripData.rewardCommission);
         rewardCommission: Number(calculatedCommission)
       }));
     }
+    // console.log( "date ---------- in new trip info: ", date);
   }, [tripData.routeId, tripData.passengerCount, fixedTripExpenses, isRefreshmentExpenseCustom, isRewardCommissionCustom]);
 
   const isFormComplete =

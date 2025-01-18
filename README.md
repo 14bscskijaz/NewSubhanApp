@@ -38,12 +38,19 @@ dotnet ef database drop -f
 
 1. first ensure that database is synced with the models.
 Use database update command to do that.
+```bash
+dotnet ef database update
+```
 
 2. Kill the old dotnet service using `kill -15 <pid>`.
 
 3. build the updated dotnet service.
 
 3. deploy using `nohup`.
+e.g. 
+```bash
+nohup dotnet run &
+```
 
 #### Access Swagger docs
 The API documentation can be accessed at the URL:
@@ -55,4 +62,21 @@ Add "/swagger/index.html" to the base URL of the server to access the API docume
 #### Update Playwrite
 ```bash
 pip install pytest-playwright playwright -U
+```
+
+## Replicating Production Database
+
+1. Create `pg_dump` of the production database.
+```bash
+pg_dump -U subhandb_owner -d subhandb -h localhost | gzip > subhandb_dump.sql.gz
+```
+
+2. Copy the dump to the local machine.
+```bash
+scp subhanvm:/home/subhan/webapp/NewSubhanApp/database/subhandb_dump.sql.gz .
+```
+
+3. Load the dump into the local database.
+```bash
+gunzip -c 16-01-2025_dumpfile.sql.gz | psql -U subhandb_owner -d subhandb_prod_rep -h localhost -p 5435
 ```

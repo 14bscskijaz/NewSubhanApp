@@ -31,6 +31,7 @@ import { useToast } from '@/hooks/use-toast'
 import { getAllFixedBusClosingExpenses } from '@/app/actions/FixedClosingExpense.action'
 import { setClosingExpense } from '@/lib/slices/fixed-closing-expense-slice'
 import useAccounting from '@/hooks/useAccounting'
+import { format } from 'date-fns'
 
 export default function TripInfoListingPage() {
   const { formatNumber } = useAccounting()
@@ -166,7 +167,10 @@ export default function TripInfoListingPage() {
             <Label htmlFor="date" className="text-gradient text-sm font-medium">Date</Label>
             <DatePicker
               selected={selectedDate}
-              onChange={(date) => setSelectedDate(date)}
+              onChange={(date) => {
+                setSelectedDate(date);
+                // setSelectedDate( format(date, 'yyyy-MM-dd') );
+              }}
               className=""
             />
           </div>

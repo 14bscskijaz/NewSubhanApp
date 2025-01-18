@@ -42,8 +42,6 @@ const savedExpenseSlice = createSlice({
       state.expenses.push(newExpense);
     },
 
-
-
     // Action to remove an expense by ID
     removeSavedExpense: (state, action: PayloadAction<number>) => {
       state.expenses = state.expenses.filter(

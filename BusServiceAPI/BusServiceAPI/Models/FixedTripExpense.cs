@@ -19,8 +19,9 @@
 
     public enum RouteCommissionT
     {
-        Standard,
-        Business
+        Percentage,
+        Person,
+        Amount
     }
 
 }

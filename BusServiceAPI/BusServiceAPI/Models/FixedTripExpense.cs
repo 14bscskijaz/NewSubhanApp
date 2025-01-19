@@ -20,7 +20,7 @@
     public enum RouteCommissionT
     {
         Percentage,
-        Person,
+        PerPerson,
         Amount
     }
 

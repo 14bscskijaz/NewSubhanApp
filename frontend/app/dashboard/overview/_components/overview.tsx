@@ -144,16 +144,16 @@ const aggregatedSummaryData = useMemo(() => {
         expense: 0, 
         netIncome: 0, 
         date: expense.date, 
-        expenseIds: [] // Add expenseIds array
+        expenseIds: []
       };
     }
 
     const voucher = vouchers.find(
       (voucher) => voucher.id === expense.busClosingVoucherId
     );
-    const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount);
+    const expenseCalc = Number(expense.amount);
 
-    const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher));
+    const sum = Number(voucher?.revenue);
 
     if (voucher) {
       acc[expense.date].revenue += sum || 0;

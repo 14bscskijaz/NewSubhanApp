@@ -25,7 +25,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     setLoading(true);
     try {
-      // await deleteTrip(data.id);
+      if(data.routeClosingVoucherId){
+        await deleteTrip(data.id);
+      }
       dispatch(removeTripInformation(data.id));
       toast({
         title:"Success",

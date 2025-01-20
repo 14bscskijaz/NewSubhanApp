@@ -58,9 +58,9 @@ export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], 
   const filtersSection = (filters: SearchFilters) => {
     let filterContent = '';
   
-    if (filters.search) {
-      filterContent += `<p><strong>Search Term:</strong> ${filters.search}</p>`;
-    }
+    // if (filters.search) {
+    //   filterContent += `<p><strong>Search Term:</strong> ${filters.search}</p>`;
+    // }
   
     if (filters.dateRange) {
       const [startDate, endDate] = filters.dateRange.split('|'); // Assuming the date range is in ISO format separated by '|'

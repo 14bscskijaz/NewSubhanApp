@@ -24,6 +24,7 @@ import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
 import { RootState } from '@/lib/store';
 import { useSelector } from 'react-redux';
+import SelectField from '@/components/ui/SelectField';
 
 type EditClosingExpenseDialogProps = {
   closingExpense: ClosingExpense;
@@ -36,6 +37,7 @@ export default function EditClosingExpenseDialog({
 }: EditClosingExpenseDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({ ...closingExpense });
+  const [routeError, setRouteError] = useState<string>('');
 
   const routes = useSelector<RootState, Route[]>(allRoutes);
   const ticketsRaw = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
@@ -62,10 +64,15 @@ export default function EditClosingExpenseDialog({
 
   const handleRouteChange = (value: string) => {
     setFormData((prev) => ({ ...prev, routeId: parseInt(value) }));
+    setRouteError('');
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (formData.routeId === null || formData.routeId === 0) {
+      setRouteError('Please select a valid route.');
+      return;
+    }
     onUpdate(formData); 
     setOpen(false);
   };
@@ -81,33 +88,24 @@ export default function EditClosingExpenseDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Edit Closing Expense</DialogTitle>
-            <DialogDescription>
-              Update the details of the closing expense and click save when you
-              are done.
-            </DialogDescription>
+
           </DialogHeader>
           <div className="grid gap-10 py-4 md:grid-cols-2">
             {/* Route Dropdown */}
-            <div className="grid gap-2 md:col-span-2">
-              <Label htmlFor="route" className="text-gradient">
-                Route
-              </Label>
-              <Select
-                onValueChange={handleRouteChange}
-                value={formData.routeId?.toString() || ''}
-              >
-                <SelectTrigger id="route">
-                  <SelectValue placeholder="Select route" />
-                </SelectTrigger>
-                <SelectContent>
-                  {filteredRoutes.map((route) => (
-                    <SelectItem key={route.id} value={`${route.id}`}>
-                      {`${route.sourceCity} (${route.sourceAdda})`} -{' '}
-                      {`${route.destinationCity} (${route.destinationAdda})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div>
+              <SelectField
+                label='Select Route'
+                id="route"
+                value={formData.routeId?.toString()}
+                onChange={handleRouteChange}
+                placeholder="Select Route"
+                options={filteredRoutes.map((route) => ({
+                  value: route.id.toString(),
+                  label: `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`,
+                }))}
+                className="flex-col !items-start !space-x-0"
+              />
+              {routeError && <p className="text-red-500 text-sm">{routeError}</p>}
             </div>
             {/* Driver Commission */}
             <div className="grid gap-2">

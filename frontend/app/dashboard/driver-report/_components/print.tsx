@@ -116,7 +116,7 @@ export const printExpenses = (driverData: driverDataT[], driverFilter: Employee 
       </head>
       <body>
         <div class="header-class">
-          <div>Bus Report</div>
+          <div>Driver Report</div>
           <div>New Subhan</div>
         </div>
         <div class="filters-section">

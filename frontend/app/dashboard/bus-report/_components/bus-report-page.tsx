@@ -28,9 +28,11 @@ export default function BusReportPage() {
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState<string>('');
   const [pageLimit, setPageLimit] = useState(10);
   const dispatch = useDispatch();
 
+  
   useEffect(() => {
     const fetchData = async() =>{
       const allBus = await getAllBuses();
@@ -39,9 +41,11 @@ export default function BusReportPage() {
       dispatch(setBusClosingVoucher(allVoucher));
       const allTrips = await getAllTrips();
       dispatch(setSavedTripInformation(allTrips));
-
+      
     }
-
+    
+    const searchParam = searchParams.get('q') || '';
+    setSearch(searchParam);
     fetchData()
   }, [])
   
@@ -73,41 +77,45 @@ export default function BusReportPage() {
     const dateRange = searchParams.get('date')?.split('|') || [];
     const busNumberFilter = searchParams.get('busNumber') || '';
     const busOwnerFilter = searchParams.get('busOwner') || '';
-  
+    const searchParam = searchParams.get('q') || '';
+
+    // Normalize searchParam for comparison
+    const normalizedSearchParam = searchParam.toLowerCase();
+
     // Parse date range
     const startDate = dateRange[0] ? new Date(dateRange[0]) : null;
     const endDate = dateRange[1] ? new Date(dateRange[1]) : null;
-  
+
     const busMap = new Map<string, any>();
     const processedVoucherIds = new Set<string>(); // Track processed vouchers for expenses and revenue
-  
+
     tripInfo
       .filter((trip) => {
         const voucher = vouchers.find((v) => v.id === trip.routeClosingVoucherId);
         if (!voucher) return false;
-  
+
         // Apply date range filter
         if (startDate && endDate) {
           const tripDate = new Date(voucher.date);
           if (tripDate < startDate || tripDate > endDate) return false;
         }
-  
+
         // Apply bus number and bus owner filters
         const bus = buses.find((b) => b.id === voucher.busId);
         if (!bus) return false;
-  
+
         if (busNumberFilter && bus.busNumber !== busNumberFilter) return false;
         if (busOwnerFilter && bus.busOwner !== busOwnerFilter) return false;
-  
+
         return true;
       })
       .forEach((trip) => {
         const voucher = vouchers.find((v) => v.id === trip.routeClosingVoucherId);
         const bus = buses.find((b) => b.id === voucher?.busId);
-  
+
         const busNumber = bus?.busNumber || 'Unknown Bus Number';
         const busOwner = bus?.busOwner || 'Unknown Bus Owner';
-  
+
         if (!busMap.has(busNumber)) {
           busMap.set(busNumber, {
             busNumber,
@@ -119,30 +127,46 @@ export default function BusReportPage() {
             uniqueVoucherIds: new Set(),
           });
         }
-  
+
         const busData = busMap.get(busNumber);
         busData.totalTrips += 1;
         busData.totalPassengers += Number(trip?.passengerCount) || 0;
-  
+
         // Only add expenses and revenue if the voucher hasn't been processed yet
         if (voucher?.id && !processedVoucherIds.has(voucher.id.toString())) {
           busData.totalExpenses += calculateTotalExpenses(voucher as any);
           busData.totalRevenue += Number(voucher.revenue || 0);
           processedVoucherIds.add(voucher.id.toString());
         }
-  
+
         busData.uniqueVoucherIds.add(voucher?.id);
         busMap.set(busNumber, busData);
       });
-  
-    return Array.from(busMap.values()).map((data) => ({
+
+    let busDataArray = Array.from(busMap.values()).map((data) => ({
       busNumber: data.busNumber,
       busOwner: data.busOwner,
-      totalTrips: formatNumber(data.uniqueVoucherIds.size),
-      totalPassengers: formatNumber(data.totalPassengers),
-      totalRevenue: formatNumber(data.totalRevenue),
-      totalExpenses: formatNumber(data.totalExpenses),
+      totalTrips: data.uniqueVoucherIds.size,
+      totalPassengers: data.totalPassengers,
+      totalRevenue: data.totalRevenue,
+      totalExpenses: data.totalExpenses,
     }));
+
+    // Filter busDataArray based on searchParam
+    if (normalizedSearchParam) {
+      busDataArray = busDataArray.filter((data) => {
+        return (
+          data.busNumber.toLowerCase().includes(normalizedSearchParam) ||
+          data.busOwner.toLowerCase().includes(normalizedSearchParam) ||
+          data.totalTrips.toString().toLowerCase().includes(normalizedSearchParam) ||
+          data.totalPassengers.toString().includes(normalizedSearchParam) ||
+          data.totalRevenue.toString().includes(normalizedSearchParam) ||
+          data.totalExpenses.toString().includes(normalizedSearchParam)
+        );
+      });
+    }
+
+    return busDataArray;
   }, [tripInfo, vouchers, buses, searchParams]);
   
   

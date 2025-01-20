@@ -56,6 +56,10 @@ export default function BusListingPage({ }: TBusListingPage) {
     const matchesSearch =
       search ?
         buse.busOwner.toLowerCase().includes(search.toLowerCase()) ||
+        buse.busBrand.toLowerCase().includes(search.toLowerCase()) ||
+        buse.busStatus.toLowerCase().includes(search.toLowerCase()) ||
+        buse.busType.toLowerCase().includes(search.toLowerCase()) ||
+        buse.description.toLowerCase().includes(search.toLowerCase()) ||
         buse.busNumber.toLowerCase().includes(search.toLowerCase()) :
         true;
 

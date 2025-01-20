@@ -131,19 +131,41 @@ export default function NewTripInfoDialog({
     remaining -= Number(updatedData.rewardCommission) || 0;
     remaining -= Number(updatedData.checkerExpense) || 0;
 
+    // Handle reward commission logic based on commission type
+    if (expenseForThisRouteId) {
+      if (expenseForThisRouteId?.commissionType === 'PerPerson') {
+        // If commission type is 'PerPerson', multiply with total passengers excluding free passengers
+        const totalPassengers = (Number(updatedData.fullTicketCount) || 0) + (Number(updatedData.halfTicketCount) || 0) + (Number(updatedData.fullTicketBusinessCount) || 0);
+        // const freePassengers = Number(updatedData.freeTicketCount) || 0;
+        const payablePassengers = totalPassengers;
+        
+        remaining -= payablePassengers * expenseForThisRouteId.rewardCommission; // Multiply by reward commission per person
+      } else if (expenseForThisRouteId?.commissionType === 'percentage') {
+        // If commission type is 'percentage', multiply with ticket earnings
+        const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings;
+        remaining -= standCommissionValue;
+      } else if (expenseForThisRouteId?.commissionType === 'amount') {
+        // If commission type is 'amount', simply subtract the value directly
+        remaining -= expenseForThisRouteId.rewardCommission;
+      }
+    }
 
+    // Apply routeCommission based on commission type (percentage)
     if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
       remaining -= expenseForThisRouteId.routeCommission;
-    } else if (expenseForThisRouteId && expenseForThisRouteId.routeCommission < 1) {
+    } else if (expenseForThisRouteId && expenseForThisRouteId?.commissionType === 'Percentage') {
       const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings;
       remaining -= standCommissionValue;
     }
 
+    // Apply miscellaneous amount
     if (updatedData.miscellaneousAmount) {
       remaining += Number(updatedData.miscellaneousAmount);
     }
+
     return Number(remaining);
-  };
+};
+
 
   const handleSelectChange = (
     id: keyof TripInformationInput,
@@ -250,7 +272,6 @@ export default function NewTripInfoDialog({
         checkerExpense: Number(tripData.checkerExpense),
         date: date
       };
-console.log(tripData.rewardCommission);
 
       dispatch(addTripInformation(newTripData));
 

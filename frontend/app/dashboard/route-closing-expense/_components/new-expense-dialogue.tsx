@@ -129,10 +129,6 @@ export default function NewExpenseDialog() {
             <DialogTitle>
               Add New <span className="text-gradient">Closing Expense</span>
             </DialogTitle>
-            <DialogDescription>
-              Enter the details of the new Closing Expense here. Click save when
-              you are done.
-            </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 gap-12 py-6 md:grid-cols-2">
           <div>

@@ -20,11 +20,19 @@ type DatePickerProps = {
 
 export function DatePicker({ selected, onChange, className }: DatePickerProps) {
   const handleDateSelect = (newDate: Date | undefined) => {
-    onChange(newDate);  // Pass the selected date to parent component
+    if (newDate) {
+      // Convert to UTC and set time to midnight UTC to avoid local time zone issues
+      const utcDate = new Date(Date.UTC(newDate.getFullYear(), newDate.getMonth(), newDate.getDate()));
+      onChange(utcDate); // Pass the UTC date to the parent component
+    } else {
+      onChange(undefined); // In case no date is selected
+    }
   };
 
   // Handle invalid date or undefined case
-  const formattedDate = selected && !isNaN(selected.getTime()) ? format(selected, "PPP") : "Pick a date";
+  const formattedDate = selected && !isNaN(selected.getTime())
+    ? format(selected, "PPP") // Format the date to display it
+    : "Pick a date";
 
   return (
     <Popover>

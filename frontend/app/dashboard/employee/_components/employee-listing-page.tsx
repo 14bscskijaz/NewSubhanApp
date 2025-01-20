@@ -57,6 +57,13 @@ export default function EmployeeListingPage({ }: TEmployeeListingPage) {
     const matchesSearch =
       search ?
         employee.firstName.toLowerCase().includes(search.toLowerCase()) ||
+        employee.cnic.toLowerCase().includes(search.toLowerCase()) ||
+        employee.dob?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        employee.mobileNumber?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        employee.employeeType?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        employee.address?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        employee.employeeStatus?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        employee.hireDate?.toString().toLowerCase().includes(search.toLowerCase()) ||
         employee.lastName.toLowerCase().includes(search.toLowerCase()) :
         true;
 

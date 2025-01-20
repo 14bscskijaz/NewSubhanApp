@@ -8,19 +8,19 @@ import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
+import { setBus } from '@/lib/slices/bus-slices';
 import { setTicketRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
 import { SavedTripInformation, allSavedsavedTripsInformation, setSavedTripInformation } from '@/lib/slices/trip-information-saved';
 import { RootState } from '@/lib/store';
+import { normalizeDate, parseDateRange } from '@/lib/utils/date';
+import { calculateMetricsCity, calculateMetricsStation } from '@/lib/utils/metrics';
+import { printExpenses } from '@/lib/utils/print';
+import { RouteMetric, SearchFilters } from '@/types/trip';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
-import { RouteMetric, SearchFilters } from '@/types/trip';
-import { normalizeDate, parseDateRange } from '@/lib/utils/date';
-import { calculateMetrics } from '@/lib/utils/metrics';
-import { printExpenses } from '@/lib/utils/print';
 
 export default function TripListingPage() {
   const savedTripInformation = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
@@ -44,7 +44,7 @@ export default function TripListingPage() {
   }), [searchParams]);
 
   // Memoize date range
-  const dateRange = useMemo(() => 
+  const dateRange = useMemo(() =>
     parseDateRange(searchFilters.dateRange),
     [searchFilters.dateRange]
   );
@@ -54,7 +54,7 @@ export default function TripListingPage() {
     return savedTripInformation.filter(trip => {
       if (!trip.date) return true;
       const tripDate = normalizeDate(trip.date);
-      
+
       if (dateRange.start && dateRange.end) {
         return tripDate >= dateRange.start && tripDate < dateRange.end;
       } else if (dateRange.start) {
@@ -67,8 +67,8 @@ export default function TripListingPage() {
   }, [savedTripInformation, dateRange]);
 
   // Memoize route metrics
-  const routeMetrics = useMemo(() => 
-    calculateMetrics(filteredTrips, routes, isCityTab),
+  const routeMetrics = useMemo(() =>
+    isCityTab ? calculateMetricsCity(filteredTrips, routes, isCityTab) : calculateMetricsStation(filteredTrips, routes, isCityTab),
     [filteredTrips, routes, isCityTab]
   );
 
@@ -81,12 +81,13 @@ export default function TripListingPage() {
         'fullPassengers',
         'totalPassengers',
         'totalRevenue',
-        'totalTrips'
-      ].some(key => 
+        'totalTrips',
+        'halfPassengers',
+      ].some(key =>
         voucher[key as keyof RouteMetric]?.toString().toLowerCase().includes(searchFilters.search.toLowerCase())
       );
 
-      const routeData = routes.find(route => 
+      const routeData = routes.find(route =>
         route.id.toString().trim() === voucher.routeIds[0]?.toString().trim()
       );
 
@@ -94,7 +95,7 @@ export default function TripListingPage() {
         ? `${routeData.sourceCity.trim()}-${routeData.destinationCity.trim()}`
         : '';
 
-      const matchesRouteFilter = !searchFilters.route || 
+      const matchesRouteFilter = !searchFilters.route ||
         routeKey.toLowerCase() === searchFilters.route.toLowerCase();
 
       return matchesSearch && matchesRouteFilter;
@@ -132,7 +133,7 @@ export default function TripListingPage() {
     setPageLimit(searchFilters.limit);
   }, [fetchData, searchFilters.page, searchFilters.limit]);
 
-  const totalRevenue = useMemo(() => 
+  const totalRevenue = useMemo(() =>
     filteredVouchers.reduce((sum, item) => sum + (item.totalRevenue || 0), 0),
     [filteredVouchers]
   );
@@ -143,9 +144,9 @@ export default function TripListingPage() {
   }, [filteredVouchers, page, pageLimit]);
 
   const handlePrint = useCallback(() => {
-    printExpenses(filteredVouchers, routes, isCityTab, searchFilters);  
+    printExpenses(filteredVouchers, routes, isCityTab, searchFilters);
   }, [filteredVouchers, routes, isCityTab, searchFilters]);
-  
+
 
   return (
     <PageContainer scrollable>
@@ -157,7 +158,7 @@ export default function TripListingPage() {
           />
         </div>
         <Separator />
-        <TripTable 
+        <TripTable
           data={paginatedTrips}
           totalData={filteredVouchers.length}
           totalRevenue={totalRevenue}

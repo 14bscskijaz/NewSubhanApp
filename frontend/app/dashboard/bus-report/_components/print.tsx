@@ -39,15 +39,23 @@ export const printExpenses = (
     ? `${formatDate(dateRange[0])} to ${formatDate(dateRange[1])}`
     : '';
 
-  const filterDetails = `
+    const filterDetails = `
     <div style="margin-bottom: 20px;">
       <ul style="list-style: none; padding: 0;">
-        ${formattedDateRange ? `<li><strong>Date Range:</strong> ${formattedDateRange}</li>` : ''}
+        ${
+          formattedDateRange && 
+          typeof formattedDateRange === 'string' && 
+          formattedDateRange.trim() !== ''
+            ? `<li><strong>Date Range:</strong> ${formattedDateRange}</li>` 
+            : ''
+        }
         ${busNumber ? `<li><strong>Bus Number:</strong> ${busNumber}</li>` : ''}
         ${busOwner ? `<li><strong>Bus Owner:</strong> ${busOwner}</li>` : ''}
       </ul>
     </div>
   `;
+  
+  
 
   const content = `
   <html>

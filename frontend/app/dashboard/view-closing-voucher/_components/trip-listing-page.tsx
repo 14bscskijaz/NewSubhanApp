@@ -100,7 +100,12 @@ export default function TripListingPage({ }: TTripListingPage) {
       ? voucher.alliedmor?.toString().toLowerCase().includes(search.toLowerCase()) ||
         voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
         voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.cOilTechnician?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.toll?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.diesel?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.voucherNumber?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.generator?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.commission?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        voucher.miscellaneousExpense?.toString().toLowerCase().includes(search.toLowerCase()) ||
         voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
         voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
       : true;

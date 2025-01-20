@@ -2,8 +2,9 @@
 'use client';
 import { BusReport } from '@/lib/slices/Report/bus-report-slice';
 import { ColumnDef } from '@tanstack/react-table';
+import { formatNumber } from 'accounting';
 
-export const columns: ColumnDef<BusReport>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: 'serial_no',
     header: 'S.No',
@@ -23,14 +24,17 @@ export const columns: ColumnDef<BusReport>[] = [
   },
   {
     accessorKey: 'totalPassengers',
-    header: 'Passengers'
+    header: 'Passengers',
+    cell:({row})=>`${formatNumber(row.original.totalPassengers)}`
   },
   {
     accessorKey: 'totalExpenses',
-    header: 'Expenses'
+    header: 'Expenses',
+    cell:({row})=>`${formatNumber(row.original.totalExpenses)}`
   },
   {
     accessorKey: 'totalRevenue',
-    header: 'Revenue'
+    header: 'Revenue',
+    cell:({row})=>`${formatNumber(row.original.totalRevenue)}`
   },
 ];

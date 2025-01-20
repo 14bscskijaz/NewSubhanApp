@@ -1,5 +1,5 @@
-import { createBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
-import { createTrip } from '@/app/actions/trip.action';
+import { createBusClosingVoucher, updateBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
+import { createTrip, updateTrip } from '@/app/actions/trip.action';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,6 +25,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import NetExpenses from './net-expense';
 import useAccounting from '@/hooks/useAccounting';
+import { useRouter } from 'next/navigation';
 
 interface BusClosingVoucherFormProps {
   driverId: string;
@@ -42,6 +43,7 @@ interface BusClosingVoucherFormProps {
   conductorId?: string;
   setSelectedRoute: Dispatch<SetStateAction<string>>
   setConductorId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  voucherData?: BusClosingVoucher;
 }
 
 const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
@@ -59,9 +61,11 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   routeId,
   conductorId,
   setSelectedRoute,
-  setConductorId
+  setConductorId,
+  voucherData,
 }) => {
-  const { formatNumber } = useAccounting()
+  const { formatNumber } = useAccounting();
+  const router = useRouter();
   const { toast } = useToast();
   const fixedClosingExpenses = useSelector<RootState, ClosingExpense[]>(
     allClosingExpenses
@@ -91,29 +95,61 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
 
   const methods = useForm({
     defaultValues: {
-      busId: Number(busId),
-      driverId: Number(driverId),
-      conductorId: Number(conductorId),
-      routeId: Number(routeId),
-      voucherNumber,
-      commission: getExpenseValue('driverCommission'),
-      diesel: null,
-      dieselLitres: null,
-      cOilTechnician: getExpenseValue('cOilExpense'),
-      toll: getExpenseValue('tollTax'),
-      cleaning: (getExpenseValue("halfSafai") ?? 0) + (getExpenseValue("fullSafai") ?? 0),
-      alliedmor: getExpenseValue('alliedMorde'),
-      cityParchi: getExpenseValue('dcPerchi'),
-      refreshment: getExpenseValue('refreshmentRate'),
-      repair: null,
-      // generator: null,
-      challan: null,
-      miscellaneousExpense: null,
-      explanation: "",
-      revenue: 0,
-      date: date,
+      busId: voucherData?.busId ?? Number(busId),
+      driverId: voucherData?.driverId ?? Number(driverId),
+      conductorId: voucherData?.conductorId ?? Number(conductorId),
+      routeId: voucherData?.routeId ?? Number(routeId),
+      voucherNumber: voucherData?.voucherNumber ?? voucherNumber,
+      commission: voucherData?.commission ?? getExpenseValue('driverCommission'),
+      diesel: voucherData?.diesel ?? null,
+      dieselLitres: voucherData?.dieselLitres ?? null,
+      cOilTechnician: voucherData?.cOilTechnician ?? getExpenseValue('cOilExpense'),
+      toll: voucherData?.toll ?? getExpenseValue('tollTax'),
+      cleaning: voucherData?.cleaning ??
+        (getExpenseValue("halfSafai") ?? 0) + (getExpenseValue("fullSafai") ?? 0),
+      alliedmor: voucherData?.alliedmor ?? getExpenseValue('alliedMorde'),
+      cityParchi: voucherData?.cityParchi ?? getExpenseValue('dcPerchi'),
+      refreshment: voucherData?.refreshment ?? getExpenseValue('refreshmentRate'),
+      repair: voucherData?.repair ?? null,
+      challan: voucherData?.generator ?? null,
+      miscellaneousExpense: voucherData?.miscellaneousExpense ?? null,
+      explanation: voucherData?.explanation ?? "",
+      revenue: voucherData?.revenue ?? 0,
+      date: voucherData?.date ?? date,
     },
   });
+
+
+  useEffect(() => {
+    if (voucherData) {
+      methods.reset({
+        busId: voucherData.busId ?? Number(busId),
+        driverId: voucherData.driverId ?? Number(driverId),
+        conductorId: voucherData.conductorId ?? Number(conductorId),
+        routeId: voucherData.routeId ?? Number(routeId),
+        voucherNumber: voucherData.voucherNumber ?? voucherNumber,
+        commission: voucherData.commission ?? getExpenseValue('driverCommission'),
+        diesel: voucherData.diesel ?? null,
+        dieselLitres: voucherData.dieselLitres ?? null,
+        cOilTechnician: voucherData.cOilTechnician ?? getExpenseValue('cOilExpense'),
+        toll: voucherData.toll ?? getExpenseValue('tollTax'),
+        cleaning:
+          voucherData.cleaning ??
+          (getExpenseValue("halfSafai") ?? 0) + (getExpenseValue("fullSafai") ?? 0),
+        alliedmor: voucherData.alliedmor ?? getExpenseValue('alliedMorde'),
+        cityParchi: voucherData.cityParchi ?? getExpenseValue('dcPerchi'),
+        refreshment: voucherData.refreshment ?? getExpenseValue('refreshmentRate'),
+        repair: voucherData.repair ?? null,
+        challan: voucherData.generator ?? null,
+        miscellaneousExpense: voucherData.miscellaneousExpense ?? null,
+        explanation: voucherData.explanation ?? "",
+        revenue: voucherData.revenue ?? 0,
+        date: voucherData.date ?? date,
+      });
+    }
+  }, [voucherData, methods, busId, driverId, conductorId, routeId, voucherNumber, date]);
+
+
 
   const handleRevenueCalculation = (data: any) => {
     const totalExpense =
@@ -445,10 +481,11 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   };
 
   const onSubmit = async (data: any) => {
-    setLoading(true);
+    setLoading(true)
     try {
       const sanitizedData = {
         ...data,
+        id: voucherData?.id,
         voucherNumber: Number(voucherNumber),
         busId: Number(data.busId),
         driverId: Number(data.driverId),
@@ -468,58 +505,88 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         miscellaneousExpense: Number(data.miscellaneousExpense) || 0,
         explanation: data.explanation,
         revenue: Number(data.revenue) || 0,
-      };
+      }
 
-      const newVoucher = await createBusClosingVoucher(sanitizedData);
+      let newVoucher: BusClosingVoucher | undefined;
+      if (voucherData) {
+        // Update existing voucher
+        newVoucher = await updateBusClosingVoucher(voucherData.id, sanitizedData)
 
-      // dispatch(addBusClosingVoucher(sanitizedData));
-      // const newVoucher = vouchers[vouchers.length - 1];
+        // Process trips - update existing ones and create new ones
+        const updatedTripInfo = tripsInformation.map(async (info: TripInformation) => {
+          // If the trip already has a routeClosingVoucherId, it's an existing trip
+          if (info.routeClosingVoucherId) {
+            await updateTrip(info.id, info);
+          } else {
+            const updatedTrip = {
+              ...info,
+              routeClosingVoucherId: voucherData?.id ?? null,
+            };
 
-      const updatedTripInfo = tripsInformation.map((info: TripInformation) => ({
-        ...info,
-        routeClosingVoucherId: newVoucher?.id,
-      }));
+            await createTrip(updatedTrip);
+          }
+        });
 
-      await Promise.all(
-        updatedTripInfo.map(async (trip) => {
-          await createTrip(trip);
-          // dispatch(addSavedTripInformation(trip))
+        await Promise.all(updatedTripInfo);
+        toast({
+          title: "Success",
+          description: "Bus closing voucher updated successfully!",
+          variant: "default",
+          duration: 1000,
         })
-      );
 
-      dispatch(setTripInformation([]));
-      dispatch(setBusClosing([]));
-      setDriverId("");
-      setBusId("");
-      setConductorId("");
-      setSelectedRoute("");
+      } else {
+        // Create new voucher
+        newVoucher = await createBusClosingVoucher(sanitizedData)
+
+        // Create all trips for new voucher
+        const updatedTripInfo = tripsInformation.map((info: TripInformation) => ({
+          ...info,
+          routeClosingVoucherId: newVoucher?.id,
+        }))
+
+        await Promise.all(
+          updatedTripInfo.map(async (trip: any) => {
+            await createTrip(trip)
+          }),
+        )
+
+        toast({
+          title: "Success",
+          description: "Bus closing voucher created successfully!",
+          variant: "default",
+          duration: 1000,
+        })
+      }
+
+      dispatch(setTripInformation([]))
+      dispatch(setBusClosing([]))
+      setDriverId("")
+      setBusId("")
+      setConductorId("")
+      setSelectedRoute("")
       setVoucherNumber("")
-      methods.reset();
-      setIsVoucherShow(false);
+      methods.reset()
+      setIsVoucherShow(false)
 
-      // Show success toast
-      toast({
-        title: 'Success',
-        description: 'Bus closing voucher created successfully!',
-        variant: 'default',
-        duration: 1000
-      });
-
+      // Trigger PDF print
       printPDF(sanitizedData);
+      router.push('/dashboard/view-closing-voucher')
     } catch (error) {
-      console.error('Error during submission:', error);
+      console.error("Error during submission:", error)
 
       // Show error toast
       toast({
-        title: 'Error',
-        description: 'An error occurred while creating the voucher.',
-        variant: 'destructive',
-        duration: 1200
-      });
+        title: "Error",
+        description: "An error occurred while processing the voucher.",
+        variant: "destructive",
+        duration: 1200,
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
 
 
   return (
@@ -581,7 +648,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         {/* Submit Button */}
         <div className="col-span-3 flex justify-start md:justify-end mt-4">
           <Button type="submit" disabled={loading}>
-            {loading ? 'Submitting...' : 'Submit'}
+            {loading ? "Submitting..." : voucherData ? "Edit Voucher" : "Submit"}
           </Button>
         </div>
       </form>

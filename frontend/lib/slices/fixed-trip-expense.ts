@@ -11,6 +11,7 @@ export type FixedTripExpense = {
   counter: number;
   dcParchi: number;
   refreshment: number;
+  commissionType?: string;
 };
 
 // Define the TripState interface

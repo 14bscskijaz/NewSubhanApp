@@ -24,6 +24,7 @@ export type BusClosingVoucher = {
   repair:number | null;
   explanation:string;
   routeId?: number;
+  isSubmitted?: boolean;
 };
 
 // Define the initial state with BusClosingVoucher type

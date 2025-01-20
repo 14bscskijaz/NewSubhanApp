@@ -2,24 +2,25 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 export type TripInformation = {
-  id: number;
-  routeClosingVoucherId: number | null;
-  routeId: number | null;
-  passengerCount: number | null; 
-  fullTicketBusinessCount: number | null;
-  fullTicketCount: number | null;
-  halfTicketCount: number | null;
-  freeTicketCount: number | null;
-  revenue: number | null; 
-  miscellaneousAmount: number | null;
-  revenueDiffExplanation: string;
-  loadEarning: number | null,
-  reference: string | null,
-  rewardCommission: number | null,
-  refreshmentExpense: number | null,
-  checkerExpense: number | null,
+  id: number
+  routeClosingVoucherId: number | null
+  routeId: number | null
+  passengerCount: number | null
+  fullTicketBusinessCount: number | null
+  fullTicketCount: number | null
+  halfTicketCount: number | null
+  freeTicketCount: number | null
+  revenue: number | null
+  miscellaneousAmount: number | null
+  revenueDiffExplanation: string
+  loadEarning: number | null
+  reference?: string | null // Made optional with ?
+  rewardCommission: number | null
+  refreshmentExpense: number | null
+  checkerExpense?: number | null // Made optional with ?
   date?: string
-};
+}
+
 
 export type TripInformationInput = TripInformation & {
   // These are collected from frontend but for backend and database
@@ -85,22 +86,39 @@ const tripInformationSlice = createSlice({
   reducers: {
     setTripInformation: (
       state,
-      action: PayloadAction<Omit<TripInformation[], 'id'>>
+      action: PayloadAction<TripInformation[]>
     ) => {
       state.tripsInformation = action.payload;
     },
     addTripInformation: (
       state,
-      action: PayloadAction<Omit<TripInformation, 'id'>>
+      action: PayloadAction<Partial<Omit<TripInformation, 'id'>> & { id?: number }>
     ) => {
       const newId =
-        state.tripsInformation.length > 0
+        action.payload.id !== undefined
+          ? action.payload.id
+          : state.tripsInformation.length > 0
           ? state.tripsInformation[state.tripsInformation.length - 1].id + 1
           : 1;
 
       const newTripInformation: TripInformation = {
-        ...action.payload,
-        id: newId
+        id: newId,
+        routeClosingVoucherId: action.payload.routeClosingVoucherId ?? null,
+        routeId: action.payload.routeId ?? null,
+        passengerCount: action.payload.passengerCount ?? null,
+        fullTicketBusinessCount: action.payload.fullTicketBusinessCount ?? null,
+        fullTicketCount: action.payload.fullTicketCount ?? null,
+        halfTicketCount: action.payload.halfTicketCount ?? null,
+        freeTicketCount: action.payload.freeTicketCount ?? null,
+        revenue: action.payload.revenue ?? null,
+        miscellaneousAmount: action.payload.miscellaneousAmount ?? null,
+        revenueDiffExplanation: action.payload.revenueDiffExplanation ?? '',
+        loadEarning: action.payload.loadEarning ?? null,
+        reference: action.payload.reference ?? null,
+        rewardCommission: action.payload.rewardCommission ?? null,
+        refreshmentExpense: action.payload.refreshmentExpense ?? null,
+        checkerExpense: action.payload.checkerExpense ?? null,
+        date: action.payload.date ?? undefined
       };
 
       state.tripsInformation.push(newTripInformation);

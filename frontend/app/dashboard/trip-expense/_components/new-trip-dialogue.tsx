@@ -20,7 +20,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { FixedTripExpense, addFixedTripExpense, setFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
+import { setFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
 import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
 import { Route, allRoutes } from '@/lib/slices/route-slices';
 import { RootState } from '@/lib/store';
@@ -39,6 +39,7 @@ export default function NewTripDialog() {
   const [dcParchi, setDcParchi] = useState<number | ''>('');
   const [refreshment, setRefreshment] = useState<number | ''>('');
   const [isPercentage, setIsPercentage] = useState<boolean>(true);
+  const [commissionType, setCommissionType] = useState<'Percentage' | 'Amount' | 'PerPerson'>('Percentage');
   const { toast } = useToast();
 
   const dispatch = useDispatch();
@@ -57,6 +58,20 @@ export default function NewTripDialog() {
     }
   };
 
+  const calculateCommission = () => {
+    switch (commissionType) {
+      case 'Percentage':
+        return Number(routeCommission) / 100;
+      case 'PerPerson':
+        // Will be multiplied by passenger count when used
+        return Number(routeCommission);
+      case 'Amount':
+        return Number(routeCommission);
+      default:
+        return 0;
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -67,7 +82,7 @@ export default function NewTripDialog() {
     }
 
     try {
-      const filterRouteCommission = isPercentage ? Number(routeCommission) / 100 : Number(routeCommission);
+      const filterRouteCommission = calculateCommission();
       const newTrip = {
         routeId: Number(routeId) ?? 0,
         routeCommission: filterRouteCommission,
@@ -76,6 +91,7 @@ export default function NewTripDialog() {
         counter: Number(counter),
         dcParchi: Number(dcParchi),
         refreshment: Number(refreshment),
+        commissionType: commissionType,
       };
 
       await createFixedTripExpense(newTrip);
@@ -110,6 +126,7 @@ export default function NewTripDialog() {
     setDcParchi('');
     setRefreshment('');
     setIsPercentage(true);
+    setCommissionType('Percentage');
   };
 
   return (
@@ -255,36 +272,39 @@ export default function NewTripDialog() {
                   id="standCommission"
                   type="number"
                   placeholder={
-                    isPercentage
+                    commissionType === 'Percentage'
                       ? "Enter Stand Commission (max 100)"
-                      : "Enter Stand Commission"
+                      : commissionType === 'PerPerson'
+                      ? "Enter Commission Per person"
+                      : "Enter Fixed Commission"
                   }
                   value={routeCommission}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (isPercentage) {
+                    if (commissionType === 'Percentage') {
                       if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
                         setRouteCommission(Number(value));
                       }
                     } else {
-                      // If not percentage, allow any value
+                      // If not Percentage, allow any value
                       setRouteCommission(Number(value));
                     }
                   }}
                 />
                 <Select
                   onValueChange={(value) => {
-                    setIsPercentage(value === "true");
-                    setRouteCommission("");
+                    setCommissionType(value as 'Percentage' | 'Amount' | 'PerPerson');
+                    setRouteCommission('');
                   }}
-                  defaultValue={isPercentage.toString()}
+                  defaultValue={commissionType}
                 >
                   <SelectTrigger id="isPercentage" className="w-20 text-gradient">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="true">%</SelectItem>
-                    <SelectItem value="false">#</SelectItem>
+                    <SelectItem value="Percentage">%</SelectItem>
+                    <SelectItem value="Amount">Amount</SelectItem>
+                    <SelectItem value="PerPerson">/person</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

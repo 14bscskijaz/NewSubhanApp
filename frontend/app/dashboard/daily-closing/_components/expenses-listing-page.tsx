@@ -21,9 +21,10 @@ import BusExpenseTable from './expenses-tables/bus-expense-table';
 import NetExpenses from './net-expense';
 import { getAllBuses } from '@/app/actions/bus.action';
 import { getAllRoutes } from '@/app/actions/route.action';
-import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
-import { createExpense, getAllExpenses, updateExpense } from '@/app/actions/expenses.action';
+import { getAllBusClosingVouchers, updateBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
+import { createExpense, getAllExpenses, updateExpense, deleteExpense } from '@/app/actions/expenses.action';
 import useAccounting from '@/hooks/useAccounting';
+import { is } from 'date-fns/locale';
 
 type TExpensesListingPage = {};
 
@@ -39,7 +40,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [generalPage, setGeneralPage] = useState(1);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [pageLimit, setPageLimit] = useState(10);
   const [pageGeneralLimit, setPageGeneralLimit] = useState(10);
   const { toast } = useToast();
@@ -61,55 +62,50 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
   useEffect(() => {
     const fetchFilteredData = () => {
-      const normalizedSelectedDate = selectedDate
-        ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
-        : undefined;
+      const normalizedSelectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
 
-      const savedExpensesForDate = savedExpenses.filter((expense) => {
+      const expensesForDate = savedExpenses.filter((expense) => {
         const expenseDate = new Date(expense.date);
         const normalizedExpenseDate = new Date(expenseDate.getFullYear(), expenseDate.getMonth(), expenseDate.getDate());
-
-        return normalizedExpenseDate.getTime() === normalizedSelectedDate?.getTime();
+        return normalizedExpenseDate.getTime() === normalizedSelectedDate.getTime();
       });
 
-      if (savedExpensesForDate.length > 0) {
-        // Set the expenses while preserving the original IDs
-        console.log(savedExpensesForDate, 'savedExpenseDate');
+      const vouchersForDate = busClosingVouchers.filter((voucher) => {
+        const voucherDate = new Date(voucher.date);
+        const normalizedVoucherDate = new Date(
+          voucherDate.getFullYear(),
+          voucherDate.getMonth(),
+          voucherDate.getDate()
+        );
+        return normalizedVoucherDate.getTime() === normalizedSelectedDate.getTime();
+      });
 
-        const updatedExpenses = savedExpensesForDate.map((expense, index) => ({
-          ...expense,
-          originalId: expense.id,  // Save the original ID
-        }));
-        dispatch(setExpenses(updatedExpenses));
-      } else {
-        const filteredData: Omit<Expense, 'id'>[] = busClosingVouchers
-          .filter((voucher) => {
-            if (!normalizedSelectedDate) return true;
+      let updatedExpenses: Omit<Expense, 'id'>[] = [];
 
-            const voucherDate = new Date(voucher.date);
-            const normalizedVoucherDate = new Date(
-              voucherDate.getFullYear(),
-              voucherDate.getMonth(),
-              voucherDate.getDate()
-            );
+      // Include all expenses for the selected date
+      updatedExpenses = expensesForDate.map(expense => ({
+        ...expense,
+        originalId: expense.id,
+      }));
 
-            return normalizedVoucherDate.getTime() === normalizedSelectedDate.getTime();
-          })
-          .map((voucher) => {
-            return {
-              busId: Number(voucher.busId),
-              busClosingVoucherId: voucher.id,
-              date: voucher.date,
-              description: '',
-              amount: 0,
-              type: 'bus',
-              routeId: voucher.routeId,
-              originalId: undefined,
-            };
+      // Add new expense entries for vouchers without corresponding expenses
+      vouchersForDate.forEach((voucher) => {
+        if (!updatedExpenses.some(e => e.busClosingVoucherId === voucher.id)) {
+          updatedExpenses.push({
+            busId: Number(voucher.busId),
+            busClosingVoucherId: voucher.id,
+            date: voucher.date,
+            description: '',
+            amount: 0,
+            type: 'bus',
+            routeId: voucher.routeId,
+            originalId: undefined,
           });
+        }
+      });
 
-        dispatch(setExpenses(filteredData));
-      }
+
+      dispatch(setExpenses(updatedExpenses));
     };
 
     fetchFilteredData();
@@ -171,7 +167,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
       .map(Number)
       .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
     if (foundVoucher) {
-      return sum + (Number(foundVoucher?.revenue) + Number(allExpenses) || 0);
+      return sum + (Number(foundVoucher?.revenue) || 0);
     }
     return sum;
   }, 0);
@@ -260,7 +256,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
           <div>Daily Closing Report</div>
           <div>New Subhan</div>
         </div>
-            <p><strong>Date:</strong> ${selectedDate ? selectedDate.toLocaleDateString() : 'All Dates'}</p>
+            <p><strong>Date:</strong> ${selectedDate.toLocaleDateString()}</p>
 
             <h2>Bus Expenses</h2>
             <table>
@@ -376,23 +372,31 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const handleSubmitExpenses = async () => {
     setLoading(true);
     try {
-      const expensePromises = expenses?.map(async (expense) => {
-        // Check if expense has an id to determine whether to update or create
-        if (Number(expense?.originalId) > 0) {
-          // Call your update action here if the id exists
-          console.log(expense, 'expenses');
+      const currentExpenseIds = new Set(expenses.map(e => e.originalId).filter(Boolean));
+      const savedExpenseIds = new Set(savedExpenses.map(e => e.id));
 
-          await updateExpense(Number(expense?.originalId), expense);
-        } else {
+      // Handle remaining expenses (create, update, or keep deleted)
+      const expensePromises = expenses.map(async (expense) => {
+        if (expense.type === 'bus') {
+          const voucher = busClosingVouchers.find(v => v.id === expense.busClosingVoucherId);
+          
+          if (voucher &&  !voucher.isSubmitted) {
+            // Update the busClosingVoucher isSubmitted status
+            await updateBusClosingVoucher(voucher.id, { ...voucher, isSubmitted: true });
+          }
+        }
 
-          // Call your create action here if the id doesn't exist
-          await createExpense(expense)
+        if (expense.originalId) {
+          // Update existing expense
+          await updateExpense(expense.originalId, expense);
+        } else if ((expense.amount > 0 || expense.description.trim() !== '') && expense.type === 'general') {
+          // Create new general expense only if it has an amount or description
+          await createExpense(expense);
+        } else if (expense.type === 'bus') {
+          // Always create new bus expenses
+          await createExpense(expense);
         }
       });
-
-      // const expensePromises = expenses.map(async (expense) => {
-      //   await createExpense(expense);
-      // });
 
       await Promise.all(expensePromises);
 
@@ -427,7 +431,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
           </Label>
           <DatePicker
             selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
+            onChange={(date: Date | undefined) => date && setSelectedDate(date)}
             className="w-[300px]"
           />
         </div>
@@ -471,3 +475,4 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
     </PageContainer>
   );
 }
+

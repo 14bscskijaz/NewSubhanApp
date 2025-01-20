@@ -92,30 +92,30 @@ export default function TripListingPage({ }: TTripListingPage) {
 
     const voucherDate = voucher.date ? new Date(voucher.date).getTime() : 0;
 
-    const matchesSearch = search
-      ? voucher.amount?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.description?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.type?.toString().toLowerCase().includes(search.toLowerCase())
-      : true;
+    // const matchesSearch = search
+    //   ? voucher.amount?.toString().toLowerCase().includes(search.toLowerCase()) ||
+    //     voucher.description?.toString().toLowerCase().includes(search.toLowerCase()) ||
+    //     voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
+    //     voucher.type?.toString().toLowerCase().includes(search.toLowerCase())
+    //   : true;
 
     const matchesDateRange = startDate && endDate ? voucherDate >= startDate && voucherDate <= endDate : true;
 
-    return matchesSearch && matchesDateRange;
+    return matchesDateRange;
   });
 
   const uniqueExpenses = Array.from(new Map(filteredVouchers.map((expense) => [expense.id, expense])).values());
 
-  const filteredExpense = uniqueExpenses.filter((expense) => {
-    const matchesSearch = search
-      ? expense.amount.toString().includes(search.toLowerCase()) ||
-        expense.date.toString().includes(search.toLowerCase()) ||
-        expense.description.toString().includes(search.toLowerCase()) ||
-        expense.type.toString().includes(search.toLowerCase())
-      : true;
+  // const filteredExpense = uniqueExpenses.filter((expense) => {
+  //   const matchesSearch = search
+  //     ? expense.amount.toString().includes(search.toLowerCase()) ||
+  //     expense.date.toString().includes(search.toLowerCase()) ||
+  //     expense.description.toString().includes(search.toLowerCase()) ||
+  //     expense.type.toString().includes(search.toLowerCase())
+  //     : true;
 
-    return matchesSearch;
-  });
+  //   return matchesSearch;
+  // });
 
   const handleCalculateExpenses = (voucher: any) => {
     const allExpenses = [
@@ -135,15 +135,15 @@ export default function TripListingPage({ }: TTripListingPage) {
     return allExpenses;
   };
 
-  const groupedExpenses = filteredExpense.reduce((acc, expense) => {
+  const groupedExpenses = uniqueExpenses.reduce((acc, expense) => {
     if (!acc[expense.date]) {
       acc[expense.date] = { revenue: 0, expense: 0, netIncome: 0, date: expense.date };
     }
 
     const voucher = vouchers.find((voucher) => voucher.id === expense.busClosingVoucherId);
-    const expenseCalc = Number(handleCalculateExpenses(voucher)) + Number(expense.amount);
+    const expenseCalc = Number(expense.amount);
 
-    const sum = Number(voucher?.revenue) + Number(handleCalculateExpenses(voucher));
+    const sum = Number(voucher?.revenue);
 
     if (voucher) {
       acc[expense.date].revenue += sum || 0;
@@ -172,9 +172,34 @@ export default function TripListingPage({ }: TTripListingPage) {
   }, {} as Record<string, { revenue: number; expense: number; netIncome: number; date: string }>);
 
   const aggregatedSummaryData = Object.values(aggregatedData);
+    const filterAggregatedSummaryData = Array.isArray(aggregatedSummaryData)
+    ? aggregatedSummaryData.filter((voucher) => {
 
+        // Extract the search parameter
+        const searchParam = searchParams?.get('q') || ''; // Safely get the 'q' parameter or default to empty string
+
+  
+        // If there is no searchParam, all vouchers match by default
+        if (!searchParam) return true;
+  
+        // Normalize searchParam for comparison
+        const normalizedSearchParam = searchParam.toLowerCase();
+  
+        // Extract the fields we want to search and handle null/undefined values
+        const { expense = '', netIncome = '', revenue = '' } = voucher;
+  
+        // Check if any field matches the search term
+        const matchesSearch = [expense, netIncome, revenue]
+          .filter(Boolean) 
+          .some((field) =>
+            field.toString().toLowerCase().includes(normalizedSearchParam)
+          );
+  
+        return matchesSearch; // Return true for matches
+      })
+    : [];
   // Sorting the aggregated summary data by date (ascending)
-  const sortedAggregatedSummaryData = aggregatedSummaryData.sort((a, b) => {
+  const sortedAggregatedSummaryData = filterAggregatedSummaryData.sort((a, b) => {
     const dateA = new Date(a.date).getTime();
     const dateB = new Date(b.date).getTime();
     return dateB - dateA; // Sort ascending by date (oldest first)
@@ -275,7 +300,7 @@ export default function TripListingPage({ }: TTripListingPage) {
               </thead>
               <tbody>
                 ${sortedAggregatedSummaryData.map(voucher => {
-                  return `
+        return `
                     <tr>
                       <td>${voucher?.date.split("T")[0]}</td>
                       <td>${formatNumber(Number(voucher.revenue)) || 0}</td>
@@ -283,13 +308,13 @@ export default function TripListingPage({ }: TTripListingPage) {
                       <td>${formatNumber(Number(voucher.netIncome)) || 0}</td>
                     </tr>
                   `;
-                }).join('')}
+      }).join('')}
               </tbody>
             </table>
           </body>
         </html>
       `;
-  
+
       printWindow.document.write(content);
       printWindow.document.close();
       printWindow.focus();
@@ -306,7 +331,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       });
     }
   };
-  
+
 
 
   const totalTripExpense = sortedAggregatedSummaryData.length;

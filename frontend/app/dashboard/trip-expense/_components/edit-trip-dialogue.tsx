@@ -41,6 +41,7 @@ export default function EditTripDialog({
   const [driverCommission, setDriverCommission] = useState<any>();
   const [isPercentage, setIsPercentage] = useState(true);
   const [routeError, setRouteError] = useState<string>(''); // State for route validation error
+  const [commissionType, setCommissionType] = useState<'Percentage' | 'Amount' | 'PerPerson'>('Percentage');
 
   useEffect(() => {
     setFormData({ ...trip });
@@ -48,11 +49,11 @@ export default function EditTripDialog({
     // Set the driverCommission and isPercentage based on routeCommission value
     const commissionValue = trip.routeCommission || 0;
     if (commissionValue < 1) {
-      setDriverCommission((commissionValue * 100).toString()); // Convert to percentage
-      setIsPercentage(true);
+      setDriverCommission((commissionValue * 100).toString());
+      setCommissionType('Percentage');
     } else {
-      setDriverCommission(commissionValue.toString()); // Show as absolute value
-      setIsPercentage(false);
+      setDriverCommission(commissionValue.toString());
+      setCommissionType('Amount');
     }
   }, [trip]);
 
@@ -65,13 +66,13 @@ export default function EditTripDialog({
   );
 
   const handleDriverCommissionChange = (value: string) => {
-    if (isPercentage) {
-      // Ensure value is between 0 and 100 when percentage is selected
+    if (commissionType === 'Percentage') {
+      // Ensure value is between 0 and 100 when Percentage is selected
       if (value === '' || (Number(value) >= 0 && Number(value) <= 100)) {
         setDriverCommission(value);
       }
     } else {
-      // Allow any numeric value when not percentage
+      // Allow any numeric value when not Percentage
       setDriverCommission(value);
     }
   };
@@ -94,11 +95,23 @@ export default function EditTripDialog({
       return; // Prevent form submission if route is not selected
     }
 
-    const filterRouteCommission = isPercentage ? Number(driverCommission) / 100 : Number(driverCommission);
+    let finalCommission;
+    switch (commissionType) {
+      case 'Percentage':
+        finalCommission = Number(driverCommission) / 100;
+        break;
+      case 'PerPerson':
+      case 'Amount':
+        finalCommission = Number(driverCommission);
+        break;
+      default:
+        finalCommission = 0;
+    }
+
     const updatedFormData = {
       ...formData,
-      routeCommission: filterRouteCommission,
-      isPercentage
+      routeCommission: finalCommission,
+      commissionType
     };
 
     onUpdate(updatedFormData);
@@ -187,23 +200,30 @@ export default function EditTripDialog({
                 <Input
                   id="standCommission"
                   type="number"
-                  placeholder={isPercentage ? 'Enter Stand Commission (max 100)' : 'Enter Stand Commission'}
+                  placeholder={
+                    commissionType === 'Percentage'
+                      ? "Enter Stand Commission (max 100)"
+                      : commissionType === 'PerPerson'
+                      ? "Enter Commission Per Person"
+                      : "Enter Fixed Commission"
+                  }
                   value={driverCommission}
                   onChange={(e) => handleDriverCommissionChange(e.target.value)}
                 />
                 <Select
                   onValueChange={(value) => {
-                    setIsPercentage(value === 'true');
+                    setCommissionType(value as 'Percentage' | 'Amount' | 'PerPerson');
                     setDriverCommission('');
                   }}
-                  defaultValue={isPercentage.toString()}
+                  defaultValue={commissionType}
                 >
-                  <SelectTrigger id="isPercentage" className="w-20">
+                  <SelectTrigger id="isPercentage" className="w-28">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="true">%</SelectItem>
-                    <SelectItem value="false">#</SelectItem>
+                    <SelectItem value="Percentage">%</SelectItem>
+                    <SelectItem value="Amount">Fixed</SelectItem>
+                    <SelectItem value="PerPerson">/Person</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -218,3 +238,4 @@ export default function EditTripDialog({
     </Dialog>
   );
 }
+

@@ -17,6 +17,8 @@ import ClosingExpenseTable from './route-closing-tables';
 import { getAllRoutes } from '@/app/actions/route.action';
 import { setRoute } from '@/lib/slices/route-slices';
 import { useToast } from '@/hooks/use-toast';
+import { getAllTicketPrices } from '@/app/actions/pricing.action';
+import { setTicketRaw } from '@/lib/slices/pricing-slices';
 
 type TExpenseListingPage = {};
 
@@ -36,8 +38,10 @@ export default function ClosingExpenseListingPage({ }: TExpenseListingPage) {
   const fetchFixedBusClosing = async () => {
     try {
       const routes = await getAllRoutes();
+      const fetchPricing = await getAllTicketPrices();
       const fixedBusClosing = await getAllFixedBusClosingExpenses()
       dispatch(setRoute(routes));
+      dispatch(setTicketRaw(fetchPricing));
       dispatch(setClosingExpense(fixedBusClosing))
       
     } catch (error:any) {
@@ -102,7 +106,7 @@ export default function ClosingExpenseListingPage({ }: TExpenseListingPage) {
         <div className="flex items-start justify-between">
           <Heading
             title={`Closing Expenses (${totalClosingExpense})`}
-            description="Manage your closing expenses for trips."
+            description=""
           />
           <NewExpenseDialog />
         </div>

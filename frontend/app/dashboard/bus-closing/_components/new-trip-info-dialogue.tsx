@@ -480,7 +480,7 @@ export default function NewTripInfoDialog({
               <Input
                 id="loadEarning"
                 type="number"
-                placeholder="Enter load expense"
+                placeholder="Enter load Earning"
                 value={tripData.loadEarning?.toString()}
                 onChange={handleInputChange}
                 min={0}

@@ -73,59 +73,80 @@ export default function EditRouteDialog({
     );
   };
 
-  const calculateRevenue = (updatedData: Omit<TripInformationInput, 'id'>) => {
+const calculateRevenue = (updatedData: Omit<TripInformationInput, "id">) => {
     const standardTicketPrice = tickets.find(
-      (ticket) =>
-        ticket.routeId === updatedData.routeId &&
-        ticket.busType === 'Standard'
-    )?.ticketPrice;
+      (ticket) => ticket.routeId === updatedData.routeId && ticket.busType === "Standard",
+    )?.ticketPrice
     const luxuryTicketPrice = tickets.find(
-      (ticket) =>
-        ticket.routeId === updatedData.routeId &&
-        ticket.busType === 'Business'
-    )?.ticketPrice;
+      (ticket) => ticket.routeId === updatedData.routeId && ticket.busType === "Business",
+    )?.ticketPrice
 
-    let ticketEarnings = 0;
+    let ticketEarnings = 0
     if (standardTicketPrice !== undefined || luxuryTicketPrice !== undefined) {
-      const fullCount = Number(updatedData.fullTicketCount) || 0;
-      const halfCount = Number(updatedData.halfTicketCount) || 0;
-      const luxuryCount = Number(updatedData.fullTicketBusinessCount) || 0;
+      const fullCount = Number(updatedData.fullTicketCount) || 0
+      const halfCount = Number(updatedData.halfTicketCount) || 0
+      const luxuryCount = Number(updatedData.fullTicketBusinessCount) || 0
       const revenue = calcTicketEarnings(
         fullCount,
         halfCount,
         luxuryCount,
         standardTicketPrice ?? 0,
-        luxuryTicketPrice ?? 0
-      );
-      ticketEarnings = revenue;
+        luxuryTicketPrice ?? 0,
+      )
+      ticketEarnings = revenue
     }
 
-    const expenseForThisRouteId = fixedTripExpenses.find(
-      (expense) => expense.routeId === Number(updatedData.routeId)
-    );
+    const expenseForThisRouteId = fixedTripExpenses.find((expense) => expense.routeId === Number(updatedData.routeId))
 
-    let remaining = ticketEarnings;
-    remaining -= expenseForThisRouteId?.rewardCommission ?? 0;
-    remaining -= expenseForThisRouteId?.steward ?? 0;
-    remaining -= expenseForThisRouteId?.counter ?? 0;
-    remaining -= expenseForThisRouteId?.dcParchi ?? 0;
-    remaining -= Number(updatedData.refreshmentExpense) || 0;
-    remaining += Number(updatedData.loadEarning) || 0;
-    remaining -= Number(updatedData.rewardCommission) || 0;
-    remaining -= Number(updatedData.checkerExpense) || 0;
+    let remaining = ticketEarnings
 
-    if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
-      remaining -= expenseForThisRouteId.routeCommission;
-    } else if (expenseForThisRouteId && expenseForThisRouteId.routeCommission < 1) {
-      const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings;
-      remaining -= standCommissionValue;
+    remaining -= expenseForThisRouteId?.steward ?? 0
+    remaining -= expenseForThisRouteId?.counter ?? 0
+    remaining -= expenseForThisRouteId?.dcParchi ?? 0
+    remaining -= expenseForThisRouteId?.refreshment ?? 0
+
+    if (isRewardCommissionCustom) {
+      remaining -= Number(updatedData?.rewardCommission) || 0;
+    }
+    else if (!isRewardCommissionCustom && expenseForThisRouteId?.rewardCommission) {
+      remaining -= expenseForThisRouteId.rewardCommission || 0;
+    }
+    // Calculate and subtract refreshment expense based on passenger count
+    if (isRefreshmentExpenseCustom) {
+      remaining -= Number(updatedData?.refreshmentExpense) || 0
+    } else if (expenseForThisRouteId?.refreshment && updatedData.passengerCount) {
+      const calculatedRefreshmentExpense = Number(updatedData.passengerCount) * expenseForThisRouteId.refreshment
+      remaining -= calculatedRefreshmentExpense
     }
 
+    remaining += Number(updatedData?.loadEarning) || 0
+    remaining -= Number(updatedData?.checkerExpense) || 0
+
+    // Handle reward commission logic based on commission type
+    if (expenseForThisRouteId) {
+      if (expenseForThisRouteId?.commissionType === "PerPerson") {
+        const totalPassengers =
+          (Number(updatedData.fullTicketCount) || 0) +
+          (Number(updatedData.halfTicketCount) || 0) +
+          (Number(updatedData.fullTicketBusinessCount) || 0)
+        const payablePassengers = totalPassengers
+        remaining -= payablePassengers * expenseForThisRouteId.routeCommission
+      } else if (expenseForThisRouteId?.commissionType === "Percentage") {
+
+        const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings
+        remaining -= standCommissionValue
+      } else if (expenseForThisRouteId?.commissionType === "Amount") {
+        remaining -= expenseForThisRouteId.routeCommission
+      }
+    }
+
+    // Apply miscellaneous amount
     if (updatedData.miscellaneousAmount) {
-      remaining += Number(updatedData.miscellaneousAmount);
+      remaining -= Number(updatedData.miscellaneousAmount)
     }
-    return Number(remaining);
-  };
+
+    return Number(remaining)
+  }
 
   const handleRouteChange = (value: string) => {
     const route = routes.find(route => route.id === Number(value))
@@ -382,7 +403,7 @@ export default function EditRouteDialog({
               <Input
                 id="loadEarning"
                 type="number"
-                placeholder="Enter load expense"
+                placeholder="Enter load earning"
                 value={tripData.loadEarning?.toString()}
                 onChange={handleInputChange}
                 min={0}

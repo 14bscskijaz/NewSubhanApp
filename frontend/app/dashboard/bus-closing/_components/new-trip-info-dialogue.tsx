@@ -1,5 +1,5 @@
-import SelectField from '@/components/ui/SelectField';
-import { Button } from '@/components/ui/button';
+import SelectField from "@/components/ui/SelectField"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -7,48 +7,39 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import {
-  FixedTripExpense,
-  allFixedTripExpenses
-} from '@/lib/slices/fixed-trip-expense';
-import { TicketPriceRaw, allTicketsRaw } from '@/lib/slices/pricing-slices';
-import { Route, allRoutes } from '@/lib/slices/route-slices';
-import {
-  TripInformation,
-  TripInformationInput,
-  addTripInformation
-} from '@/lib/slices/trip-information';
-import { RootState } from '@/lib/store';
-import { Plus } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/hooks/use-toast"
+import { type FixedTripExpense, allFixedTripExpenses } from "@/lib/slices/fixed-trip-expense"
+import { type TicketPriceRaw, allTicketsRaw } from "@/lib/slices/pricing-slices"
+import { type Route, allRoutes } from "@/lib/slices/route-slices"
+import { type TripInformation, type TripInformationInput, addTripInformation } from "@/lib/slices/trip-information"
+import type { RootState } from "@/lib/store"
+import { Plus } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
 
 export default function NewTripInfoDialog({
   busId,
   voucherNumber,
   driverId,
   date,
-  routeId
+  routeId,
 }: {
-  busId: string;
-  voucherNumber: string;
-  driverId: string;
-  date?: string;
-  routeId: string;
+  busId: string
+  voucherNumber: string
+  driverId: string
+  date?: string
+  routeId: string
 }) {
-  const routes = useSelector<RootState, Route[]>(allRoutes);
-  const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
-  const fixedTripExpenses = useSelector<RootState, FixedTripExpense[]>(
-    allFixedTripExpenses
-  );
-  const [open, setOpen] = useState(false);
-  const [tripData, setTripData] = useState<Omit<TripInformationInput, 'id'>>({
+  const routes = useSelector<RootState, Route[]>(allRoutes)
+  const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw)
+  const fixedTripExpenses = useSelector<RootState, FixedTripExpense[]>(allFixedTripExpenses)
+  const [open, setOpen] = useState(false)
+  const [tripData, setTripData] = useState<Omit<TripInformationInput, "id">>({
     routeClosingVoucherId: null,
     routeId: null,
     passengerCount: null,
@@ -64,197 +55,177 @@ export default function NewTripInfoDialog({
     loadEarning: null,
     rewardCommission: null,
     refreshmentExpense: null,
-    reference:"",
+    reference: "",
     checkerExpense: null,
-    date: date
-  });
+    date: date,
+  })
 
-  const [isRefreshmentExpenseCustom, setIsRefreshmentExpenseCustom] = useState(false);
-  const [isRewardCommissionCustom, setIsRewardCommissionCustom] = useState(false);
+  const [isRefreshmentExpenseCustom, setIsRefreshmentExpenseCustom] = useState(false)
+  const [isRewardCommissionCustom, setIsRewardCommissionCustom] = useState(false)
 
-  const { toast } = useToast();
+  const { toast } = useToast()
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
   const calcTicketEarnings = (
     fullCount: number,
     halfCount: number,
     luxuryCount: number,
     standardTicketPrice: number,
-    luxuryTicketPrice: number
+    luxuryTicketPrice: number,
   ) => {
-    return (
-      fullCount * standardTicketPrice +
-      (halfCount * standardTicketPrice) / 2 +
-      luxuryCount * luxuryTicketPrice
-    );
-  };
+    return fullCount * standardTicketPrice + (halfCount * standardTicketPrice) / 2 + luxuryCount * luxuryTicketPrice
+  }
 
-  const calculateRevenue = (updatedData: Omit<TripInformationInput, 'id'>) => {
+  const calculateRevenue = (updatedData: Omit<TripInformationInput, "id">) => {
     const standardTicketPrice = tickets.find(
-      (ticket) =>
-        ticket.routeId === updatedData.routeId &&
-        ticket.busType === 'Standard'
-    )?.ticketPrice;
+      (ticket) => ticket.routeId === updatedData.routeId && ticket.busType === "Standard",
+    )?.ticketPrice
     const luxuryTicketPrice = tickets.find(
-      (ticket) =>
-        ticket.routeId === updatedData.routeId &&
-        ticket.busType === 'Business'
-    )?.ticketPrice;
+      (ticket) => ticket.routeId === updatedData.routeId && ticket.busType === "Business",
+    )?.ticketPrice
 
-    let ticketEarnings = 0;
+    let ticketEarnings = 0
     if (standardTicketPrice !== undefined || luxuryTicketPrice !== undefined) {
-      const fullCount = Number(updatedData.fullTicketCount) || 0;
-      const halfCount = Number(updatedData.halfTicketCount) || 0;
-      const luxuryCount = Number(updatedData.fullTicketBusinessCount) || 0;
+      const fullCount = Number(updatedData.fullTicketCount) || 0
+      const halfCount = Number(updatedData.halfTicketCount) || 0
+      const luxuryCount = Number(updatedData.fullTicketBusinessCount) || 0
       const revenue = calcTicketEarnings(
         fullCount,
         halfCount,
         luxuryCount,
         standardTicketPrice ?? 0,
-        luxuryTicketPrice ?? 0
-      );
-      ticketEarnings = revenue;
+        luxuryTicketPrice ?? 0,
+      )
+      ticketEarnings = revenue
     }
 
-    const expenseForThisRouteId = fixedTripExpenses.find(
-      (expense) => expense.routeId === Number(updatedData.routeId)
-    );
+    const expenseForThisRouteId = fixedTripExpenses.find((expense) => expense.routeId === Number(updatedData.routeId))
 
-    let remaining = ticketEarnings;
-    remaining -= expenseForThisRouteId?.rewardCommission ?? 0;
-    remaining -= expenseForThisRouteId?.steward ?? 0;
-    remaining -= expenseForThisRouteId?.counter ?? 0;
-    remaining -= expenseForThisRouteId?.dcParchi ?? 0;
-    remaining -= Number(updatedData.refreshmentExpense) || 0;
-    remaining += Number(updatedData.loadEarning) || 0;
-    remaining -= Number(updatedData.rewardCommission) || 0;
-    remaining -= Number(updatedData.checkerExpense) || 0;
+    let remaining = ticketEarnings
+    remaining -= expenseForThisRouteId?.rewardCommission ?? 0
+    remaining -= expenseForThisRouteId?.steward ?? 0
+    remaining -= expenseForThisRouteId?.counter ?? 0
+    remaining -= expenseForThisRouteId?.dcParchi ?? 0
+    remaining -= expenseForThisRouteId?.refreshment ?? 0
+
+    // Calculate and subtract refreshment expense based on passenger count
+    if (isRefreshmentExpenseCustom) {
+      remaining -= Number(updatedData?.refreshmentExpense) || 0
+    } else if (expenseForThisRouteId?.refreshment && updatedData.passengerCount) {
+      const calculatedRefreshmentExpense = Number(updatedData.passengerCount) * expenseForThisRouteId.refreshment
+      remaining -= calculatedRefreshmentExpense
+    }
+
+    remaining += Number(updatedData?.loadEarning) || 0
+    remaining -= Number(updatedData?.checkerExpense) || 0
 
     // Handle reward commission logic based on commission type
     if (expenseForThisRouteId) {
-      if (expenseForThisRouteId?.commissionType === 'PerPerson') {
-        // If commission type is 'PerPerson', multiply with total passengers excluding free passengers
-        const totalPassengers = (Number(updatedData.fullTicketCount) || 0) + (Number(updatedData.halfTicketCount) || 0) + (Number(updatedData.fullTicketBusinessCount) || 0);
-        // const freePassengers = Number(updatedData.freeTicketCount) || 0;
-        const payablePassengers = totalPassengers;
-        
-        remaining -= payablePassengers * expenseForThisRouteId.rewardCommission; // Multiply by reward commission per person
-      } else if (expenseForThisRouteId?.commissionType === 'percentage') {
-        // If commission type is 'percentage', multiply with ticket earnings
-        const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings;
-        remaining -= standCommissionValue;
-      } else if (expenseForThisRouteId?.commissionType === 'amount') {
-        // If commission type is 'amount', simply subtract the value directly
-        remaining -= expenseForThisRouteId.rewardCommission;
+      if (expenseForThisRouteId?.commissionType === "PerPerson") {
+        const totalPassengers =
+          (Number(updatedData.fullTicketCount) || 0) +
+          (Number(updatedData.halfTicketCount) || 0) +
+          (Number(updatedData.fullTicketBusinessCount) || 0)
+        const payablePassengers = totalPassengers
+        remaining -= payablePassengers * expenseForThisRouteId.routeCommission
+      } else if (expenseForThisRouteId?.commissionType === "Percentage") {
+        const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings
+        remaining -= standCommissionValue
+      } else if (expenseForThisRouteId?.commissionType === "Amount") {
+        remaining -= expenseForThisRouteId.routeCommission
       }
-    }
-
-    // Apply routeCommission based on commission type (percentage)
-    if (expenseForThisRouteId && expenseForThisRouteId.routeCommission > 1) {
-      remaining -= expenseForThisRouteId.routeCommission;
-    } else if (expenseForThisRouteId && expenseForThisRouteId?.commissionType === 'Percentage') {
-      const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings;
-      remaining -= standCommissionValue;
     }
 
     // Apply miscellaneous amount
     if (updatedData.miscellaneousAmount) {
-      remaining += Number(updatedData.miscellaneousAmount);
+      remaining -= Number(updatedData.miscellaneousAmount)
     }
 
-    return Number(remaining);
-};
+    return Number(remaining)
+  }
 
-
-  const handleSelectChange = (
-    id: keyof TripInformationInput,
-    value: string
-  ) => {
-    const stationName = value.split(' (')[0];
+  const handleSelectChange = (id: keyof TripInformationInput, value: string) => {
+    const stationName = value.split(" (")[0]
     setTripData((prev) => {
-      const updatedData = { ...prev, [id]: stationName };
+      const updatedData = { ...prev, [id]: stationName }
 
-      if (id === 'sourceStation' || id === 'destinationStation') {
+      if (id === "sourceStation" || id === "destinationStation") {
         const newRouteId = routes.find(
           (route) =>
-            route.sourceAdda ===
-            (id === 'sourceStation' ? stationName : prev.sourceStation) &&
-            route.destinationAdda ===
-            (id === 'destinationStation' ? stationName : prev.destinationStation)
-        )?.id;
-        updatedData.routeId = newRouteId ? Number(newRouteId) : null;
-        updatedData.revenue = calculateRevenue(updatedData);
+            route.sourceAdda === (id === "sourceStation" ? stationName : prev.sourceStation) &&
+            route.destinationAdda === (id === "destinationStation" ? stationName : prev.destinationStation),
+        )?.id
+        updatedData.routeId = newRouteId ? Number(newRouteId) : null
+        updatedData.revenue = calculateRevenue(updatedData)
       }
 
-      return updatedData;
-    });
-  };
+      return updatedData
+    })
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
+    const { id, value } = e.target
     const numericFields = [
-      'routeClosingVoucherId',
-      'routeId',
-      'passengerCount',
-      'fullTicketBusinessCount',
-      'fullTicketCount',
-      'halfTicketCount',
-      'freeTicketCount',
-      'revenue',
-      'reference',
-      'refreshmentExpense',
-      'rewardCommission',
-      "checkerExpense"
-    ];
+      "routeClosingVoucherId",
+      "routeId",
+      "passengerCount",
+      "fullTicketBusinessCount",
+      "fullTicketCount",
+      "halfTicketCount",
+      "freeTicketCount",
+      "revenue",
+      "reference",
+      "refreshmentExpense",
+      "rewardCommission",
+      "checkerExpense",
+    ]
 
     setTripData((prev) => {
-      let newValue = value;
+      let newValue = value
       if (numericFields.includes(id)) {
-        const numericValue = Number(value);
+        const numericValue = Number(value)
         if (id === "fullTicketBusinessCount" && numericValue > 9) {
-          newValue = "9";
+          newValue = "9"
         }
       }
 
-      if (id === 'refreshmentExpense') {
-        setIsRefreshmentExpenseCustom(true);
+      if (id === "refreshmentExpense") {
+        setIsRefreshmentExpenseCustom(true)
       }
 
-      if (id === 'rewardCommission') {
-        setIsRewardCommissionCustom(true);
+      if (id === "rewardCommission") {
+        setIsRewardCommissionCustom(true)
       }
 
-      if (id === 'routeId' || id === 'passengerCount') {
-        setIsRefreshmentExpenseCustom(false);
-        setIsRewardCommissionCustom(false);
+      if (id === "routeId" || id === "passengerCount") {
+        setIsRefreshmentExpenseCustom(false)
+        setIsRewardCommissionCustom(false)
       }
 
       const newData = {
         ...prev,
-        [id]: newValue
-      };
+        [id]: newValue,
+      }
 
-      const fullCount = Number(newData.fullTicketCount) || 0;
-      const halfCount = Number(newData.halfTicketCount) || 0;
-      const freeCount = Number(newData.freeTicketCount) || 0;
-      const luxuryCount = Number(newData.fullTicketBusinessCount) || 0;
+      const fullCount = Number(newData.fullTicketCount) || 0
+      const halfCount = Number(newData.halfTicketCount) || 0
+      const freeCount = Number(newData.freeTicketCount) || 0
+      const luxuryCount = Number(newData.fullTicketBusinessCount) || 0
 
-      newData.passengerCount = Number(
-        fullCount + halfCount + freeCount + luxuryCount
-      );
+      newData.passengerCount = Number(fullCount + halfCount + freeCount + luxuryCount)
 
-      newData.revenue = calculateRevenue(newData);
+      newData.revenue = calculateRevenue(newData)
 
-      return newData;
-    });
-  };
+      return newData
+    })
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
-      event.preventDefault();
+      event.preventDefault()
 
-      const newTripData: Omit<TripInformation, 'id'> = {
+      const newTripData: Omit<TripInformation, "id"> = {
         routeClosingVoucherId: Number(tripData.routeClosingVoucherId),
         routeId: Number(tripData.routeId),
         passengerCount: Number(tripData.passengerCount),
@@ -264,30 +235,30 @@ export default function NewTripInfoDialog({
         freeTicketCount: Number(tripData.freeTicketCount),
         miscellaneousAmount: Number(tripData.miscellaneousAmount),
         revenue: Number(tripData.revenue),
-        reference:tripData.reference,
+        reference: tripData.reference,
         revenueDiffExplanation: tripData.revenueDiffExplanation,
         refreshmentExpense: Number(tripData.refreshmentExpense),
         loadEarning: Number(tripData.loadEarning),
         rewardCommission: Number(tripData.rewardCommission),
         checkerExpense: Number(tripData.checkerExpense),
-        date: date
-      };
+        date: date,
+      }
 
-      dispatch(addTripInformation(newTripData));
+      dispatch(addTripInformation(newTripData))
 
-      setOpen(false);
-      resetForm();
+      setOpen(false)
+      resetForm()
     } catch (error: any) {
-      console.error(error.message);
+      console.error(error.message)
 
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
-        duration: 1000
+        duration: 1000,
       })
     }
-  };
+  }
 
   const resetForm = () => {
     setTripData({
@@ -300,77 +271,79 @@ export default function NewTripInfoDialog({
       freeTicketCount: null,
       miscellaneousAmount: null,
       revenue: null,
-      revenueDiffExplanation: '',
-      sourceStation: '',
-      destinationStation: '',
+      revenueDiffExplanation: "",
+      sourceStation: "",
+      destinationStation: "",
       loadEarning: null,
-      reference:"",
+      reference: "",
       rewardCommission: null,
       refreshmentExpense: null,
       checkerExpense: null,
-      date: date
-    });
-    setIsRefreshmentExpenseCustom(false);
-    setIsRewardCommissionCustom(false);
-  };
+      date: date,
+    })
+    setIsRefreshmentExpenseCustom(false)
+    setIsRewardCommissionCustom(false)
+  }
 
   const handleRouteChange = (value: string) => {
-    const route = routes.find(route => route.id === Number(value))
+    const route = routes.find((route) => route.id === Number(value))
     setTripData((prev) => {
-      const updatedData = { ...prev, sourceStation: route?.sourceAdda || "", destinationStation: route?.destinationAdda || "" }
-      updatedData.routeId = Number(route?.id) || null;
-      updatedData.revenue = calculateRevenue(updatedData);
-      return updatedData;
+      const updatedData = {
+        ...prev,
+        sourceStation: route?.sourceAdda || "",
+        destinationStation: route?.destinationAdda || "",
+      }
+      updatedData.routeId = Number(route?.id) || null
+      updatedData.revenue = calculateRevenue(updatedData)
+      return updatedData
     })
-
   }
 
   const calculateRefreshmentExpense = () => {
     if (tripData.routeId && tripData.passengerCount) {
-      const expenseForThisRouteId = fixedTripExpenses.find(
-        (expense) => expense.routeId === Number(tripData.routeId)
-      );
+      const expenseForThisRouteId = fixedTripExpenses.find((expense) => expense.routeId === Number(tripData.routeId))
       if (expenseForThisRouteId && expenseForThisRouteId.refreshment) {
-        const calculatedRefreshmentExpense =
-          Number(tripData.passengerCount) * expenseForThisRouteId.refreshment;
-        return calculatedRefreshmentExpense;
+        const calculatedRefreshmentExpense = Number(tripData.passengerCount) * expenseForThisRouteId.refreshment
+        return calculatedRefreshmentExpense
       }
     }
-    return '0';
-  };
+    return "0"
+  }
 
   const calculateRewardCommission = () => {
     if (tripData.routeId) {
-      const expenseForThisRouteId = fixedTripExpenses.find(
-        (expense) => expense.routeId === Number(tripData.routeId)
-      );
+      const expenseForThisRouteId = fixedTripExpenses.find((expense) => expense.routeId === Number(tripData.routeId))
       if (expenseForThisRouteId && expenseForThisRouteId.rewardCommission) {
-        return expenseForThisRouteId.rewardCommission;
+        return expenseForThisRouteId.rewardCommission
       }
     }
-    return '0';
-  };
+    return "0"
+  }
 
   useEffect(() => {
     if (!isRefreshmentExpenseCustom) {
-      const calculatedExpense = calculateRefreshmentExpense();
+      const calculatedExpense = calculateRefreshmentExpense()
       setTripData((prev) => ({
         ...prev,
-        refreshmentExpense: Number(calculatedExpense)
-      }));
+        refreshmentExpense: Number(calculatedExpense),
+      }))
     }
     if (!isRewardCommissionCustom) {
-      const calculatedCommission = calculateRewardCommission();
+      const calculatedCommission = calculateRewardCommission()
       setTripData((prev) => ({
         ...prev,
-        rewardCommission: Number(calculatedCommission)
-      }));
+        rewardCommission: Number(calculatedCommission),
+      }))
     }
-    // console.log( "date ---------- in new trip info: ", date);
-  }, [tripData.routeId, tripData.passengerCount, fixedTripExpenses, isRefreshmentExpenseCustom, isRewardCommissionCustom]);
+  }, [
+    tripData.routeId,
+    tripData.passengerCount,
+    fixedTripExpenses,
+    isRefreshmentExpenseCustom,
+    isRewardCommissionCustom,
+  ])
 
-  const isFormComplete =
-    busId && voucherNumber && driverId && routeId && date;
+  const isFormComplete = busId && voucherNumber && driverId && routeId && date
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -386,8 +359,7 @@ export default function NewTripInfoDialog({
               Add New <span className="text-gradient">Trip</span>
             </DialogTitle>
             <DialogDescription>
-              Enter the details of the new bus closing expense here. Click save
-              when you are done.
+              Enter the details of the new bus closing expense here. Click save when you are done.
             </DialogDescription>
           </DialogHeader>
 
@@ -407,7 +379,7 @@ export default function NewTripInfoDialog({
             />
 
             <div className="grid gap-2">
-              <Label htmlFor="fullTicketBusinessCount" className='text-gradient'>
+              <Label htmlFor="fullTicketBusinessCount" className="text-gradient">
                 Full Ticket Luxury Count
               </Label>
               <Input
@@ -419,14 +391,16 @@ export default function NewTripInfoDialog({
                 min={0}
                 max={9}
                 onInput={(e) => {
-                  const target = e.target as HTMLInputElement;
-                  if (Number(target.value) > 9) target.value = "9";
+                  const target = e.target as HTMLInputElement
+                  if (Number(target.value) > 9) target.value = "9"
                 }}
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="fullTicketCount" className='text-gradient'>Full Ticket Count</Label>
+              <Label htmlFor="fullTicketCount" className="text-gradient">
+                Full Ticket Count
+              </Label>
               <Input
                 id="fullTicketCount"
                 type="number"
@@ -438,7 +412,9 @@ export default function NewTripInfoDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="halfTicketCount" className='text-gradient'>Half Ticket Count</Label>
+              <Label htmlFor="halfTicketCount" className="text-gradient">
+                Half Ticket Count
+              </Label>
               <Input
                 id="halfTicketCount"
                 type="number"
@@ -450,7 +426,9 @@ export default function NewTripInfoDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="freeTicketCount" className='text-gradient'>Free Ticket Count</Label>
+              <Label htmlFor="freeTicketCount" className="text-gradient">
+                Free Ticket Count
+              </Label>
               <Input
                 id="freeTicketCount"
                 type="number"
@@ -461,7 +439,9 @@ export default function NewTripInfoDialog({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="reference" className='text-gradient'>Reference</Label>
+              <Label htmlFor="reference" className="text-gradient">
+                Reference
+              </Label>
               <Input
                 id="reference"
                 type="text"
@@ -473,7 +453,9 @@ export default function NewTripInfoDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="passengerCount" className='text-gradient'>Passenger Count</Label>
+              <Label htmlFor="passengerCount" className="text-gradient">
+                Passenger Count
+              </Label>
               <Input
                 disabled={true}
                 id="passengerCount"
@@ -485,7 +467,9 @@ export default function NewTripInfoDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="loadEarning" className="text-gradient">Load Earning</Label>
+              <Label htmlFor="loadEarning" className="text-gradient">
+                Load Earning
+              </Label>
               <Input
                 id="loadEarning"
                 type="number"
@@ -497,7 +481,9 @@ export default function NewTripInfoDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="rewardCommission" className="text-gradient">Reward Commission</Label>
+              <Label htmlFor="rewardCommission" className="text-gradient">
+                Reward Commission
+              </Label>
               <Input
                 id="rewardCommission"
                 type="number"
@@ -510,7 +496,9 @@ export default function NewTripInfoDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="refreshmentExpense" className="text-gradient">Refreshment Expense</Label>
+              <Label htmlFor="refreshmentExpense" className="text-gradient">
+                Refreshment Expense
+              </Label>
               <Input
                 id="refreshmentExpense"
                 type="number"
@@ -521,7 +509,6 @@ export default function NewTripInfoDialog({
                 step="1"
               />
             </div>
-
 
             <div className="grid gap-2">
               <Label htmlFor="checkerExpense" className="text-gradient">
@@ -537,9 +524,10 @@ export default function NewTripInfoDialog({
               />
             </div>
 
-
             <div className="grid gap-2">
-              <Label htmlFor="miscellaneousAmount" className='text-gradient'>Miscellaneous Expense</Label>
+              <Label htmlFor="miscellaneousAmount" className="text-gradient">
+                Miscellaneous Expense
+              </Label>
               <Input
                 id="miscellaneousAmount"
                 type="number"
@@ -548,9 +536,11 @@ export default function NewTripInfoDialog({
                 onChange={handleInputChange}
               />
             </div>
-            
+
             <div className="grid gap-2">
-              <Label htmlFor="actualRevenue" className='text-gradient'>Actual Revenue</Label>
+              <Label htmlFor="actualRevenue" className="text-gradient">
+                Actual Revenue
+              </Label>
               <Input
                 id="actualRevenue"
                 type="number"
@@ -560,10 +550,12 @@ export default function NewTripInfoDialog({
               />
             </div>
             <div className="grid gap-2 col-span-2">
-              <Label htmlFor="revenueDiffExplanation" className="text-gradient">Revenue Difference Explanation</Label>
+              <Label htmlFor="revenueDiffExplanation" className="text-gradient">
+                Revenue Difference Explanation
+              </Label>
               <Textarea
                 id="revenueDiffExplanation"
-                className='placeholder:text-gray-200'
+                className="placeholder:text-gray-200"
                 placeholder="Explain any revenue differences"
                 value={tripData.revenueDiffExplanation}
                 onChange={(e) =>
@@ -582,6 +574,6 @@ export default function NewTripInfoDialog({
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
 

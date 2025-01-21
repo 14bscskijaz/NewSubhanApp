@@ -103,12 +103,18 @@ export default function NewTripInfoDialog({
     const expenseForThisRouteId = fixedTripExpenses.find((expense) => expense.routeId === Number(updatedData.routeId))
 
     let remaining = ticketEarnings
-    remaining -= expenseForThisRouteId?.rewardCommission ?? 0
+
     remaining -= expenseForThisRouteId?.steward ?? 0
     remaining -= expenseForThisRouteId?.counter ?? 0
     remaining -= expenseForThisRouteId?.dcParchi ?? 0
     remaining -= expenseForThisRouteId?.refreshment ?? 0
 
+    if (isRewardCommissionCustom) {
+      remaining -= Number(updatedData?.rewardCommission) || 0;
+    }
+    else if (!isRewardCommissionCustom && expenseForThisRouteId?.rewardCommission) {
+      remaining -= expenseForThisRouteId.rewardCommission || 0;
+    }
     // Calculate and subtract refreshment expense based on passenger count
     if (isRefreshmentExpenseCustom) {
       remaining -= Number(updatedData?.refreshmentExpense) || 0
@@ -130,6 +136,7 @@ export default function NewTripInfoDialog({
         const payablePassengers = totalPassengers
         remaining -= payablePassengers * expenseForThisRouteId.routeCommission
       } else if (expenseForThisRouteId?.commissionType === "Percentage") {
+
         const standCommissionValue = expenseForThisRouteId.routeCommission * ticketEarnings
         remaining -= standCommissionValue
       } else if (expenseForThisRouteId?.commissionType === "Amount") {

@@ -489,7 +489,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
         voucherNumber: Number(voucherNumber),
         busId: Number(data.busId),
         driverId: Number(data.driverId),
-        conductorId: Number(data.conductorId),
+        conductorId: data.conductorId == 0 ? null : Number(data.conductorId),
         routeId: Number(data.routeId),
         commission: Number(data.commission) || 0,
         diesel: Number(data.diesel) || 0,

@@ -44,7 +44,6 @@ export default function PricingListingPage({ }: TPricingListingPage) {
     try {
       const routes = await getAllRoutes()
       const allTicketData = await getAllTicketPrices()
-      // console.log(allTicketData, "allTicketData");
       dispatch(setTicketRaw(allTicketData))
       dispatch(setRoute(routes))
 

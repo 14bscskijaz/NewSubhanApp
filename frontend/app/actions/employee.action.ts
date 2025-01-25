@@ -15,7 +15,6 @@ const axiosInstance = axios.create({
 export async function getAllEmployees() {
     try {
         const response = await axiosInstance.get(`${API_BASE_URL}/Employees`);
-        // console.log(response.data, 'Fetched Employees');
         return response.data;
     } catch (error:any) {
         console.error('Error fetching employees:', error.message);
@@ -26,7 +25,6 @@ export async function getAllEmployees() {
 export async function createEmployee(employeeData: Omit<Employee, "id">) {
     try {
         const response = await axiosInstance.post(`${API_BASE_URL}/Employees`, employeeData);
-        console.log(response.data, 'Created Employee');
         return response.data;
     } catch (error:any) {
         console.error('Error creating employee:', error.message);
@@ -37,7 +35,6 @@ export async function createEmployee(employeeData: Omit<Employee, "id">) {
 export async function updateEmployeeAPI(employeeId: number, updatedData: Record<string, any>) {
     try {
         const response = await axiosInstance.put(`${API_BASE_URL}/Employees/${employeeId}`, updatedData);
-        console.log(response.data, 'Updated Employee');
         return response.data;
     } catch (error:any) {
         console.error('Error updating employee:', error.message);
@@ -48,7 +45,6 @@ export async function updateEmployeeAPI(employeeId: number, updatedData: Record<
 export async function deleteEmployee(employeeId: number) {
     try {
         await axiosInstance.delete(`${API_BASE_URL}/Employees/${employeeId}`);
-        console.log(`Employee with ID ${employeeId} deleted successfully.`);
     } catch (error:any) {
         console.error('Error deleting employee:', error.message); 1 
         throw error;

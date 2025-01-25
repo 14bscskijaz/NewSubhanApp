@@ -36,7 +36,6 @@ export async function createBusClosingVoucher(busClosingVoucher: BusClosingVouch
             const axiosError = error as any;
             console.error("Error Message from the server:", axiosError?.response?.data);
             console.error(util.inspect(axiosError?.response?.data?.detail, { depth: null, colors: true }))
-            console.log("Original Request Data:", axiosError?.config?.data);
         }
         // console.error("Error creating bus closing voucher:", error);
         throw error;

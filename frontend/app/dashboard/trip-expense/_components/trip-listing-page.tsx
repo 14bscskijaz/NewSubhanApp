@@ -1,110 +1,125 @@
-'use client';
-import { getAllFixedTripExpenses } from '@/app/actions/FixedTripExpense.action';
-import PageContainer from '@/components/layout/page-container';
-import { Heading } from '@/components/ui/heading';
-import { Separator } from '@/components/ui/separator';
-import { FixedTripExpense, allFixedTripExpenses, setFixedTripExpense } from '@/lib/slices/fixed-trip-expense';
-import { RootState } from '@/lib/store';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import NewTripDialog from './new-trip-dialogue';
-import TripTable from './trip-tables';
-import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
-import { TicketPriceRaw, allTicketsRaw, setTicketRaw } from '@/lib/slices/pricing-slices';
-import { getAllTicketPrices } from '@/app/actions/pricing.action';
-import { getAllRoutes } from '@/app/actions/route.action';
-import { useToast } from '@/hooks/use-toast';
+"use client"
 
-type TTripListingPage = {};
+import { getAllFixedTripExpenses } from "@/app/actions/FixedTripExpense.action"
+import PageContainer from "@/components/layout/page-container"
+import { Heading } from "@/components/ui/heading"
+import { Separator } from "@/components/ui/separator"
+import { type FixedTripExpense, allFixedTripExpenses, setFixedTripExpense } from "@/lib/slices/fixed-trip-expense"
+import type { RootState } from "@/lib/store"
+import { useSearchParams } from "next/navigation"
+import { useEffect, useState, useCallback } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import NewTripDialog from "./new-trip-dialogue"
+import TripTable from "./trip-tables"
+import { type Route, allRoutes, setRoute } from "@/lib/slices/route-slices"
+import { type TicketPriceRaw, allTicketsRaw, setTicketRaw } from "@/lib/slices/pricing-slices"
+import { getAllTicketPrices } from "@/app/actions/pricing.action"
+import { getAllRoutes } from "@/app/actions/route.action"
+import { useToast } from "@/hooks/use-toast"
 
-export default function TripListingPage({ }: TTripListingPage) {
-  const trips = useSelector<RootState, FixedTripExpense[]>(allFixedTripExpenses);
-  // const routes = useSelector<RootState, Route[]>(allRoutes);
-  // const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw);
-  const searchParams = useSearchParams();
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const [source, setSource] = useState('');
-  const [pageLimit, setPageLimit] = useState(10);
-  const dispatch = useDispatch();
-  const {toast} = useToast();
+type TTripListingPage = {}
 
-  const fetchFixedTripExpense = async () => {
-    try {
-      const fetchFixedExpense = await getAllFixedTripExpenses();
-      const routes = await getAllRoutes();
-      dispatch(setFixedTripExpense(fetchFixedExpense));
-      dispatch(setRoute(routes));
-      const tickets = await getAllTicketPrices();
-      dispatch(setTicketRaw(tickets));
-      
-    } catch (error:any) {
-      console.error(error.message);
-      
-      toast({
-        title:"Error",
-        description:error.message,
-        variant:"destructive",
-        duration:1000
-      })
-    }
-  };
+export default function TripListingPage({}: TTripListingPage) {
+  const trips = useSelector<RootState, FixedTripExpense[]>(allFixedTripExpenses)
+  const routes = useSelector<RootState, Route[]>(allRoutes)
+  const tickets = useSelector<RootState, TicketPriceRaw[]>(allTicketsRaw)
+  const searchParams = useSearchParams()
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState("")
+  const [source, setSource] = useState("")
+  const [pageLimit, setPageLimit] = useState(10)
+  const dispatch = useDispatch()
+  const { toast } = useToast()
+  const [isInitialFetchDone, setIsInitialFetchDone] = useState(false)
 
   useEffect(() => {
-    fetchFixedTripExpense()
-    const pageParam = searchParams.get('page') || '1';
-    const searchParam = searchParams.get('q') || '';
-    const countParam = searchParams.get('count') || '';
-    const limitParam = searchParams.get('limit') || '10';
+    const fetchFixedTripExpense = async () => {
+      if (isInitialFetchDone) return
+      try {
+        const fetchFixedExpense = await getAllFixedTripExpenses()
+        const routes = await getAllRoutes()
+        const tickets = await getAllTicketPrices()
 
-    setPage(Number(pageParam));
-    setSearch(searchParam);
-    setSource(countParam);
-    setPageLimit(Number(limitParam));
-  }, [searchParams,dispatch]);
+        dispatch(setFixedTripExpense(fetchFixedExpense))
+        dispatch(setRoute(routes))
+        dispatch(setTicketRaw(tickets))
+
+        setIsInitialFetchDone(true)
+      } catch (error: any) {
+        console.error(error.message)
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+          duration: 1000,
+        })
+      }
+    }
+
+    fetchFixedTripExpense()
+
+    const pageParam = searchParams.get("page") || "1"
+    const searchParam = searchParams.get("q") || ""
+    const countParam = searchParams.get("count") || ""
+    const limitParam = searchParams.get("limit") || "10"
+
+    setPage(Number(pageParam))
+    setSearch(searchParam)
+    setSource(countParam)
+    setPageLimit(Number(limitParam))
+  }, [dispatch, searchParams, toast])
 
   const filteredTrip = trips.filter((trip) => {
+    const route = routes.find((r) => r.id === trip.routeId)
+    const searchLower = search.toLowerCase()
+    const sourceLower = source.toLowerCase()
+
     const matchesSearch = search
-      ? trip.routeCommission.toString().includes(search.toLowerCase()) ||
-      trip.rewardCommission.toString().includes(search.toLowerCase()) ||
-      trip.steward.toString().includes(search.toLowerCase()) ||
-      trip.counter.toString().includes(search.toLowerCase()) ||
-      trip.dcParchi.toString().includes(search.toLowerCase()) ||
-      trip.refreshment.toString().includes(search.toLowerCase())
-      : true;
+      ? trip.routeCommission.toString().includes(searchLower) ||
+        trip.rewardCommission.toString().includes(searchLower) ||
+        trip.steward.toString().includes(searchLower) ||
+        trip.counter.toString().includes(searchLower) ||
+        trip.dcParchi.toString().includes(searchLower) ||
+        trip.refreshment.toString().includes(searchLower) ||
+        route?.sourceCity.toLowerCase().includes(searchLower) ||
+        route?.destinationCity.toLowerCase().includes(searchLower) ||
+        route?.sourceAdda.toLowerCase().includes(searchLower) ||
+        route?.destinationAdda.toLowerCase().includes(searchLower)
+      : true
 
     const matchesCount = source
-      ? trip.routeCommission.toString() === source.toLowerCase() ||
-      trip.rewardCommission.toString() === source.toLowerCase() ||
-      trip.steward.toString() === source.toLowerCase() ||
-      trip.counter.toString() === source.toLowerCase() ||
-      trip.dcParchi.toString() === source.toLowerCase() ||
-      trip.refreshment.toString() === source.toLowerCase()
-      : true;
+      ? trip.routeCommission.toString() === sourceLower ||
+        trip.rewardCommission.toString() === sourceLower ||
+        trip.steward.toString() === sourceLower ||
+        trip.counter.toString() === sourceLower ||
+        trip.dcParchi.toString() === sourceLower ||
+        trip.refreshment.toString() === sourceLower ||
+        route?.sourceCity.toLowerCase().includes(sourceLower) ||
+        route?.destinationCity.toLowerCase().includes(sourceLower) ||
+        route?.sourceAdda.toLowerCase().includes(sourceLower) ||
+        route?.destinationAdda.toLowerCase().includes(sourceLower)
+      : true
 
-    return matchesSearch && matchesCount;
-  });
+    return matchesSearch && matchesCount
+  })
 
-  const totalTripExpense = filteredTrip.length;
+  const totalTripExpense = filteredTrip.length
 
-  const startIndex = (page - 1) * pageLimit;
-  const endIndex = startIndex + pageLimit;
-  const paginatedTrips = filteredTrip.slice(startIndex, endIndex);
+  const startIndex = (page - 1) * pageLimit
+  const endIndex = startIndex + pageLimit
+  const paginatedTrips = filteredTrip.slice(startIndex, endIndex)
 
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
         <div className="flex items-start justify-between">
-          <Heading
-            title={`Trip Expense (${totalTripExpense})`}
-            description=""
-          />
+          <Heading title={`Trip Expense (${totalTripExpense})`} description="" />
           <NewTripDialog />
         </div>
         <Separator />
         <TripTable data={paginatedTrips} totalData={totalTripExpense} />
       </div>
     </PageContainer>
-  );
+  )
 }
+

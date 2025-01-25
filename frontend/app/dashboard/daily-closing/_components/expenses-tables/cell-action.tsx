@@ -23,7 +23,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     setLoading(true);
     try {
       if(data?.originalId){
-        console.log('hello',data?.id);
         
         await deleteExpense(data.originalId);
         dispatch(removeExpense(data.id));

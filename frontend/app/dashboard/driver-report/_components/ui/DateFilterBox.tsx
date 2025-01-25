@@ -27,14 +27,12 @@ export function DateFilterBox({
 
   // Convert selected date to string format for the filter
   const handleSelect = (selectedDate: Date | undefined) => {
-    console.log("Handle Selected Date:", selectedDate); // Debugging log
     if (!selectedDate) {
       setFilterValue("");
       return;
     }
     const value = selectedDate.toISOString();
     setFilterValue(value).then(() => {
-      console.log("Updated filter value:", value); // Debugging log
     });
   };
 

@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
 import NewTripDialog from '../../trip-expense/_components/new-trip-dialogue';
 import useAccounting from '@/hooks/useAccounting';
+import { log } from 'node:console';
 
 type TTripListingPage = {};
 
@@ -48,7 +49,7 @@ export default function TripListingPage({ }: TTripListingPage) {
         getAllBuses(),
         getAllTicketPrices(),
       ]);
-  
+
       dispatch(setBusClosingVoucher(busClosingExpense));
       dispatch(setRoute(routeData));
       dispatch(setBus(busData));
@@ -63,7 +64,7 @@ export default function TripListingPage({ }: TTripListingPage) {
       });
     }
   };
-  
+
 
   useEffect(() => {
     fetchFixedTripExpense();
@@ -81,8 +82,28 @@ export default function TripListingPage({ }: TTripListingPage) {
     setRouteFilter(routeParam);
     setPageLimit(Number(limitParam));
 
-    // console.log("filteredVouchers data -----------:", filteredVouchers);
   }, [searchParams, dispatch]);
+
+  const handleCalculateExpenses = (voucher: any) => {
+    // Sum all expenses, ensuring proper field names and valid numeric conversions
+    const allExpenses = [
+      voucher?.alliedmor,
+      voucher?.cityParchi,
+      voucher?.cleaning,
+      voucher?.cOilTechnician,
+      voucher?.commission,
+      voucher?.diesel,
+      voucher?.refreshment,
+      voucher?.toll,
+      voucher?.generator,
+      voucher?.repair,
+      voucher?.miscellaneousExpense,
+    ]
+      .map(Number) // Convert all values to numbers
+      .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
+
+    return allExpenses;
+  };
 
   const filteredVouchers = vouchers.filter((voucher) => {
     let startDate = 0;
@@ -95,24 +116,26 @@ export default function TripListingPage({ }: TTripListingPage) {
     }
 
     const voucherDate = voucher.date ? new Date(voucher.date).getTime() : 0;
-
-    const matchesSearch = search
-      ? voucher.alliedmor?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.cityParchi?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.cleaning?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.toll?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.diesel?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.voucherNumber?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.generator?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.commission?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.miscellaneousExpense?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
-        voucher.dieselLitres?.toString().toLowerCase().includes(search.toLowerCase())
-      : true;
-
+    const route = routes.find((r) => r.id === voucher.routeId);
     const busData = buses.find(
       (bus) => bus.id.toString().trim() === voucher.busId.toString().trim()
     );
+
+    const totalExpenseValue = handleCalculateExpenses(voucher);
+    const allRevenue = totalExpenseValue + Number(voucher.revenue);
+    const matchesSearch = search
+      ? voucher.voucherNumber?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      totalExpenseValue?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      voucher.revenue?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      allRevenue?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      voucher.date?.toString().toLowerCase().includes(search.toLowerCase()) ||
+      route?.sourceCity.toLowerCase().includes(search.toLowerCase()) ||
+      route?.destinationCity.toLowerCase().includes(search.toLowerCase()) ||
+      route?.sourceAdda.toLowerCase().includes(search.toLowerCase()) ||
+      route?.destinationAdda.toLowerCase().includes(search.toLowerCase()) ||
+      busData?.busNumber.toLowerCase().includes(search.toLowerCase())
+      : true;
+
     const routeData = routes.find(
       (route) => route.id.toString().trim() === voucher.routeId?.toString().trim()
     );
@@ -145,7 +168,7 @@ export default function TripListingPage({ }: TTripListingPage) {
 
 
 
-  
+
   const totalExpense = sortedVouchers.reduce((acc: any, item: any) => {
     const expenses = [
       item.alliedmor,
@@ -160,35 +183,15 @@ export default function TripListingPage({ }: TTripListingPage) {
       item?.repair,
       item?.miscellaneousExpense,
     ]
-      .map(Number) // Convert all values to numbers
-      .reduce((sum, val) => sum + (isNaN(val) ? 0 : val), 0); // Sum the values, treating NaN as 0
+      .map(Number)
+      .reduce((sum, val) => sum + (isNaN(val) ? 0 : val), 0);
 
     return acc + expenses; // Accumulate the total expense
   }, 0)
 
   const totalRevenue = sortedVouchers.reduce((sum: number, item: any) => sum + (item.revenue || 0), 0) + totalExpense;
 
-  const handleCalculateExpenses = (voucher: any) => {
-    // Sum all expenses, ensuring proper field names and valid numeric conversions
-    const allExpenses = [
-      voucher?.alliedmor,
-      voucher?.cityParchi,
-      voucher?.cleaning,
-      voucher?.cOilTechnician,
-      voucher?.commission,
-      voucher?.diesel,
-      voucher?.dieselLitres,
-      voucher?.refreshment,
-      voucher?.toll,
-      voucher?.generator,
-      voucher?.repair,
-      voucher?.miscellaneousExpense,
-    ]
-      .map(Number) // Convert all values to numbers
-      .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
 
-    return allExpenses;
-  };
 
   const printExpenses = () => {
     // Create Maps for quick lookups

@@ -154,7 +154,6 @@ export default function DriverReportPage() {
 
   const handlePrint = useCallback(() => {
     const filterEmployee = employees?.find(emp => Number(emp?.id) === Number(driverFilterId))
-    console.log(filterEmployee);
     
     return printExpenses(driverData as any,filterEmployee,selectedDate?.toISOString(),busBrandFilter as any,routeFilter as any);
   }, [driverData]);

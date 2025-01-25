@@ -71,7 +71,8 @@ export default function TripInfoListingPage() {
 
   const searchParams = useSearchParams()
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  
 
   const fetchAllData = async () => {
     try {
@@ -107,6 +108,7 @@ export default function TripInfoListingPage() {
   }, [])
 
   useEffect(() => {
+    
     const pageParam = searchParams.get("page") || "1"
     const searchParam = searchParams.get("q") || ""
     const limitParam = searchParams.get("limit") || "10"
@@ -116,7 +118,6 @@ export default function TripInfoListingPage() {
         return trip.routeClosingVoucherId?.toString() === searchParam
       })
       const voucher = BusClosingVouchers.find((voucher) => voucher.id === Number(searchParam))
-      console.log(voucher, "voucher")
       if (voucher) {
         setVoucherNumber(voucher?.voucherNumber.toString())
         setBusId(voucher?.busId.toString())
@@ -127,16 +128,6 @@ export default function TripInfoListingPage() {
         setVoucherData(voucher)
       }
       dispatch(setTripInformation(filterTripInformation))
-    } else {
-      // Reset all state when no search param
-      setVoucherNumber("")
-      setBusId("")
-      setSelectedRoute("")
-      setDriverId("")
-      setConductorId("")
-      setIsVoucherShow(false)
-      setVoucherData(undefined)
-      dispatch(setTripInformation([]))
     }
 
     setPage(Number(pageParam))
@@ -153,6 +144,8 @@ export default function TripInfoListingPage() {
   }, [tripsInformation])
 
   useEffect(() => {
+    console.log(busClosing, 'busClosing');
+    
     if (voucherNumber && driverId && busId && selectedDate && selectedRoute) {
       const updatedBusClosing: BusClosing = {
         voucherNumber,
@@ -162,6 +155,7 @@ export default function TripInfoListingPage() {
         date: selectedDate.toISOString(),
         routeId: selectedRoute,
       }
+      console.log(dispatch, 'addBusClosing');
 
       // Dispatch the updated data to Redux
       dispatch(addBusClosing(updatedBusClosing))
@@ -277,7 +271,7 @@ export default function TripInfoListingPage() {
                   driverId={driverId}
                   date={selectedDate?.toISOString()}
                   routeId={selectedRoute}
-                  // conductorId={conductorId}
+                // conductorId={conductorId}
                 />
               </div>
               <Separator />

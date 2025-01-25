@@ -45,9 +45,13 @@ export default function BusReportPage() {
     }
     
     const searchParam = searchParams.get('q') || '';
+    const pageLimitParam = searchParams.get('limit') || 10;
+    const pageParam = searchParams.get('page') || 1;
+    setPageLimit(Number(pageLimitParam));
+    setPage(Number(pageParam));
     setSearch(searchParam);
     fetchData()
-  }, [])
+  }, [searchParams]);
   
 
   const calculateTotalExpenses = (voucher: BusClosingVoucher): any => {
@@ -78,6 +82,7 @@ export default function BusReportPage() {
     const busNumberFilter = searchParams.get('busNumber') || '';
     const busOwnerFilter = searchParams.get('busOwner') || '';
     const searchParam = searchParams.get('q') || '';
+    
 
     // Normalize searchParam for comparison
     const normalizedSearchParam = searchParam.toLowerCase();

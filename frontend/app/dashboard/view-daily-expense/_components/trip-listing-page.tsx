@@ -131,7 +131,6 @@ export default function TripListingPage({ }: TTripListingPage) {
     // Extract the date without the time
     // const dateKey = current.date.split('T')[0];
     const dateKey = format(new Date(current.date), 'yyyy-MM-dd');
-    // console.log("dateKey: -------------", dateKey);
 
     if (!acc[dateKey]) {
       acc[dateKey] = { revenue: 0, expense: 0, netIncome: 0, date: dateKey };

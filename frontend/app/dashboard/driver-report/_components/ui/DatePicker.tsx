@@ -40,7 +40,6 @@ export function DatePicker({ date, onChange, className }: DatePickerProps) {
           initialFocus
           selected={date}
           onSelect={(selectedDate) => {
-            console.log("Selected Date:", selectedDate); // Debugging log
             onChange(selectedDate);
           }}
         />

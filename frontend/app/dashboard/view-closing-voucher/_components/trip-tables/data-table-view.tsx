@@ -67,7 +67,6 @@ export function DataTableView<TData, TValue>({
   const totalGrossRevenue = formatNumber(Number(totalRevenue) - Number(totalExpense))
 
   const handleRowClick = (row: any) => {
-    console.log(row.original.id);
     
     if (path === "/dashboard/view-closing-voucher") {
       router.push(`/dashboard/bus-closing?q=${row.original.id}`)

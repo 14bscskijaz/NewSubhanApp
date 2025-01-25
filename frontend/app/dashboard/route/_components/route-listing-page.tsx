@@ -37,7 +37,6 @@ export default function RouteListingPage({ }: TRouteListingPage) {
         duration: 1000
       })
     }
-    // console.log(getRoutes,"getRoutes");
   }
 
 

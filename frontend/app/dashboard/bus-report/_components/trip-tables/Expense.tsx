@@ -12,7 +12,6 @@ const Expense: React.FC<VoucherProps> = ({ voucherId }) => {
 
     // Find the voucher with the given VoucherId
     const foundVoucher = vouchers.find((voucher) => voucher.id === voucherId);
-console.log(foundVoucher,'foundVoucher');
 
     // Sum all expenses, ensuring proper field names and valid numeric conversions
     const allExpenses = [

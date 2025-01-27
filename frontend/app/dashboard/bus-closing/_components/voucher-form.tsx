@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import NetExpenses from './net-expense';
 import useAccounting from '@/hooks/useAccounting';
 import { useRouter } from 'next/navigation';
+import format from 'date-fns/format';
 
 interface BusClosingVoucherFormProps {
   driverId: string;
@@ -481,6 +482,9 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   };
 
   const onSubmit = async (data: any) => {
+    console.log(data.date, 'date');
+    const formattedDate = data.date ? format(new Date(data.date), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") : null;
+    console.log(formattedDate, 'formattedDate');
     setLoading(true)
     try {
       const sanitizedData = {

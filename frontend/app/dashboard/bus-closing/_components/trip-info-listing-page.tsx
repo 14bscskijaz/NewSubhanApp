@@ -155,7 +155,7 @@ export default function TripInfoListingPage() {
         date: selectedDate.toISOString(),
         routeId: selectedRoute,
       }
-      console.log(dispatch, 'addBusClosing');
+      // console.log(dispatch, 'addBusClosing');
 
       // Dispatch the updated data to Redux
       dispatch(addBusClosing(updatedBusClosing))

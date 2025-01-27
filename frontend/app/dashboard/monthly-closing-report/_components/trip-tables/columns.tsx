@@ -2,6 +2,7 @@
 'use client';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatNumber } from 'accounting';
+import { format } from 'date-fns';
 
 export const columns:ColumnDef<any>[] = [
   {
@@ -10,14 +11,16 @@ export const columns:ColumnDef<any>[] = [
     cell: ({ row }) => row.index + 1
   },
 
-  {
-    accessorKey: 'date',
-    header: 'Date',
-    cell: ({ row }) =>
-      row.original.date
-        ? new Date(row.original.date).toISOString().split("T")[0]
-        : ''
-  },
+ {
+     accessorKey: 'date',
+     header: 'Date',
+    //  cell: ({ row })   =>
+    //    row.original.date
+    //      // ? row.original.date
+    //      // ? new Date(row.original.date).toISOString().split("T")[0]
+    //      ? format(new Date(row.original.date), 'dd-MM-yyyy')
+    //      : ''
+   },
   // {
   //   accessorKey: 'voucherNumber',
   //   header: 'VoucherNumber',

@@ -22,6 +22,7 @@ import useAccounting from '@/hooks/useAccounting';
 import { Expense, allExpenses } from '@/lib/slices/expenses-slices';
 import { allSavedExpenses, setSavedExpenses } from '@/lib/slices/saved-expenses';
 import { getAllExpenses } from '@/app/actions/expenses.action';
+import { format } from 'date-fns';
 
 type TTripListingPage = {};
 
@@ -85,6 +86,7 @@ export default function TripListingPage({ }: TTripListingPage) {
 
       const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1);
       const lastDayOfMonth = new Date(selectedYear, selectedMonth + 1, 0);
+      console.log(firstDayOfMonth, lastDayOfMonth);
 
       startDate = firstDayOfMonth.setHours(0, 0, 0, 0);
       endDate = lastDayOfMonth.setHours(23, 59, 59, 999);
@@ -158,7 +160,14 @@ export default function TripListingPage({ }: TTripListingPage) {
   const summaryData = Object.values(groupedExpenses);
 
   const aggregatedData = summaryData.reduce((acc, current) => {
-    const dateKey = current.date.split('T')[0];
+    const utcDate = new Date(current.date);
+    const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
+
+    const formattedDate = `${localDate.getDate().toString().padStart(2, '0')}-${(localDate.getMonth() + 1).toString().padStart(2, '0')}-${localDate.getFullYear()}`;
+    console.log(formattedDate, 'formattedDate');
+
+    // const dateKey = current.date.split('T')[0];
+    const dateKey = format(new Date(current.date), 'yyyy-MM-dd');
 
     if (!acc[dateKey]) {
       acc[dateKey] = { revenue: 0, expense: 0, netIncome: 0, date: dateKey };
@@ -172,31 +181,31 @@ export default function TripListingPage({ }: TTripListingPage) {
   }, {} as Record<string, { revenue: number; expense: number; netIncome: number; date: string }>);
 
   const aggregatedSummaryData = Object.values(aggregatedData);
-    const filterAggregatedSummaryData = Array.isArray(aggregatedSummaryData)
+  const filterAggregatedSummaryData = Array.isArray(aggregatedSummaryData)
     ? aggregatedSummaryData.filter((voucher) => {
 
-        // Extract the search parameter
-        const searchParam = searchParams?.get('q') || ''; // Safely get the 'q' parameter or default to empty string
+      // Extract the search parameter
+      const searchParam = searchParams?.get('q') || ''; // Safely get the 'q' parameter or default to empty string
 
-  
-        // If there is no searchParam, all vouchers match by default
-        if (!searchParam) return true;
-  
-        // Normalize searchParam for comparison
-        const normalizedSearchParam = searchParam.toLowerCase();
-  
-        // Extract the fields we want to search and handle null/undefined values
-        const { expense = '', netIncome = '', revenue = '' } = voucher;
-  
-        // Check if any field matches the search term
-        const matchesSearch = [expense, netIncome, revenue]
-          .filter(Boolean) 
-          .some((field) =>
-            field.toString().toLowerCase().includes(normalizedSearchParam)
-          );
-  
-        return matchesSearch; // Return true for matches
-      })
+
+      // If there is no searchParam, all vouchers match by default
+      if (!searchParam) return true;
+
+      // Normalize searchParam for comparison
+      const normalizedSearchParam = searchParam.toLowerCase();
+
+      // Extract the fields we want to search and handle null/undefined values
+      const { expense = '', netIncome = '', revenue = '' } = voucher;
+
+      // Check if any field matches the search term
+      const matchesSearch = [expense, netIncome, revenue]
+        .filter(Boolean)
+        .some((field) =>
+          field.toString().toLowerCase().includes(normalizedSearchParam)
+        );
+
+      return matchesSearch; // Return true for matches
+    })
     : [];
   // Sorting the aggregated summary data by date (ascending)
   const sortedAggregatedSummaryData = filterAggregatedSummaryData.sort((a, b) => {

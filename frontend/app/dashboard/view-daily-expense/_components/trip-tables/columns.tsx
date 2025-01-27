@@ -14,12 +14,12 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'date',
     header: 'Date',
-    cell: ({ row }) =>
-      row.original.date
-        ? row.original.date
-        // ? new Date(row.original.date).toISOString().split("T")[0]
-        // ? format(new Date(row.original.date), 'dd/MM/yyyy')
-        : ''
+    // cell: ({ row }) =>
+    //   row.original.date
+    //     // ? row.original.date
+    //     // ? new Date(row.original.date).toISOString().split("T")[0]
+    //     ? format(new Date(row.original.date), 'dd-MM-yyyy')
+    //     : ''
   },
   // {
   //   id: 'busNumber',

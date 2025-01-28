@@ -107,7 +107,7 @@ export default function NewTripInfoDialog({
     remaining -= expenseForThisRouteId?.steward ?? 0
     remaining -= expenseForThisRouteId?.counter ?? 0
     remaining -= expenseForThisRouteId?.dcParchi ?? 0
-    remaining -= expenseForThisRouteId?.refreshment ?? 0
+    // remaining -= expenseForThisRouteId?.refreshment ?? 0
 
     if (isRewardCommissionCustom) {
       remaining -= Number(updatedData?.rewardCommission) || 0;

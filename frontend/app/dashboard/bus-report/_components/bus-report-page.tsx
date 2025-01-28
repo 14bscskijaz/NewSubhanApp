@@ -18,12 +18,16 @@ import useAccounting from '@/hooks/useAccounting';
 import { getAllBuses } from '@/app/actions/bus.action';
 import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
 import { getAllTrips } from '@/app/actions/trip.action';
+import { allSavedExpenses, Expense, setSavedExpenses } from '@/lib/slices/saved-expenses';
+import { allExpenses } from '@/lib/slices/expenses-slices';
+import { getAllExpenses } from '@/app/actions/expenses.action';
 
 
 export default function BusReportPage() {
   const {formatNumber}  = useAccounting()
 
   const tripInfo = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
+  const expensesData = useSelector<RootState,Expense[]>(allSavedExpenses);  
   const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const buses = useSelector<RootState, Buses[]>(allBuses);
   const searchParams = useSearchParams();
@@ -41,6 +45,8 @@ export default function BusReportPage() {
       dispatch(setBusClosingVoucher(allVoucher));
       const allTrips = await getAllTrips();
       dispatch(setSavedTripInformation(allTrips));
+      const allExpenses = await getAllExpenses();
+      dispatch(setSavedExpenses(allExpenses));
       
     }
     
@@ -54,27 +60,23 @@ export default function BusReportPage() {
   }, [searchParams]);
   
 
-  const calculateTotalExpenses = (voucher: BusClosingVoucher): any => {
+  const calculateTotalExpenses = (voucher: BusClosingVoucher): number => {
     if (!voucher) {
       console.error("Voucher data is missing.");
       return 0;
     }
+  console.log(voucher, 'voucher');
   
-    const expenses = [
-      voucher.commission,
-      voucher.diesel,
-      voucher.cOilTechnician,
-      voucher.toll,
-      voucher.cleaning,
-      voucher.alliedmor,
-      voucher.cityParchi,
-      voucher.refreshment,
-    ];
+    const filterExpenses = expensesData.filter(
+      (expense) => expense.busClosingVoucherId === voucher.id
+    );
+  console.log(filterExpenses, 'filterExpenses');
   
-    const total = expenses.reduce((sum:any, expense) => sum + (Math.floor(expense || 0)), 0);
+    const total = filterExpenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
   
     return total;
   };
+  
   
 
   const busMetrics = useCallback(() => {

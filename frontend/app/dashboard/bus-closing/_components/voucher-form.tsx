@@ -484,7 +484,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
   const onSubmit = async (data: any) => {
     console.log(data.date, 'date');
     const formattedDate = data.date ? format(new Date(data.date), "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") : null;
-    console.log(formattedDate, 'formattedDate');
+    // console.log(formattedDate, 'formattedDate');
     setLoading(true)
     try {
       const sanitizedData = {

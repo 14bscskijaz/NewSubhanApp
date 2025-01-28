@@ -57,7 +57,27 @@ The API documentation can be accessed at the URL:
 "<address on which the server is running>/swagger/index.html".
 Add "/swagger/index.html" to the base URL of the server to access the API documentation.
 
-### Testing
+## Testing
+
+### To Run the Tests
+```bash
+pytest
+```
+
+Running test with different options.
+```bash
+pytest --headed --slowmo=2000
+```
+
+### Run tests in Debug Mode
+```bash
+PWDEBUG=1 pytest -s 
+```
+
+### Start Test Recording
+```bash
+playwright codegen --viewport-size "1880, 1000" localhost:3000
+```
 
 #### Update Playwrite
 ```bash
@@ -65,6 +85,7 @@ pip install pytest-playwright playwright -U
 ```
 
 ## Replicating Production Database
+
 
 1. Create `pg_dump` of the production database.
 ```bash

@@ -53,14 +53,23 @@ export default function DriverReportPage() {
     };
 
     fetchData();
+
+    const pageParam = searchParams.get('page');
+    if (pageParam) {
+      setPage(Number(pageParam));
+    }
+    const pageLimitParam = searchParams.get('pageLimit');
+    if (pageLimitParam) {
+      setPageLimit(Number(pageLimitParam));
+    }
   }, []);
 
   const driverMetrics = useCallback(() => {
     const driverMap = new Map<string, any>();
-  
+    const processedVouchers = new Set<string>();
+
     // Extract filters from searchParams
 
-  
     // Split the route filter into source and destination if applicable
     let routeSourceCity = '';
     let routeDestinationCity = '';
@@ -69,25 +78,32 @@ export default function DriverReportPage() {
       routeSourceCity = source.trim();
       routeDestinationCity = destination.trim();
     }
-  
+    const voucherTripCounts = tripInfo.reduce((acc, trip) => {
+      if (trip.routeClosingVoucherId) {
+        acc[trip.routeClosingVoucherId] = (acc[trip.routeClosingVoucherId] || 0) + 1;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+
     tripInfo
       .filter((trip) => {
         const voucher = vouchers.find((v) => v.id === trip.routeClosingVoucherId);
         if (!voucher) return false;
-  
+
         // Apply date filter
         if (selectedDate) {
           const tripDate = new Date(voucher.date);
           if (tripDate.toDateString() !== selectedDate.toDateString()) return false;
         }
-  
+
         // Apply driver filter if specified
         if (driverFilterId && Number(voucher.driverId) !== Number(driverFilterId)) return false;
-  
+
         // Apply busBrand filter
         const bus = buses.find((b) => b.id === voucher?.busId);
         if (busBrandFilter && bus?.busBrand !== busBrandFilter) return false;
-  
+
         // Apply route filter
         if (routeFilter) {
           const route = routes.find((r) => r.id === trip?.routeId);
@@ -98,17 +114,21 @@ export default function DriverReportPage() {
             if (!(isSourceMatch && isDestinationMatch)) return false;
           }
         }
-  
+
         return true;
       })
       .forEach((trip) => {
         const voucher = vouchers.find((v) => v.id === trip.routeClosingVoucherId);
-        const bus = buses.find((b) => b.id === voucher?.busId);
-        const filterDriver = employees.find((e) => Number(e.id) === Number(voucher?.driverId));
+        if (!voucher || processedVouchers.has(voucher.id.toString())) return; 
+  
+        processedVouchers.add(voucher.id.toString()); 
+  
+        const bus = buses.find((b) => b.id === voucher.busId);
+        const filterDriver = employees.find((e) => Number(e.id) === Number(voucher.driverId));
         const driver = `${filterDriver?.firstName} ${filterDriver?.lastName}` || 'Unknown Driver';
         const busType = bus?.busType || 'Unknown Bus Type';
         const busBrand = bus?.busBrand || 'Unknown Brand';
-        const dieselLitres = voucher?.dieselLitres || 0;
+        const dieselLitres = voucher.dieselLitres ?? 0; // Use nullish coalescing
   
         // Create a unique key for driver + busBrand
         const key = `${driver}-${busBrand}`;
@@ -125,7 +145,7 @@ export default function DriverReportPage() {
   
         const driverData = driverMap.get(key);
         driverData.busType.add(busType);
-        driverData.trips += 1;
+        driverData.trips += voucherTripCounts[voucher.id] || 0; // Add the number of trips for this voucher
         driverData.diesel += dieselLitres;
   
         driverMap.set(key, driverData);
@@ -139,11 +159,11 @@ export default function DriverReportPage() {
       diesel: formatNumber(data.diesel),
     }));
   }, [tripInfo, vouchers, buses, employees, routes, searchParams, selectedDate, driverFilterId, formatNumber]);
-  
-  
-  
-  
-  
+
+
+
+
+
 
   const driverData = driverMetrics();
 
@@ -154,8 +174,8 @@ export default function DriverReportPage() {
 
   const handlePrint = useCallback(() => {
     const filterEmployee = employees?.find(emp => Number(emp?.id) === Number(driverFilterId))
-    
-    return printExpenses(driverData as any,filterEmployee,selectedDate?.toISOString(),busBrandFilter as any,routeFilter as any);
+
+    return printExpenses(driverData as any, filterEmployee, selectedDate?.toISOString(), busBrandFilter as any, routeFilter as any);
   }, [driverData]);
 
   return (

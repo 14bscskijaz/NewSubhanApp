@@ -258,6 +258,11 @@ export const navItems: NavItem[] = [
         icon: 'userPen'
       },
       {
+        title: 'Bus Report Revenue',
+        url: '/dashboard/bus-report-revenue',
+        icon: 'userPen'
+      },
+      {
         title: 'Monthly Closing Report',
         url: '/dashboard/monthly-closing-report',
         icon: 'login'

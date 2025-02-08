@@ -19,7 +19,7 @@ export const columns: ColumnDef<TripInformationInput & {routeIds:[number]}>[] = 
   
   {
     accessorKey: 'totalTrips',
-    header: 'Trips Count'
+    header: 'Vouchers Count'
   },
   {
     accessorKey: 'totalPassengers',

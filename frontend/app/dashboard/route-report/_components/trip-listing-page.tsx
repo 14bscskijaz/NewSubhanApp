@@ -21,10 +21,13 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TripTable from './trip-tables';
+import { allBusClosingVouchers, BusClosingVoucher, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
+import { getAllBusClosingVouchers } from '@/app/actions/BusClosingVoucher.action';
 
 export default function TripListingPage() {
   const savedTripInformation = useSelector<RootState, SavedTripInformation[]>(allSavedsavedTripsInformation);
   const routes = useSelector<RootState, Route[]>(allRoutes);
+  const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const dispatch = useDispatch();
   const { toast } = useToast();
   const searchParams = useSearchParams();
@@ -68,7 +71,7 @@ export default function TripListingPage() {
 
   // Memoize route metrics
   const routeMetrics = useMemo(() =>
-    isCityTab ? calculateMetricsCity(filteredTrips, routes, isCityTab) : calculateMetricsStation(filteredTrips, routes, isCityTab),
+    isCityTab ? calculateMetricsCity(filteredTrips, routes, isCityTab, vouchers) : calculateMetricsStation(filteredTrips, routes),
     [filteredTrips, routes, isCityTab]
   );
 
@@ -105,15 +108,17 @@ export default function TripListingPage() {
   // Data fetching
   const fetchData = useCallback(async () => {
     try {
-      const [trips, routesData, busesData, tickets] = await Promise.all([
+      const [trips, routesData, allVouchers, busesData, tickets] = await Promise.all([
         getAllTrips(),
         getAllRoutes(),
+        getAllBusClosingVouchers(),
         getAllBuses(),
         getAllTicketPrices()
       ]);
 
       dispatch(setSavedTripInformation(trips));
       dispatch(setRoute(routesData));
+      dispatch(setBusClosingVoucher(allVouchers));
       dispatch(setBus(busesData));
       dispatch(setTicketRaw(tickets));
     } catch (error: any) {

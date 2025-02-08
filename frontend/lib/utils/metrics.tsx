@@ -3,149 +3,162 @@ import { SavedTripInformation } from '@/lib/slices/trip-information-saved';
 import { RouteMetric } from '@/types/trip';
 import { Route } from '../slices/route-slices';
 import { formatNumber } from './accounting';
+import { BusClosingVoucher } from '../slices/bus-closing-voucher';
 
 export const calculateMetricsCity = (
-    filteredTrips: SavedTripInformation[],
-    routes: Route[],
-    isCity: boolean
+  filteredTrips: SavedTripInformation[],
+  routes: Route[],
+  isCity: boolean,
+  vouchers: BusClosingVoucher[]
 ): RouteMetric[] => {
-    const routeMap = new Map<string, any>();
+  const routeMap = new Map<string, any>();
 
-    filteredTrips.forEach(trip => {
-        const route = routes.find(r => r.id.toString() === trip.routeId?.toString());
-        if (!route) return;
+  // Helper function to normalize city names
+  const normalizeCityName = (city: string): string => {
+    return city
+      .trim() // Remove leading/trailing spaces
+      .toLowerCase() // Convert to lowercase
+      .replace(/\s+/g, ''); // Remove all spaces (e.g., "New York" => "newyork")
+  };
 
-        const routeKey = isCity
-            ? `${route.sourceCity}-${route.destinationCity}`
-            : route.id.toString();
+  filteredTrips.forEach(trip => {
+    // 1. Find the route DIRECTLY from trip data (not through voucher)
+    const route = routes.find(r => r.id.toString() === trip.routeId?.toString());
+    if (!route) return; // Skip if no route found (or handle differently)
 
-        if (!routeMap.has(routeKey)) {
-            routeMap.set(routeKey, {
-                routeKey,
-                sourceCity: route.sourceCity,
-                destinationCity: route.destinationCity,
-                sourceAdda: route.sourceAdda,
-                destinationAdda: route.destinationAdda,
-                routeId: route.id,
-                totalTrips: 0,
-                totalPassengers: 0,
-                totalRevenue: 0,
-                freePassengers: 0,
-                halfPassengers: 0,
-                fullPassengers: 0,
-                routeIds: new Set(),
-                uniqueVoucherIds: new Set(),
-            });
-        }
+    // 2. Normalize city names for grouping
+    const sourceCity = normalizeCityName(route.sourceCity);
+    const destinationCity = normalizeCityName(route.destinationCity);
 
-        const data = routeMap.get(routeKey);
-        data.totalTrips += 1;
-        data.totalPassengers += Number(trip.passengerCount) || 0;
-        data.totalRevenue += Number(trip.revenue) || 0;
-        data.freePassengers += Number(trip.freeTicketCount) || 0;
-        data.halfPassengers += Number(trip.halfTicketCount) || 0;
-        data.fullPassengers += Number(trip.fullTicketCount) || 0;
-        data.routeIds.add(trip.routeId);
-        if (trip.routeClosingVoucherId) {
-            data.uniqueVoucherIds.add(trip.routeClosingVoucherId.toString());
-        }
-    });
+    // 3. Create grouping key based on normalized city names when isCity=true
+    const routeKey = isCity
+      ? `${sourceCity}-${destinationCity}`
+      : `${route.sourceAdda}-${route.destinationAdda}`;
 
-    return Array.from(routeMap.values()).map(data => ({
-        ...data,
-        totalTrips: formatNumber(data.uniqueVoucherIds.size),
-        totalPassengers: formatNumber(data.totalPassengers),
-        totalRevenue: formatNumber(Math.floor(data.totalRevenue)),
-        freePassengers: formatNumber(data.freePassengers),
-        halfPassengers: formatNumber(data.halfPassengers),
-        fullPassengers: formatNumber(data.fullPassengers),
-        averagePassengers: data.totalTrips ?
-            formatNumber(Math.floor(data.totalPassengers / data.uniqueVoucherIds.size)) :
-            formatNumber(0),
-        routeCount: formatNumber(data.routeIds.size),
-        routeIds: Array.from(data.routeIds),
-        tripsCount: data.uniqueVoucherIds.size,
-        voucherIds: Array.from(data.uniqueVoucherIds),
-    }));
+    // 4. Initialize map entry if not exists
+    if (!routeMap.has(routeKey)) {
+      routeMap.set(routeKey, {
+        routeKey,
+        sourceCity: route.sourceCity, // Keep original city name for display
+        destinationCity: route.destinationCity, // Keep original city name for display
+        sourceAdda: route.sourceAdda,
+        destinationAdda: route.destinationAdda,
+        totalTrips: 0,
+        totalPassengers: 0,
+        totalRevenue: 0,
+        freePassengers: 0,
+        halfPassengers: 0,
+        fullPassengers: 0,
+        routeIds: new Set<string>(),
+        uniqueVoucherIds: new Set<string>(),
+      });
+    }
+
+    // 5. Update metrics
+    const data = routeMap.get(routeKey);
+    data.totalTrips += 1;
+    data.totalPassengers += Number(trip.passengerCount) || 0;
+    data.totalRevenue += Number(trip.revenue) || 0;
+    data.freePassengers += Number(trip.freeTicketCount) || 0;
+    data.halfPassengers += Number(trip.halfTicketCount) || 0;
+    data.fullPassengers += Number(trip.fullTicketCount) || 0;
+    data.routeIds.add(route.id.toString());
+    
+    // 6. Track vouchers if needed
+    if (trip.routeClosingVoucherId) {
+      data.uniqueVoucherIds.add(trip.routeClosingVoucherId.toString());
+    }
+  });
+
+  // 7. Convert map to result format
+  return Array.from(routeMap.values()).map(data => ({
+    ...data,
+    totalTrips: data.uniqueVoucherIds.size,
+    totalPassengers: data.totalPassengers,
+    totalRevenue: Math.floor(data.totalRevenue),
+    freePassengers: data.freePassengers,
+    halfPassengers: data.halfPassengers,
+    fullPassengers: data.fullPassengers,
+    averagePassengers: data.uniqueVoucherIds.size > 0
+      ? Math.floor(data.totalPassengers / data.uniqueVoucherIds.size)
+      : 0,
+    routeCount: data.routeIds.size,
+    routeIds: Array.from(data.routeIds),
+    tripsCount: data.uniqueVoucherIds.size,
+    voucherIds: Array.from(data.uniqueVoucherIds),
+  }));
 };
 
-
 export const calculateMetricsStation = (
-    filteredTrips: SavedTripInformation[],
-    routes: Route[],
-    isCity: boolean
+  filteredTrips: SavedTripInformation[],
+  routes: Route[]
 ): RouteMetric[] => {
-    const routeMap = new Map<string, any>();
+  const routeMap = new Map<
+    string,
+    {
+      routeKey: string;
+      sourceCity: string;
+      destinationCity: string;
+      sourceAdda: string;
+      destinationAdda: string;
+      totalTrips: number;
+      totalPassengers: number;
+      totalRevenue: number;
+      freePassengers: number;
+      halfPassengers: number;
+      fullPassengers: number;
+      routeIds: Set<string>;
+    }
+  >();
 
-    filteredTrips.forEach(trip => {
-        const route = routes.find(r => r.id.toString() === trip.routeId?.toString());
-        if (!route) return;
+  filteredTrips.forEach(trip => {
+    const route = routes.find(r => r.id.toString() === trip.routeId?.toString());
+    if (!route) return;
 
-        // Modify the key generation logic based on isCity flag
-        const routeKey = isCity
-            ? `${route.sourceCity}-${route.destinationCity}` // For city-to-city, use city pair
-            : `${route.sourceAdda}-${route.destinationAdda}`; // For station-to-station, use station pair
+    // Corrected: Use sourceAdda and destinationAdda for station-based grouping
+    const routeKey = `${route.sourceAdda}-${route.destinationAdda}`;
 
-        // If this routeKey doesn't exist, initialize it
-        if (!routeMap.has(routeKey)) {
-            routeMap.set(routeKey, {
-                routeKey,
-                sourceCity: route.sourceCity,
-                destinationCity: route.destinationCity,
-                sourceAdda: route.sourceAdda,
-                destinationAdda: route.destinationAdda,
-                routeId: route.id,
-                totalTrips: 0,
-                totalPassengers: 0,
-                totalRevenue: 0,
-                freePassengers: 0,
-                halfPassengers: 0,
-                fullPassengers: 0,
-                routeIds: new Set(),
-                tripCount: 0, // Added a new field to track trip count
-            });
-        }
+    if (!routeMap.has(routeKey)) {
+      routeMap.set(routeKey, {
+        routeKey,
+        sourceCity: route.sourceCity,
+        destinationCity: route.destinationCity,
+        sourceAdda: route.sourceAdda,
+        destinationAdda: route.destinationAdda,
+        totalTrips: 0,
+        totalPassengers: 0,
+        totalRevenue: 0,
+        freePassengers: 0,
+        halfPassengers: 0,
+        fullPassengers: 0,
+        routeIds: new Set<string>(),
+      });
+    }
+    const data = routeMap.get(routeKey)!;
 
-        // Get the data for the current route
-        const data = routeMap.get(routeKey);
+    data.totalTrips += 1;
+    data.routeIds.add(trip.routeId?.toString() || '');
+    data.totalPassengers += Number(trip.passengerCount) || 0;
+    data.totalRevenue += Number(trip.revenue) || 0;
+    data.freePassengers += Number(trip.freeTicketCount) || 0;
+    data.halfPassengers += Number(trip.halfTicketCount) || 0;
+    data.fullPassengers += Number(trip.fullTicketCount) || 0;
+  });
 
-        // For isCity = true, we count only unique trips
-        if (isCity) {
-            // Only increment totalTrips for unique voucher IDs (city-to-city aggregation)
-            data.totalTrips += 1;
-            data.routeIds.add(trip.routeId); // Ensure each route ID is counted only once
-        } else {
-            // For isCity = false, count each trip separately (station-to-station)
-            data.totalTrips += 1;
-            data.routeIds.add(trip.routeId); // Still aggregate by route IDs for reporting
-        }
-
-        // Always update passenger counts and revenue
-        data.totalPassengers += Number(trip.passengerCount) || 0;
-        data.totalRevenue += Number(trip.revenue) || 0;
-        data.freePassengers += Number(trip.freeTicketCount) || 0;
-        data.halfPassengers += Number(trip.halfTicketCount) || 0;
-        data.fullPassengers += Number(trip.fullTicketCount) || 0;
-
-        // Track number of trips for this station or city pair
-        data.tripCount += 1;
-    });
-
-    // Now, return the aggregated metrics for each route
-    return Array.from(routeMap.values()).map(data => ({
-        ...data,
-        totalTrips: formatNumber(data.totalTrips), // Show total trips
-        totalPassengers: formatNumber(data.totalPassengers),
-        totalRevenue: formatNumber(Math.floor(data.totalRevenue)),
-        freePassengers: formatNumber(data.freePassengers),
-        halfPassengers: formatNumber(data.halfPassengers),
-        fullPassengers: formatNumber(data.fullPassengers),
-        averagePassengers: data.totalTrips ?
-            formatNumber(Math.floor(data.totalPassengers / data.totalTrips)) :
-            formatNumber(0),
-        routeCount: formatNumber(data.routeIds.size),
-        routeIds: Array.from(data.routeIds),
-        tripsCount: data.totalTrips, // Use total trips for the count
-        voucherIds: Array.from(data.routeIds), // Display voucher IDs
-    }));
+  return Array.from(routeMap.values()).map(data => ({
+    ...data,
+    totalTrips: data.totalTrips,
+    totalPassengers: data.totalPassengers,
+    totalRevenue: Math.floor(data.totalRevenue),
+    freePassengers: data.freePassengers,
+    halfPassengers: data.halfPassengers,
+    fullPassengers: data.fullPassengers,
+    averagePassengers: data.totalTrips > 0
+      ? Math.floor(data.totalPassengers / data.totalTrips)
+      : 0,
+    routeCount: data.routeIds.size,
+    routeIds: Array.from(data.routeIds),
+    tripsCount: data.totalTrips,
+    voucherIds: [],
+  }));
 };

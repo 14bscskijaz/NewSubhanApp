@@ -16,15 +16,15 @@ export const calculateMetricsCity = (
   // Helper function to normalize city names
   const normalizeCityName = (city: string): string => {
     return city
-      .trim() // Remove leading/trailing spaces
-      .toLowerCase() // Convert to lowercase
-      .replace(/\s+/g, ''); // Remove all spaces (e.g., "New York" => "newyork")
+      .trim() 
+      .toLowerCase()
+      .replace(/\s+/g, '');
   };
 
   filteredTrips.forEach(trip => {
     // 1. Find the route DIRECTLY from trip data (not through voucher)
     const route = routes.find(r => r.id.toString() === trip.routeId?.toString());
-    if (!route) return; // Skip if no route found (or handle differently)
+    if (!route) return; 
 
     // 2. Normalize city names for grouping
     const sourceCity = normalizeCityName(route.sourceCity);
@@ -39,8 +39,8 @@ export const calculateMetricsCity = (
     if (!routeMap.has(routeKey)) {
       routeMap.set(routeKey, {
         routeKey,
-        sourceCity: route.sourceCity, // Keep original city name for display
-        destinationCity: route.destinationCity, // Keep original city name for display
+        sourceCity: route.sourceCity, 
+        destinationCity: route.destinationCity, 
         sourceAdda: route.sourceAdda,
         destinationAdda: route.destinationAdda,
         totalTrips: 0,

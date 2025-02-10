@@ -41,10 +41,11 @@ export default function TripListingPage() {
     search: searchParams.get('q') || '',
     busNumber: searchParams.get('busNumber') || '',
     dateRange: searchParams.get('date') || '',
-    route: searchParams.get('route') || '',
+    route: searchParams.get('route') ? searchParams.get('route')!.split(',') : "",
     limit: Number(searchParams.get('limit')) || 10,
     page: Number(searchParams.get('page')) || 1,
   }), [searchParams]);
+  
 
   // Memoize date range
   const dateRange = useMemo(() =>
@@ -89,21 +90,23 @@ export default function TripListingPage() {
       ].some(key =>
         voucher[key as keyof RouteMetric]?.toString().toLowerCase().includes(searchFilters.search.toLowerCase())
       );
-
+  
       const routeData = routes.find(route =>
         route.id.toString().trim() === voucher.routeIds[0]?.toString().trim()
       );
-
+  
       const routeKey = routeData
         ? `${routeData.sourceCity.trim()}-${routeData.destinationCity.trim()}`
         : '';
-
-      const matchesRouteFilter = !searchFilters.route ||
-        routeKey.toLowerCase() === searchFilters.route.toLowerCase();
-
+  
+      const matchesRouteFilter =
+        !searchFilters.route || (Array.isArray(searchFilters.route) && searchFilters.route.length === 0) ||
+        (Array.isArray(searchFilters.route) && searchFilters.route.some(route => route.toLowerCase() === routeKey.toLowerCase()));
+  
       return matchesSearch && matchesRouteFilter;
     });
   }, [routeMetrics, searchFilters.search, searchFilters.route, routes]);
+  
 
   // Data fetching
   const fetchData = useCallback(async () => {

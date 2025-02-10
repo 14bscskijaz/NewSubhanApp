@@ -32,10 +32,8 @@ interface FilterBoxProps {
   filterKey: string;
   title: string;
   options: FilterOption[];
-  setFilterValue: (
-    value: string | null,
-  ) => Promise<URLSearchParams>;
-  filterValue: string;
+  setFilterValue: any;
+  filterValue: any;
 }
 
 export function DataTableFilterBoxView({
@@ -46,11 +44,13 @@ export function DataTableFilterBoxView({
   filterValue,
 }: FilterBoxProps) {
   const handleSelect = (value: string) => {
-    if (filterValue === value) {
-      setFilterValue(null);
+    let updatedFilters;
+    if (filterValue.includes(value)) {
+      updatedFilters = filterValue.filter((v:any) => v !== value);
     } else {
-      setFilterValue(value);
+      updatedFilters = [...filterValue, value];
     }
+    setFilterValue(updatedFilters.length > 0 ? updatedFilters : null);
   };
 
   const resetFilter = () => setFilterValue(null);
@@ -61,18 +61,20 @@ export function DataTableFilterBoxView({
         <Button variant="outline" className="bg-gradient-border">
           <PlusCircledIcon className="mr-2 h-4 w-4" />
           {title}
-          {filterValue && (
+          {filterValue && filterValue?.length > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4 bg-gradient-2" />
-              <Badge
-                variant="default"
-                className="rounded-sm text-white bg-gradient-2 py-1 px-1 font-normal"
-              >
-                {
-                  options.find((option) => option.value === filterValue)
-                    ?.label
-                }
-              </Badge>
+              <div className="flex flex-wrap gap-1">
+                {filterValue && filterValue?.map((val:any) => (
+                  <Badge
+                    key={val}
+                    variant="default"
+                    className="rounded-sm text-white bg-gradient-2 py-1 px-1 font-normal"
+                  >
+                    {options.find((option) => option.value === val)?.label}
+                  </Badge>
+                ))}
+              </div>
             </>
           )}
         </Button>
@@ -91,7 +93,7 @@ export function DataTableFilterBoxView({
                   <div
                     className={cn(
                       'mr-2 flex h-4 w-4 items-center justify-center rounded-full border border-primary',
-                      filterValue === option.value
+                      filterValue.includes(option.value)
                         ? 'bg-primary text-primary-foreground'
                         : 'opacity-50 [&_svg]:invisible'
                     )}
@@ -108,7 +110,7 @@ export function DataTableFilterBoxView({
                 </CommandItem>
               ))}
             </CommandGroup>
-            {filterValue && (
+            {filterValue?.length > 0 && (
               <>
                 <CommandSeparator />
                 <CommandGroup>

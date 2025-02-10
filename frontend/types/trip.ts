@@ -21,7 +21,7 @@ export interface RouteMetric {
     search: string;
     busNumber: string;
     dateRange: string;
-    route: string;
+    route: string | string[];
     limit: number;
     page: number;
   }

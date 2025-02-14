@@ -17,7 +17,7 @@ const Routes: React.FC<RouteProps> = ({ routeId }) => {
     return (
         <div>
             {foundRoute ? (
-                <p>{foundRoute.sourceAdda} - {foundRoute.destinationAdda}</p>
+                <p>{foundRoute.sourceCity} - {foundRoute.destinationCity}</p>
             ) : (
                 <p>N/A</p>
             )}

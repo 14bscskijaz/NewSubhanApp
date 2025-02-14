@@ -60,26 +60,67 @@ export function BarGraph() {
   const routes = useSelector<RootState, Route[]>(allRoutes)
   const [selectedRoute, setSelectedRoute] = React.useState<string>('all')
 
+  const getCityAbbreviation = (city: string): string => {
+    // Predefined abbreviations
+    const cityAbbreviations: Record<string, string> = {
+      'Faisalabad': 'FSD',
+      'Lahore': 'LHR',
+      'Islamabad': 'ISB',
+      'Karachi': 'KHI',
+      'Multan': 'MUX',
+      'Peshawar': 'PEW',
+      'Quetta': 'UET',
+      'Rawalpindi': 'RWP',
+      'Sialkot': 'SKT',
+      'Gujranwala': 'GUJ',
+      'Hyderabad': 'HYD',
+    }
+  
+    // Return predefined abbreviation if available
+    if (cityAbbreviations[city]) {
+      return cityAbbreviations[city]
+    }
+  
+    // If not predefined, take the first 3 letters in uppercase
+    return city.substring(0, 3).toUpperCase()
+  }
+  
   const aggregatedData = React.useMemo(() => {
+    const currentDate = new Date()
+    const currentMonth = currentDate.getMonth()
+    const currentYear = currentDate.getFullYear()
+  
     const routeMap = new Map<number, Route>()
     routes.forEach((route) => routeMap.set(route.id, route))
-
+  
     const aggregation = new Map<string, number>()
     tripInfo.forEach((trip) => {
-      if (trip.routeId !== null && trip.passengerCount !== null) {
+      const tripDate = trip.date ? new Date(trip.date) : null
+      if (
+        tripDate &&
+        trip.routeId !== null &&
+        trip.passengerCount !== null &&
+        tripDate.getMonth() === currentMonth &&
+        tripDate.getFullYear() === currentYear
+      ) {
         const route = routeMap.get(trip.routeId)
         if (route) {
-          const key = `${route.sourceCity}-${route.destinationCity}`
+          // Get dynamic abbreviations
+          const sourceAbbr = getCityAbbreviation(route.sourceCity)
+          const destAbbr = getCityAbbreviation(route.destinationCity)
+          const key = `${sourceAbbr}-${destAbbr}`
+  
           aggregation.set(key, (aggregation.get(key) || 0) + trip.passengerCount)
         }
       }
     })
-
+  
     return Array.from(aggregation.entries()).map(([route, passengerCount]) => ({
       route,
       passengerCount,
     }))
   }, [tripInfo, routes]) as ChartData[]
+  
 
   // Get unique routes for the select dropdown
   const uniqueRoutes = React.useMemo(() => {

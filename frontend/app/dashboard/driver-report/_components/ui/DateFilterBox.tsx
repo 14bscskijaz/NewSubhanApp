@@ -1,6 +1,7 @@
 'use client';
 
-import { DatePicker } from './DatePicker';
+import { DateRange } from "react-day-picker"
+import { DateRangePicker } from './DatePicker';
 
 interface DateFilterProps {
   filterKey: string;
@@ -15,34 +16,38 @@ export function DateFilterBox({
   filterValue,
   setFilterValue,
 }: DateFilterProps) {
-  // Parse the date from the filter value
-  const parseDate = (value: string): Date | undefined => {
+  // Parse the date range from the filter value
+  const parseDateRange = (value: string): DateRange | undefined => {
     if (!value) return undefined;
     try {
-      return new Date(value);
+      const [from, to] = value.split('|');
+      return {
+        from: from ? new Date(from) : undefined,
+        to: to ? new Date(to) : undefined,
+      };
     } catch {
       return undefined;
     }
   };
 
-  // Convert selected date to string format for the filter
-  const handleSelect = (selectedDate: Date | undefined) => {
-    if (!selectedDate) {
+  // Convert date range to string format for the filter
+  const handleSelect = (range: DateRange | undefined) => {
+    if (!range) {
       setFilterValue("");
       return;
     }
-    const value = selectedDate.toISOString();
-    setFilterValue(value).then(() => {
-    });
+    const value = `${range.from?.toISOString() || ''}|${range.to?.toISOString() || ''}`;
+    setFilterValue(value);
   };
 
   return (
     <div className='inline'>
-      <DatePicker
-        date={parseDate(filterValue)}
+      <DateRangePicker
+        date={parseDateRange(filterValue)}
         onChange={handleSelect}
         className='bg-gradient-border'
       />
     </div>
   );
 }
+

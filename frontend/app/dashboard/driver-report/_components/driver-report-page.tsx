@@ -42,7 +42,7 @@ export default function DriverReportPage() {
   const busBrandFilter = searchParams.get("busBrand")
   const routeFilter = searchParams.get("route")
   const driverFilterId = searchParams.get("driver")
-  const selectedDate = searchParams.get("date") ? new Date(searchParams.get("date")!) : null
+  const dateParam = searchParams.get("date")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,10 +71,17 @@ export default function DriverReportPage() {
     if (pageLimitParam) {
       setPageLimit(Number(pageLimitParam))
     }
-  }, [dispatch, searchParams]) // Added dispatch and searchParams to dependencies
+  }, [dispatch, searchParams])
 
   const driverMetrics = useCallback(() => {
-    // Create a map to store aggregated data by driver-bus combination
+    let startDate: Date | null = null
+    let endDate: Date | null = null
+    if (dateParam) {
+      const dates = dateParam.split("|")
+      startDate = dates[0] ? new Date(dates[0]) : null
+      endDate = dates[1] ? new Date(dates[1]) : null
+    }
+
     const aggregatedData = new Map<
       string,
       {
@@ -83,11 +90,10 @@ export default function DriverReportPage() {
         busBrand: string
         tripCount: number
         totalDiesel: number
-        voucherIds: Set<string> // Track unique vouchers
+        voucherIds: Set<string>
       }
     >()
 
-    // Parse route filter
     let routeSourceCity = ""
     let routeDestinationCity = ""
     if (routeFilter) {
@@ -96,34 +102,69 @@ export default function DriverReportPage() {
       routeDestinationCity = destination.trim().toLowerCase()
     }
 
-    // First, get all valid vouchers based on filters
     const validVouchers = vouchers.filter((voucher) => {
-      // Date filter
-      if (selectedDate) {
-        const voucherDate = new Date(voucher.date)
-        if (voucherDate.toDateString() !== selectedDate.toDateString()) return false
+      // Convert UTC voucher date to local time
+      const voucherDate = new Date(voucher.date)
+      const localVoucherDate = new Date(
+        voucherDate.getUTCFullYear(),
+        voucherDate.getUTCMonth(),
+        voucherDate.getUTCDate(),
+        voucherDate.getUTCHours(),
+        voucherDate.getUTCMinutes(),
+        voucherDate.getUTCSeconds()
+      )
+
+      if (startDate) {
+        // Convert startDate to local time
+        const localStartDate = new Date(
+          startDate.getUTCFullYear(),
+          startDate.getUTCMonth(),
+          startDate.getUTCDate(),
+          startDate.getUTCHours(),
+          startDate.getUTCMinutes(),
+          startDate.getUTCSeconds()
+        )
+
+        if (endDate) {
+          // Convert endDate to local time
+          const localEndDate = new Date(
+            endDate.getUTCFullYear(),
+            endDate.getUTCMonth(),
+            endDate.getUTCDate(),
+            endDate.getUTCHours(),
+            endDate.getUTCMinutes(),
+            endDate.getUTCSeconds()
+          )
+
+          if (localVoucherDate < localStartDate || localVoucherDate > localEndDate) return false
+        } else {
+          // Single date filter
+          if (
+            localVoucherDate.getFullYear() !== localStartDate.getFullYear() ||
+            localVoucherDate.getMonth() !== localStartDate.getMonth() ||
+            localVoucherDate.getDate() !== localStartDate.getDate()
+          ) {
+            return false
+          }
+        }
       }
 
-      // Driver filter
       if (driverFilterId && Number(voucher.driverId) !== Number(driverFilterId)) return false
 
-      // Bus brand filter
       const bus = buses.find((b) => b.id === voucher.busId)
       if (busBrandFilter && bus?.busBrand !== busBrandFilter) return false
 
       return true
     })
 
-    // Process valid vouchers
     validVouchers.forEach((voucher) => {
       const relatedTrips = tripInfo.filter((trip) => trip.routeClosingVoucherId === voucher.id)
 
-      // Skip if no related trips or if route filter doesn't match
       if (routeFilter) {
         const hasMatchingRoute = relatedTrips.some((trip) => {
           const route = routes.find((r) => r.id === trip.routeId)
-          if (!route) return false
           return (
+            route &&
             route.sourceCity.toLowerCase().includes(routeSourceCity) &&
             route.destinationCity.toLowerCase().includes(routeDestinationCity)
           )
@@ -153,11 +194,10 @@ export default function DriverReportPage() {
       const data = aggregatedData.get(key)!
       data.busTypes.add(bus.busType)
       data.voucherIds.add(voucher.id.toString())
-      data.tripCount = data.voucherIds.size // Count unique vouchers
+      data.tripCount = data.voucherIds.size
       data.totalDiesel += voucher.dieselLitres || 0
     })
 
-    // Convert the map to array and format the data
     return Array.from(aggregatedData.values()).map((data) => ({
       driver: data.driver,
       busType: Array.from(data.busTypes).join(", "),
@@ -174,7 +214,7 @@ export default function DriverReportPage() {
     busBrandFilter,
     routeFilter,
     driverFilterId,
-    selectedDate,
+    dateParam,
     formatNumber,
   ])
 
@@ -189,11 +229,11 @@ export default function DriverReportPage() {
     return printExpenses(
       driverData as any,
       filterEmployee,
-      selectedDate?.toISOString(),
+      dateParam??undefined,
       busBrandFilter as any,
       routeFilter as any,
     )
-  }, [driverData, employees, driverFilterId, selectedDate, busBrandFilter, routeFilter])
+  }, [driverData, employees, driverFilterId, dateParam, busBrandFilter, routeFilter])
 
   return (
     <PageContainer scrollable>
@@ -208,4 +248,3 @@ export default function DriverReportPage() {
     </PageContainer>
   )
 }
-

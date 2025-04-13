@@ -40,7 +40,7 @@ export const BusExpensecolumns: ColumnDef<Expense>[] = [
     header: 'Route',
     cell: (
       { row } // Parent component usage
-    ) => <Routes routeId={Number(row.original.routeId)} />
+    ) => <Routes routeId={Number(row.original.busClosingVoucherId)} />
   },
   {
     accessorKey: 'description',

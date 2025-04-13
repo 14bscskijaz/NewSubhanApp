@@ -10,14 +10,16 @@ type RouteProps = {
 
 const Routes: React.FC<RouteProps> = ({ routeId }) => {
     const routes = useSelector<RootState, Route[]>(allRoutes);
-
+    const busVouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
+    // console.log(busVouchers, "routeId");
+    const busVoucher = busVouchers.find((voucher) => voucher.id === routeId);
     // Find the voucher with the given VoucherId
-    const foundRoute = routes.find((routes) => routes.id === routeId);
+    const foundRoute = routes.find((routes) => routes.id === busVoucher?.routeId);
 
     return (
         <div>
             {foundRoute ? (
-                <p>{foundRoute.sourceCity} - {foundRoute.destinationCity}</p>
+                <p>{foundRoute?.sourceCity} - {foundRoute?.destinationCity}</p>
             ) : (
                 <p>N/A</p>
             )}

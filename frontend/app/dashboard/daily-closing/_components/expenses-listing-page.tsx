@@ -1,4 +1,8 @@
 'use client';
+import { getAllBuses } from '@/app/actions/bus.action';
+import { getAllBusClosingVouchers, updateBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
+import { createExpense, getAllExpenses, updateExpense } from '@/app/actions/expenses.action';
+import { getAllRoutes } from '@/app/actions/route.action';
 import PageContainer from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
@@ -6,11 +10,12 @@ import { Heading } from '@/components/ui/heading';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import useAccounting from '@/hooks/useAccounting';
 import { BusClosingVoucher, allBusClosingVouchers, setBusClosingVoucher } from '@/lib/slices/bus-closing-voucher';
 import { Buses, allBuses, setBus } from '@/lib/slices/bus-slices';
 import { Expense, allExpenses, setExpenses } from '@/lib/slices/expenses-slices';
 import { Route, allRoutes, setRoute } from '@/lib/slices/route-slices';
-import { addSavedExpense, allSavedExpenses, setSavedExpenses } from '@/lib/slices/saved-expenses';
+import { allSavedExpenses, setSavedExpenses } from '@/lib/slices/saved-expenses';
 import { SavedTripInformation, allSavedsavedTripsInformation } from '@/lib/slices/trip-information-saved';
 import { RootState } from '@/lib/store';
 import { useSearchParams } from 'next/navigation';
@@ -19,12 +24,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import RouteTable from './expenses-tables';
 import BusExpenseTable from './expenses-tables/bus-expense-table';
 import NetExpenses from './net-expense';
-import { getAllBuses } from '@/app/actions/bus.action';
-import { getAllRoutes } from '@/app/actions/route.action';
-import { getAllBusClosingVouchers, updateBusClosingVoucher } from '@/app/actions/BusClosingVoucher.action';
-import { createExpense, getAllExpenses, updateExpense, deleteExpense } from '@/app/actions/expenses.action';
-import useAccounting from '@/hooks/useAccounting';
-import { is } from 'date-fns/locale';
 
 type TExpensesListingPage = {};
 
@@ -45,13 +44,13 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   const [pageGeneralLimit, setPageGeneralLimit] = useState(10);
   const { toast } = useToast();
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); 
 
   const fetchData = async () => {
     const allBusesData = await getAllBuses();
     const allRoutes = await getAllRoutes();
-    const allVouchers = await getAllBusClosingVouchers()
-    const allExpenses = await getAllExpenses()
+    const allVouchers = await getAllBusClosingVouchers();
+    const allExpenses = await getAllExpenses();
     // console.log(allExpenses,'allExpenses');
 
     dispatch(setBus(allBusesData))
@@ -89,7 +88,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
       }));
 
       // Add new expense entries for vouchers without corresponding expenses
-      vouchersForDate.forEach((voucher) => {
+      vouchersForDate?.forEach((voucher) => {
         if (!updatedExpenses.some(e => e.busClosingVoucherId === voucher.id)) {
           updatedExpenses.push({
             busId: Number(voucher.busId),
@@ -103,9 +102,9 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
           });
         }
       });
-
-
-      dispatch(setExpenses(updatedExpenses));
+      if(expenses.length ===0){
+        dispatch(setExpenses(updatedExpenses));
+      }
     };
 
     fetchFilteredData();
@@ -146,7 +145,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
   // Calculate the total amount for bus and general expenses
   const totalBusExpenses = busExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
   const totalGeneralExpenses = generalExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
-  
+
   const TotalExpense = totalBusExpenses + totalGeneralExpenses;
 
   const totalRevenue = expenses.reduce((sum, expense) => {
@@ -163,7 +162,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
       foundVoucher?.generator,
       foundVoucher?.repair,
       foundVoucher?.miscellaneousExpense,
-  ]
+    ]
       .map(Number)
       .reduce((acc, val) => acc + (isNaN(val) ? 0 : val), 0);
     if (foundVoucher) {
@@ -379,8 +378,8 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
       const expensePromises = expenses.map(async (expense) => {
         if (expense.type === 'bus') {
           const voucher = busClosingVouchers.find(v => v.id === expense.busClosingVoucherId);
-          
-          if (voucher &&  !voucher.isSubmitted) {
+
+          if (voucher && !voucher.isSubmitted) {
             // Update the busClosingVoucher isSubmitted status
             await updateBusClosingVoucher(voucher.id, { ...voucher, isSubmitted: true });
           }

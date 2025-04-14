@@ -12,7 +12,7 @@ export const BusExpensecolumns: ColumnDef<Expense>[] = [
   {
     id: 'serial_no',
     header: 'S.No',
-    cell: ({ row }) => <SerialNo rowIndex = {row.index}/>
+    cell: ({ row }) => <SerialNo rowIndex={row.index} />
   },
   {
     id: 'busNumber',
@@ -25,14 +25,14 @@ export const BusExpensecolumns: ColumnDef<Expense>[] = [
     id: 'voucherNumber',
     header: 'Voucher Number',
     cell: (
-      { row } // Parent component usage
+      { row } 
     ) => <VoucherNumber voucherId={Number(row.original.busClosingVoucherId)} />
   },
   {
     id: 'revenue',
     header: 'Revenue',
     cell: (
-      { row } // Parent component usage
+      { row } 
     ) => <Revenue voucherId={Number(row.original.busClosingVoucherId)} />
   },
   {

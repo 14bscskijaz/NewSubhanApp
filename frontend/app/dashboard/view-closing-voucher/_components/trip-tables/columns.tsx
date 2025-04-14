@@ -8,6 +8,7 @@ import Revenue from './Revenue';
 import SourceDestination from './SourceDestination';
 import FormatedRevenue from './FormatedRevenue';
 import { format } from 'date-fns';
+import { CellAction } from './CellAction';
 
 export const columns: ColumnDef<BusClosingVoucher>[] = [
   {
@@ -82,9 +83,9 @@ export const columns: ColumnDef<BusClosingVoucher>[] = [
   //   accessorKey: 'refreshment',
   //   header: 'Refreshment'
   // },
-  // {
-  //   id: 'actions',
-  //   header: 'Actions',
-  //   cell: ({ row }) => <CellAction data={row.original} />
-  // }
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => <CellAction data={row.original} />
+  }
 ];

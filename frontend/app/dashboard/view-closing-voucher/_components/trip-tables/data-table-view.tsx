@@ -67,7 +67,7 @@ export function DataTableView<TData, TValue>({
   const totalGrossRevenue = formatNumber(Number(totalRevenue) - Number(totalExpense))
 
   const handleRowClick = (row: any) => {
-    
+
     if (path === "/dashboard/view-closing-voucher") {
       router.push(`/dashboard/bus-closing?q=${row.original.id}`)
     }
@@ -112,7 +112,15 @@ export function DataTableView<TData, TValue>({
                   onClick={() => handleRowClick(row)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="min-w-36 whitespace-pre px-4 py-2">
+                    <TableCell
+                      key={cell.id}
+                      className="min-w-36 whitespace-pre px-4 py-2"
+                      onClick={(e) => {
+                        if (cell.column.id === "actions") {
+                          e.stopPropagation()
+                        }
+                      }}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}

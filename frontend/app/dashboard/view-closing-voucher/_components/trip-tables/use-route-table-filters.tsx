@@ -56,7 +56,7 @@ export function useRouteTableFilters() {
     searchParams.route.withOptions({ shallow: false }).withDefault('')
   );
 
-  const [dateFilter, setDateFilter] = useQueryState<string>(
+  const [dateFilter, setDateFilter] = useQueryState(
     'date',
     searchParams.date.withOptions({ shallow: false }).withDefault("")
   );

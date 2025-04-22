@@ -102,9 +102,9 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
           });
         }
       });
-      if(expenses.length ===0){
-        dispatch(setExpenses(updatedExpenses));
-      }
+      // if(expenses.length === 0){
+      dispatch(setExpenses(updatedExpenses));
+      // }
     };
 
     fetchFilteredData();
@@ -333,18 +333,22 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
 
             <h2>Summary</h2>
             <table>
-            <tr>
-              <th>Total Revenue</th>
-              <td>${formatNumber(totalRevenue)}</td>
-            </tr>
+            <thead>
+            </thead>
+            <tbody>
               <tr>
-                <th>Total Expenses</th>
-                <td>${formatNumber(TotalExpense)}</td>
+                <th>Total Revenue</th>
+                <td>${formatNumber(totalRevenue)}</td>
               </tr>
-              <tr>
-                <th>Net Income</th>
-                <td>${formatNumber(totalRevenue - TotalExpense)}</td>
-              </tr>
+                <tr>
+                  <th>Total Expenses</th>
+                  <td>${formatNumber(TotalExpense)}</td>
+                </tr>
+                <tr>
+                  <th>Net Income</th>
+                  <td>${formatNumber(totalRevenue - TotalExpense)}</td>
+                </tr>
+              </tbody>
             </table>
           </body>
         </html>
@@ -442,6 +446,8 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
               <Heading title={`Daily Closing (${busExpenses.length})`} description="" />
             </div>
             <Separator />
+            <div>
+            </div>
             <BusExpenseTable data={busExpensesPaginnated} totalData={busExpenses.length} />
           </div>
           <div className='w-[1px] h-full left-[49.9%] bg-neutral-200 absolute hidden md:block'></div>

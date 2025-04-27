@@ -90,6 +90,8 @@ pip install pytest-playwright playwright -U
 1. Create `pg_dump` of the production database.
 ```bash
 pg_dump -U subhandb_owner -d subhandb -h localhost | gzip > subhandb_dump.sql.gz
+or 
+pg_dump -h localhost -U subhandb_owner -d subhandb -F custom -f 2025-04-23_subhandb.dump
 ```
 
 2. Copy the dump to the local machine.
@@ -100,4 +102,6 @@ scp subhanvm:/home/subhan/webapp/NewSubhanApp/database/subhandb_dump.sql.gz .
 3. Load the dump into the local database.
 ```bash
 gunzip -c 16-01-2025_dumpfile.sql.gz | psql -U subhandb_owner -d subhandb_prod_rep -h localhost -p 5435
+or
+pg_restore -h localhost -U subhandb_owner -d accounts_test_db 2025-04-23_subhandb.dump
 ```

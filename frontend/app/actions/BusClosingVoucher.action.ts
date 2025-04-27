@@ -29,6 +29,10 @@ export async function getAllBusClosingVouchers(): Promise<BusClosingVoucher[]> {
 export async function createBusClosingVoucher(busClosingVoucher: BusClosingVoucher): Promise<BusClosingVoucher> {
     try {
         const response = await axiosInstance.post(API_BASE_URL, busClosingVoucher);
+        
+        if (response.status === 201) {
+            console.log("Bus closing voucher created successfully.");
+        } 
         return response.data;
     } catch (error) {
         console.error("Error creating bus closing voucher:");

@@ -555,6 +555,7 @@ const BusClosingVoucherForm: React.FC<BusClosingVoucherFormProps> = ({
           }),
         )
 
+        console.log("Bus closing voucher and Trips created successfully.");
         toast({
           title: "Success",
           description: "Bus closing voucher created successfully!",

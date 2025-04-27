@@ -108,6 +108,7 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
     };
 
     fetchFilteredData();
+    console.log("Fetch data for daily closing");
   }, [selectedDate, busClosingVouchers, savedExpenses, dispatch]);
 
 
@@ -335,11 +336,11 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
             <table>
             <thead>
             </thead>
-            <tbody>
-              <tr>
-                <th>Total Revenue</th>
-                <td>${formatNumber(totalRevenue)}</td>
-              </tr>
+              <tbody>
+                <tr>
+                  <th>Total Revenue</th>
+                  <td>${formatNumber(totalRevenue)}</td>
+                </tr>
                 <tr>
                   <th>Total Expenses</th>
                   <td>${formatNumber(TotalExpense)}</td>

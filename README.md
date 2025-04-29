@@ -14,6 +14,24 @@ dotnet build
 dotnet run
 ```
 
+### Observability Setup: Docker
+To spin up the Docker containers for the first time for observability, run the following command
+from the docker directory:
+```bash
+sudo docker compose up -d  # -d flag is used to run the containers in detached mode
+```
+This will start the containers for Loki and Grafana.
+
+To start the containers again after stopping them, run the following command:
+```bash
+sudo docker compose start
+```
+
+To stop the Docker containers (from the docker directory):
+```bash
+sudo docker compose stop
+```
+
 ### Install dotnet-ef
 ```bash
 dotnet tool install --global dotnet-ef --version 6

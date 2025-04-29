@@ -14,7 +14,10 @@ const nextConfig = {
       }
     ]
   },
-  transpilePackages: ['geist']
+  transpilePackages: ['geist'],
+  experimental: {
+    instrumentationHook: true
+  }
 };
 
 module.exports = nextConfig;

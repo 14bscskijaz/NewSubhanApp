@@ -16,6 +16,63 @@ const getServerLogger = () => {
     pino({ level: 'info' }); // Fallback logger if global isn't set
 }
 
+// Helper function to serialize Error objects
+const serializeError = (error: any): Record<string, any> => {
+  if (!(error instanceof Error)) {
+    return error;
+  }
+
+  // Extract all properties from the error object
+  const serialized: Record<string, any> = {
+    name: error.name,
+    message: error.message,
+    stack: error.stack,
+  };
+
+  // Copy any custom properties the error might have
+  Object.getOwnPropertyNames(error).forEach(prop => {
+    if (!['name', 'message', 'stack'].includes(prop)) {
+      try {
+        const value = (error as any)[prop];
+        serialized[prop] = value instanceof Error ? serializeError(value) : value;
+      } catch (e) {
+        serialized[prop] = 'Could not serialize property';
+      }
+    }
+  });
+
+  return serialized;
+};
+
+// Function to recursively serialize any Error objects in a log entry
+const serializeLogEntry = (obj: any): any => {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  
+  if (obj instanceof Error) {
+    return serializeError(obj);
+  }
+  
+  if (Array.isArray(obj)) {
+    return obj.map(serializeLogEntry);
+  }
+  
+  if (typeof obj === 'object') {
+    const result: Record<string, any> = {};
+    for (const key of Object.keys(obj)) {
+      try {
+        result[key] = serializeLogEntry(obj[key]);
+      } catch (e) {
+        result[key] = 'Could not serialize value';
+      }
+    }
+    return result;
+  }
+  
+  return obj;
+};
+
 // Client-side logger that sends logs to backend API
 const createClientLogger = () => {
   // Configure batching settings
@@ -30,8 +87,14 @@ const createClientLogger = () => {
   // Function to send logs to the backend
   const sendLogs = async (logs: LogData[]) => {
     if (logs.length === 0) return;
+
+    // console.log(" Sending logs to server:", JSON.stringify({ logs }));
+
     
     try {
+      // Create a serialized copy of the logs with all errors properly serialized
+      // const serializedLogs = logs.map(log => serializeLogEntry(log));
+      
       await fetch('/api/logs/batch', {
         method: 'POST',
         headers: {
@@ -65,16 +128,22 @@ const createClientLogger = () => {
   };
 
   // Add log to the queue or send immediately for certain levels
-  const queueLog = (level: string, message: string, args: Record<string, any> = {}): void => {
+  const queueLog = (level: string, message: string, args: Record<string, any> = {}, err: Record<string, any> = {}): void => {
+
+    // console.log("THe error object in queueLog", serializeLogEntry(err));
+
     const logEntry: LogData = {
       level,
       message,
       time: new Date().toISOString(),
-      ...args,
+      ...serializeLogEntry(args),
+      error: serializeLogEntry(err),
       browser: true,
       url: window.location.href,
       userAgent: navigator.userAgent,
     };
+
+    // console.log("Log entry", logEntry);
 
     // For error and fatal logs, send immediately
     if (IMMEDIATE_LEVELS.includes(level)) {
@@ -126,11 +195,11 @@ const createClientLogger = () => {
 
   // Browser compatible logger interface
   return {
-    debug: (msg: string, args = {}) => queueLog('debug', msg, args),
+    debug: (msg: string, args = {} ) => queueLog('debug', msg, args),
     info: (msg: string, args = {}) => queueLog('info', msg, args),
     warn: (msg: string, args = {}) => queueLog('warn', msg, args),
-    error: (msg: string, args = {}) => queueLog('error', msg, args),
-    fatal: (msg: string, args = {}) => queueLog('fatal', msg, args),
+    error: (msg: string, args = {}, err = {}) => queueLog('error', msg, args, err),
+    fatal: (msg: string, args = {}, err = {}) => queueLog('fatal', msg, args, err),
     // Manual flush method to send logs immediately
     flush: async () => {
       const currentBatch = [...logQueue];
@@ -149,8 +218,8 @@ const createClientLogger = () => {
         debug: (msg: string, args = {}) => queueLog('debug', msg, { ...bindings, ...args }),
         info: (msg: string, args = {}) => queueLog('info', msg, { ...bindings, ...args }),
         warn: (msg: string, args = {}) => queueLog('warn', msg, { ...bindings, ...args }),
-        error: (msg: string, args = {}) => queueLog('error', msg, { ...bindings, ...args }),
-        fatal: (msg: string, args = {}) => queueLog('fatal', msg, { ...bindings, ...args }),
+        error: (msg: string, args = {}, err = {}) => queueLog('error', msg, { ...bindings, ...args}, err),
+        fatal: (msg: string, args = {}, err = {}) => queueLog('fatal', msg, { ...bindings, ...args }, err),
         flush: async () => {
           const currentBatch = [...logQueue];
           logQueue = [];
@@ -174,7 +243,7 @@ const clientLoggerInstance = isClient ? createClientLogger() : null;
 export const logger = isClient ? clientLoggerInstance! : getServerLogger();
 
 // Helper to create contextual loggers
-export function getLogger(context: string) {
+export function getLogger(context: string | Object) {
   return isClient 
     ? clientLoggerInstance!.child({ context }) 
     : getServerLogger().child({ context });

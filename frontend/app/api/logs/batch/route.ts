@@ -26,8 +26,9 @@ export async function POST(request: NextRequest) {
         const message = enhancedLog.message || 'Client log not found.';
 
         // Remove level and message from the metadata
-        const { level: _, message: __, ...metadata } = enhancedLog;
-        
+        const { level: _, message: __, error: error, ...metadata } = enhancedLog;
+        // console.log("The error object in the log"); 
+        // console.log(error);
         // Log with the appropriate level
         switch(level) {
           case 'trace':
@@ -43,10 +44,10 @@ export async function POST(request: NextRequest) {
             globalThis.logger.warn({metadata, message});
             break;
           case 'error':
-            globalThis.logger.error({metadata, message});
+            globalThis.logger.error({err: error, metadata, message});
             break;
           case 'fatal':
-            globalThis.logger.fatal({metadata, message});
+            globalThis.logger.fatal({err: error, metadata, message});
             break;
           default:
             globalThis.logger.info({metadata, message});

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { logger, getLogger } from '@/lib/logger';
 import { Button } from '@/components/ui/button';
+import { error } from 'console';
 
 export function LoggingExample() {
   const [message, setMessage] = useState('');
@@ -30,8 +31,15 @@ export function LoggingExample() {
     componentLogger.error('This is an error log example', { 
       action: 'error_example',
       component: 'LoggingExample',
-      stack: new Error().stack
-    });
+      // stack: new Error().stack
+      },
+      new Error(
+        'Very long error object' // This can be a real error object
+      )
+      // {
+      //   stack: new Error().stack
+      // }
+    );
     setMessage('Error log sent to server! Check Grafana to see it.');
   };
   

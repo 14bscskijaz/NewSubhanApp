@@ -1,4 +1,4 @@
-import pino from 'pino';
+import pino, { Logger } from 'pino';
 
 // Check if code is running on browser or server
 const isClient = typeof window !== 'undefined';
@@ -11,7 +11,7 @@ interface LogData {
 }
 
 // Server-side logger uses the global instance set up in instrumentation.ts
-const getServerLogger = () => {
+export const getServerLogger = (): Logger => {
   return globalThis?.logger || 
     pino({ level: 'info' }); // Fallback logger if global isn't set
 }
@@ -90,7 +90,6 @@ const createClientLogger = () => {
 
     // console.log(" Sending logs to server:", JSON.stringify({ logs }));
 
-    
     try {
       // Create a serialized copy of the logs with all errors properly serialized
       // const serializedLogs = logs.map(log => serializeLogEntry(log));
@@ -130,7 +129,7 @@ const createClientLogger = () => {
   // Add log to the queue or send immediately for certain levels
   const queueLog = (level: string, message: string, args: Record<string, any> = {}, err: Record<string, any> = {}): void => {
 
-    // console.log("THe error object in queueLog", serializeLogEntry(err));
+    // console.log("THe args object in queueLog", serializeLogEntry(args));
 
     const logEntry: LogData = {
       level,
@@ -240,11 +239,11 @@ const createClientLogger = () => {
 const clientLoggerInstance = isClient ? createClientLogger() : null;
 
 // Export the appropriate logger based on environment
-export const logger = isClient ? clientLoggerInstance! : getServerLogger();
+// export const logger = isClient ? clientLoggerInstance! : getServerLogger();
 
 // Helper to create contextual loggers
 export function getLogger(context: string | Object) {
   return isClient 
     ? clientLoggerInstance!.child({ context }) 
-    : getServerLogger().child({ context });
+    : getServerLogger();
 }

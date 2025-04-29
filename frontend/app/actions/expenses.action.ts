@@ -1,6 +1,8 @@
 'use server'
+import { getLogger, getServerLogger } from "@/lib/logger";
 import { Expense } from "@/lib/slices/expenses-slices";
 import axios from "axios";
+import { get } from "http";
 
 // const API_BASE_URL = "https://localhost:7169/api/Expense";
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/Expense";
@@ -12,13 +14,28 @@ const axiosInstance = axios.create({
     }),
 });
 
+const serverLogger = getServerLogger();
+
 // Get all expenses
 export async function getAllExpenses(): Promise<Expense[]> {
     try {
         const response = await axiosInstance.get(API_BASE_URL);
+
+        serverLogger.info({
+            expenseCount: String(response.data.length),
+            lastExpense: JSON.stringify(response.data[ response.data.length - 1]),
+            customCount: 400,
+          },
+          'Fetched all expenses successfully'
+        );
         return response.data;
     } catch (error) {
         console.error("Error fetching expenses:", error);
+        serverLogger.error({
+            err: error,
+          },
+          'Error fetching all expenses'
+        );
         throw error;
     }
 }

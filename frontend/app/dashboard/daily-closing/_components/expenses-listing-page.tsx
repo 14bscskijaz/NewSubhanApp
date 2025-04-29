@@ -24,10 +24,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import RouteTable from './expenses-tables';
 import BusExpenseTable from './expenses-tables/bus-expense-table';
 import NetExpenses from './net-expense';
+import { getLogger } from '@/lib/logger';
+import { format } from 'date-fns';
+// import { logInfo } from '@/lib/logger';
 
 type TExpensesListingPage = {};
 
 export default function ExpensesListingPage({ }: TExpensesListingPage) {
+  const componentLogger = getLogger('Add Daily Closing');
   const { formatNumber } = useAccounting()
   const busClosingVouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
   const [loading, setLoading] = useState(false);
@@ -102,13 +106,17 @@ export default function ExpensesListingPage({ }: TExpensesListingPage) {
           });
         }
       });
-      // if(expenses.length === 0){
       dispatch(setExpenses(updatedExpenses));
-      // }
+
+      componentLogger.info("Filtered expenses for the selected date", {
+        selectedDate: format(selectedDate, "d MMM yyyy pp"),
+        dailyClosing: JSON.stringify(updatedExpenses.map(elem => elem.busClosingVoucherId)),
+      })
     };
 
     fetchFilteredData();
-    console.log("Fetch data for daily closing");
+    // logInfo("Fetch data for daily closing", { pageroute: '/api/users' })
+    // console.log("Fetch data for daily closing");
   }, [selectedDate, busClosingVouchers, savedExpenses, dispatch]);
 
 

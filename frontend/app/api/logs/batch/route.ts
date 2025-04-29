@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
 
         // Remove level and message from the metadata
         const { level: _, message: __, error: error, ...metadata } = enhancedLog;
-        // console.log("The error object in the log"); 
-        // console.log(error);
+        // console.log("The metadata object in the log");
+        // console.log(metadata);
         // Log with the appropriate level
         switch(level) {
           case 'trace':

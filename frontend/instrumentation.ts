@@ -9,8 +9,6 @@ declare global {
 export async function register() {
   // console.log("Instrumentation registered");  
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    // console.log("-----------------Node.js runtime detected-------------------");
-
     const pino = (await import("pino")).default;
     const pinoLoki = (await import("pino-loki")).default;
 

@@ -6,8 +6,13 @@ services:
     ports:
       - "3001:3000"
     environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      # We need to access grafana at /grafana from behind a reverse proxy, so we need to also specify /grafana in the root URL.
+      # Additionally, we also set GF_SERVER_SERVE_FROM_SUB_PATH to true to serve Grafana from a subpath.
+      # - GF_SERVER_ROOT_URL=https://newsubhan.com/grafana  # Production Setting. 
+      # - GF_SERVER_SERVE_FROM_SUB_PATH=true  # Production Setting.
+      - GF_SERVER_ROOT_URL=http://localhost:3001
+      - GF_AUTH_ANONYMOUS_ENABLED=true  # For use in dev only 
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin  # For use in dev only
     volumes:
       - grafana-storage:/var/lib/grafana
     networks:

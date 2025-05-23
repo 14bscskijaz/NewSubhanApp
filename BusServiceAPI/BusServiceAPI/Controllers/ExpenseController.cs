@@ -65,11 +65,11 @@ namespace BusServiceAPI.Controllers
         // GET: api/Expense/Report
         [HttpGet("Report")]
         public IActionResult GetExpenseReport(
-            [FromQuery] DateTime? startDate = null, 
-            [FromQuery] DateTime? endDate = null, 
-            [FromQuery] string? type = null, 
+            [FromQuery] DateTime? startDate = null,
+            [FromQuery] DateTime? endDate = null,
+            [FromQuery] string? type = null,
             [FromQuery(Name = "busId")] List<int> busIds = null,
-            [FromQuery] int page = 1, 
+            [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10)
         {
             IQueryable<Expense> query = _context.Expenses
@@ -131,6 +131,13 @@ namespace BusServiceAPI.Controllers
                 })
                 .ToList();
 
+            // Calculate total amount
+            var totalAmount = expenses.Sum(e => e.Amount);
+            var columnTotals = new 
+            {
+                amount = totalAmount
+            };
+
             // Create response with pagination metadata
             var result = new 
             {
@@ -138,7 +145,8 @@ namespace BusServiceAPI.Controllers
                 TotalPages = totalPages,
                 CurrentPage = page,
                 PageSize = pageSize,
-                Items = expenses
+                Items = expenses,
+                ColumnTotals = columnTotals
             };
 
             return Ok(result);

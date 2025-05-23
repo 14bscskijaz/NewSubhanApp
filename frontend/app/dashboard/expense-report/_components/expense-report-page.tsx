@@ -5,6 +5,7 @@ import { type ExpenseReport } from "@/app/actions/expenses.action";
 import PageContainer from "@/components/layout/page-container";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import ExpenseReportTable from "./expense-report-table";
 import axios from "axios";
 import { getLogger } from "@/lib/logger";
@@ -33,6 +34,9 @@ export default function ExpenseReportPage() {
   const dispatch = useDispatch();
 
   const [expensesReports, setExpenseReports] = useState<ExpenseReport[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [columnTotals, setColumnTotals] = useState<{ [key: string]: number }>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const [page, setPage] = useQueryState("page", searchParams.page.withOptions({ shallow: false }));
   const [limit, setLimit] = useQueryState("limit", searchParams.limit.withOptions({ shallow: false }));
@@ -49,24 +53,29 @@ export default function ExpenseReportPage() {
     busId: busIdFilters ? busIdFilters.split('.') : []
   };
 
-  console.log("URL Params:", urlParams);
+  // console.log("URL Params:", urlParams);
   const fetchData = async () => {
+    setIsLoading(true);
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
         params: urlParams
       });
-      console.log(response.data);
+      // console.log(response.data);
       clientLogger.info('Fetched all expense reports successfully', {
         expenseReportCount: String(response.data.items.length),
         lastExpenseReport: JSON.stringify(response.data.items[ response.data.items.length - 1]),
       })
       setExpenseReports(response.data.items);
+      setTotalItems(response.data.totalItems);
+      setColumnTotals(response.data.columnTotals || {});
     } catch (error) {
       console.error("Error fetching expense reports:", error);
       clientLogger.error('Error fetching all expense reports', {
         err: error,
       });
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -97,12 +106,21 @@ export default function ExpenseReportPage() {
         </div>
         <Separator />
       
-        
-        <ExpenseReportTable
-          data={expensesReports}
-          totalItems={expensesReports.length}
-          columnTotals={{}}
-        />
+        {isLoading ? (
+          <DataTableSkeleton 
+            columnCount={6} 
+            rowCount={10}
+            searchableColumnCount={1}
+            filterableColumnCount={2} 
+            showViewOptions={true}
+          />
+        ) : (
+          <ExpenseReportTable
+            data={expensesReports}
+            totalItems={totalItems}
+            columnTotals={columnTotals}
+          />
+        )}
 
       </div>
     </PageContainer>

@@ -58,7 +58,7 @@ export const columns: ColumnDef<Partial<ExpenseReport>>[] = [
 		cell: ({ row }) => {
 			// Format as currency
 			return (
-				<div className="text-right font-medium">
+				<div className="text-left font-medium">
           {row.original.amount !== undefined ? formatNumber(row.original.amount) : "N/A"}
 				</div>
 			);

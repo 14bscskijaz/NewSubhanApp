@@ -5,7 +5,7 @@ import { columns } from "./columns";
 import { type ExpenseReport } from "@/app/actions/expenses.action";
 import { useTableFilters } from "./use-table-filters";
 import { DateFilterBox } from "@/components/date/DateFilterBox";
-import { DataTableFilterBox } from "@/components/ui/table/data-table-filter-box";
+import { DataTableMultiFilterBox } from "@/components/ui/table/data-table-multi-filter-box";
 import { DataTableResetFilter } from "@/components/ui/table/data-table-reset-filter";
 
 interface ExpenseTableProps {
@@ -44,7 +44,7 @@ export default function RouteTable({ data, totalItems, columnTotals, }: ExpenseT
           setFilterValue={setDateFilter}
         />
 
-        <DataTableFilterBox
+        <DataTableMultiFilterBox
           filterKey="busNumber"
           title="Bus Number"
           options={BUS_OPTIONS}

@@ -14,8 +14,9 @@
     --card-foreground: 20 51% 3%;
     --border: 20 15% 94%;
     --input: 20 15% 94%;
-    --primary: 80 28% 72%;
-    --primary-foreground: 20 48% 12%;
+    --primary: 167 72% 33%;
+    --primary-foreground: 167 27% 94%;
+    /* --primary-foreground: hsl(167, 27%, 94%); */
     --secondary: 20 12% 92%;
     --secondary-foreground: 20 12% 32%;
     --accent: 20 12% 92%;

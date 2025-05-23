@@ -24,13 +24,14 @@ namespace BusServiceAPI.Controllers
         {
             var expenses = _context.Expenses
                 .Include(e => e.Bus)  // Include Bus information if necessary
+                .Include(e => e.BusClosingVoucher)
                 .Select(e => new ExpenseDTO
                 {
                     Id = e.Id,
                     Date = e.Date,
                     Type = e.Type.ToString(),
-                    BusId = e.Bus.Id,
-                    BusClosingVoucherId = e.BusClosingVoucher.Id,
+                    BusId = e.Bus != null ? e.Bus.Id : e.BusId,
+                    BusClosingVoucherId = e.BusClosingVoucherId,
                     Amount = e.Amount,
                     Description = e.Description
                 }).ToList();
@@ -44,6 +45,7 @@ namespace BusServiceAPI.Controllers
         {
             var expense = _context.Expenses
                 .Include(e => e.Bus)  // Include Bus information if needed
+                .Include(e => e.BusClosingVoucher) // Include BusClosingVoucher to prevent null reference
                 .Select(e => new ExpenseDTO
                 {
                     Id = e.Id,
@@ -60,6 +62,88 @@ namespace BusServiceAPI.Controllers
             return Ok(expense);
         }
 
+        // GET: api/Expense/Report
+        [HttpGet("Report")]
+        public IActionResult GetExpenseReport(
+            [FromQuery] DateTime? startDate = null, 
+            [FromQuery] DateTime? endDate = null, 
+            [FromQuery] string? type = null, 
+            [FromQuery(Name = "busId")] List<int> busIds = null,
+            [FromQuery] int page = 1, 
+            [FromQuery] int pageSize = 10)
+        {
+            IQueryable<Expense> query = _context.Expenses
+                .Include(e => e.Bus)
+                .Include(e => e.BusClosingVoucher);
+
+            // Print the incoming parameters for debugging
+            Console.WriteLine($"startDate: {startDate}, endDate: {endDate}, Type: {type}");
+            Console.WriteLine($"BusId: {(busIds != null ? string.Join(",", busIds) : "null")}, Page: {page}, PageSize: {pageSize}");
+
+            // Apply filters
+            if (startDate.HasValue)
+            {
+                query = query.Where(e => e.Date >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                // Add one day to include the end date fully
+                var nextDay = endDate.Value.AddDays(1);
+                query = query.Where(e => e.Date < nextDay);
+            }
+
+            if (!string.IsNullOrEmpty(type))
+            {
+                if (Enum.TryParse<ExpenseType>(type, true, out var expenseType))
+                {
+                    query = query.Where(e => e.Type == expenseType);
+                }
+            }
+
+            if (busIds != null && busIds.Any())
+            {
+                query = query.Where(e => e.BusId.HasValue && busIds.Contains(e.BusId.Value));
+            }
+
+            // Filter entries with 0 amount
+            query = query.Where(e => e.Amount > 0);
+
+            // Calculate total for pagination metadata
+            var totalItems = query.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            // Apply pagination
+            var expenses = query
+                .OrderByDescending(e => e.Date)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(e => new ExpenseReportDTO
+                {
+                    Id = e.Id,
+                    Date = e.Date,
+                    Type = e.Type.ToString(),
+                    BusId = e.Bus != null ? e.Bus.Id : e.BusId,
+                    BusNumber = e.Bus != null ? e.Bus.BusNumber : string.Empty,
+                    BusClosingVoucherId = e.BusClosingVoucherId,
+                    Amount = e.Amount,
+                    Description = e.Description
+                })
+                .ToList();
+
+            // Create response with pagination metadata
+            var result = new 
+            {
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                CurrentPage = page,
+                PageSize = pageSize,
+                Items = expenses
+            };
+
+            return Ok(result);
+        }
+
         // POST: api/Expense
         [HttpPost]
         public IActionResult CreateExpense([FromBody] ExpenseDTO expenseDto)
@@ -69,7 +153,7 @@ namespace BusServiceAPI.Controllers
             var expense = new Expense
             {
                 Date = expenseDto.Date,
-                Type = Enum.Parse<ExpenseType>(expenseDto.Type),
+                Type = !string.IsNullOrEmpty(expenseDto.Type) ? Enum.Parse<ExpenseType>(expenseDto.Type) : ExpenseType.general,
                 BusId = expenseDto.BusId,
                 BusClosingVoucherId = expenseDto.BusClosingVoucherId,
                 Amount = expenseDto.Amount,
@@ -101,7 +185,7 @@ namespace BusServiceAPI.Controllers
             if (expense == null) return NotFound();
 
             expense.Date = expenseDto.Date;
-            expense.Type = Enum.Parse<ExpenseType>(expenseDto.Type);
+            expense.Type = !string.IsNullOrEmpty(expenseDto.Type) ? Enum.Parse<ExpenseType>(expenseDto.Type) : ExpenseType.general;
             expense.BusId = expenseDto.BusId;
             expense.BusClosingVoucherId = expenseDto.BusClosingVoucherId;
             expense.Amount = expenseDto.Amount;

@@ -271,6 +271,10 @@ export const navItems: NavItem[] = [
         title: 'Driver Report',
         url: '/dashboard/driver-report',
         icon: 'login'
+      },
+      {
+        title: 'Expense Report',
+        url: '/dashboard/expense-report',
       }
     ]
   },

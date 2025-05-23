@@ -9,8 +9,9 @@ import {
 export const searchParams = {
   page: parseAsInteger.withDefault(1),
   limit: parseAsInteger.withDefault(10),
-  status:parseAsString,
-  q: parseAsString,
+  pageSize: parseAsInteger.withDefault(10),
+  status: parseAsString,
+  q: parseAsString.withDefault(''),
   gender: parseAsString,
   busNumber: parseAsString,
   busOwner: parseAsString,

@@ -191,7 +191,7 @@ export default function BusReportPage() {
         busNumber: busNumberFilter,
         busOwner: busOwnerFilter,
     });
-}, [busData, buses, searchParams]);
+  }, [busData, buses, searchParams]);
 
 
   const totalBusReport = busData.length;

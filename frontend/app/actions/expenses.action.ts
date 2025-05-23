@@ -4,6 +4,32 @@ import { Expense } from "@/lib/slices/expenses-slices";
 import axios from "axios";
 import { get } from "http";
 
+type ActionResponse<T> = {
+  success: boolean;
+  message?: string;
+  data?: T | T[];
+  meta?: {
+    totalItems?: number;
+    columnTotals?: Record<string, null | number>;
+    page?: number;
+    limit?: number;
+  };
+  error?: any;
+}
+
+export type ExpenseReport = {
+  id: number;
+  date: string;
+  type: 'bus' | 'general';
+  busClosingVoucherId?: number | null;
+  busId?: number;
+  busNumber?: string;
+  routeId?: number;
+  amount: number;
+  description: string;
+  originalId?: number; // Make sure originalId is included
+};
+
 // const API_BASE_URL = "https://localhost:7169/api/Expense";
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/Expense";
 
@@ -83,3 +109,24 @@ export async function deleteExpense(id: number): Promise<void> {
     }
 }
 
+export async function getExpenseReports(): Promise<any> {
+  try {
+    const response = await axiosInstance.get(`${API_BASE_URL}/Report`);
+    console.log(response.data);
+    serverLogger.info({
+      expenseReportCount: String(response.data.items.length),
+      lastExpenseReport: JSON.stringify(response.data.items[ response.data.items.length - 1]),
+      },
+      'Fetched all expense reports successfully'
+    );
+      return response.data;
+  } catch (error) {
+    console.error("Error fetching expense reports:", error);
+    serverLogger.error({
+        err: error,
+      },
+      'Error fetching all expense reports'
+    );
+    throw error;
+  }
+}

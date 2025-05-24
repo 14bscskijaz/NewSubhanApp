@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { type ExpenseReport } from "@/app/actions/expenses.action";
+import { getExpenseReports, type ExpenseReport } from "@/app/actions/expenses.action";
 import PageContainer from "@/components/layout/page-container";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
@@ -15,20 +15,9 @@ import { parseDateRange } from "@/lib/utils/date";
 import { getAllBuses } from "@/app/actions/bus.action";
 import { useDispatch } from "react-redux";
 import { setBus } from "@/lib/slices/bus-slices";
-import qs from "qs";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/Expense";
-
-const axiosInstance = axios.create({
-    baseURL: API_BASE_URL,
-    httpsAgent: new (require('http').Agent)({
-        rejectUnauthorized: false,
-    }),
-    paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
-});
+import { toast } from "sonner";
 
 const clientLogger = getLogger("expense-report");
-
 
 export default function ExpenseReportPage() {
   const dispatch = useDispatch();
@@ -57,23 +46,12 @@ export default function ExpenseReportPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
-        params: urlParams
-      });
-      // console.log(response.data);
-      clientLogger.info('Fetched all expense reports successfully', {
-        expenseReportCount: String(response.data.items.length),
-        lastExpenseReport: JSON.stringify(response.data.items[ response.data.items.length - 1]),
-      })
-      setExpenseReports(response.data.items);
-      setTotalItems(response.data.totalItems);
-      setColumnTotals(response.data.columnTotals || {});
+     const data = await getExpenseReports(urlParams);
+      setExpenseReports(data.items);
+      setTotalItems(data.totalItems);
+      setColumnTotals(data.columnTotals || {});
     } catch (error) {
-      console.error("Error fetching expense reports:", error);
-      clientLogger.error('Error fetching all expense reports', {
-        err: error,
-      });
-      throw error;
+      toast.error("Failed to fetch expense reports");
     } finally {
       setIsLoading(false);
     }

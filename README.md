@@ -60,6 +60,11 @@ Use database update command to do that.
 dotnet ef database update
 ```
 
+2. Search for the process running the old dotnet service.
+```bash
+ps aux | grep dotnet
+```
+
 2. Kill the old dotnet service using `kill -15 <pid>`.
 
 3. build the updated dotnet service.

@@ -3,6 +3,7 @@ import { getLogger, getServerLogger } from "@/lib/logger";
 import { Expense } from "@/lib/slices/expenses-slices";
 import axios from "axios";
 import { get } from "http";
+import qs from "qs";
 
 type ActionResponse<T> = {
   success: boolean;
@@ -38,6 +39,7 @@ const axiosInstance = axios.create({
     httpsAgent: new (require('http').Agent)({
         rejectUnauthorized: false,
     }),
+    paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
 });
 
 const serverLogger = getServerLogger();
@@ -109,17 +111,19 @@ export async function deleteExpense(id: number): Promise<void> {
     }
 }
 
-export async function getExpenseReports(): Promise<any> {
+export async function getExpenseReports(urlParams: any): Promise<any> {
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}/Report`);
-    console.log(response.data);
+    const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
+      params: urlParams
+    });
+    // console.log(response.data);
     serverLogger.info({
       expenseReportCount: String(response.data.items.length),
       lastExpenseReport: JSON.stringify(response.data.items[ response.data.items.length - 1]),
       },
       'Fetched all expense reports successfully'
     );
-      return response.data;
+    return response.data;
   } catch (error) {
     console.error("Error fetching expense reports:", error);
     serverLogger.error({
@@ -130,3 +134,28 @@ export async function getExpenseReports(): Promise<any> {
     throw error;
   }
 }
+
+// export async function getExpenseReportById(id: number): Promise<ExpenseReport> {
+
+//     try {
+//       const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
+//         params: urlParams
+//       });
+//       // console.log(response.data);
+//       clientLogger.info('Fetched all expense reports successfully', {
+//         expenseReportCount: String(response.data.items.length),
+//         lastExpenseReport: JSON.stringify(response.data.items[ response.data.items.length - 1]),
+//       })
+//       setExpenseReports(response.data.items);
+//       setTotalItems(response.data.totalItems);
+//       setColumnTotals(response.data.columnTotals || {});
+//     } catch (error) {
+//       console.error("Error fetching expense reports:", error);
+//       clientLogger.error('Error fetching all expense reports', {
+//         err: error,
+//       });
+//       throw error;
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   }

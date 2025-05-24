@@ -46,7 +46,8 @@ export default function ExpenseReportPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-     const data = await getExpenseReports(urlParams);
+      const data = await getExpenseReports(urlParams);
+      console.log("Fetched Expense Reports:", data);
       setExpenseReports(data.items);
       setTotalItems(data.totalItems);
       setColumnTotals(data.columnTotals || {});

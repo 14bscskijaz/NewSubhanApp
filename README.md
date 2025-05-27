@@ -65,11 +65,11 @@ dotnet ef database update
 ps aux | grep dotnet
 ```
 
-2. Kill the old dotnet service using `kill -15 <pid>`.
+3. Kill the old dotnet service using `kill -15 <pid>`.
 
-3. build the updated dotnet service.
+4. build the updated dotnet service.
 
-3. deploy using `nohup`.
+5. deploy using `nohup`.
 e.g. 
 ```bash
 nohup dotnet run &

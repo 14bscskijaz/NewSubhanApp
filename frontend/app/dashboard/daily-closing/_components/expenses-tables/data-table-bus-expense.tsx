@@ -34,7 +34,7 @@ export function DataTableBusExpense<TData, TValue>({
   columns,
   data,
   totalItems,
-  pageSizeOptions = [5, 10, 15, 20]
+  pageSizeOptions = [15, 20, 25, 30]
 }: DataTableProps<TData, TValue>) {
   const { open } = useSidebar();
   const [currentPage, setCurrentPage] = useQueryState(
@@ -43,9 +43,7 @@ export function DataTableBusExpense<TData, TValue>({
   );
   const [pageSize, setPageSize] = useQueryState(
     'limit',
-    parseAsInteger
-      .withOptions({ shallow: false, history: 'push' })
-      .withDefault(10) 
+    parseAsInteger .withOptions({ shallow: false, history: 'push' }) .withDefault(30) 
   );
 
   const paginationState = {

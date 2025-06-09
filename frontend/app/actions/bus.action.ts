@@ -1,32 +1,46 @@
 'use server'
+import { getLogger, getServerLogger } from "@/lib/logger";
 import { Buses } from '@/lib/slices/bus-slices';
 import axios from 'axios';
+
+export type BusReport = {
+  id: number;
+  busId?: number;
+  busNumber?: string;
+  busOwner?: string;
+  tripsCount: number;
+  passegers: number;
+  expenses?: number; // Make sure originalId is included
+  revenue?: number;
+};
 
 // const API_BASE_URL = "https://localhost:7169/api/Bus";
 const API_BASE_URL  = process.env.NEXT_PUBLIC_BACKEND_URL + '/Bus';
 
+const serverLogger = getServerLogger();
+
 // Create an Axios instance with custom SSL settings
 const axiosInstance = axios.create({
-    baseURL: API_BASE_URL,
-    httpsAgent: new (require('http').Agent)({
-        rejectUnauthorized: false,
-    }),
+  baseURL: API_BASE_URL,
+  httpsAgent: new (require('http').Agent)({
+      rejectUnauthorized: false,
+  }),
 });
 
 export async function getAllBuses(): Promise<Buses[]> {
-    try {
-        // Make the request with axios
-        const response = await axiosInstance.get(API_BASE_URL);
+  try {
+    // Make the request with axios
+    const response = await axiosInstance.get(API_BASE_URL);
 
-        // Extract the data from the response
-        const data = await response.data;
+    // Extract the data from the response
+    const data = await response.data;
 
-        return data;
-    } catch (error) {
-        // Handle errors
-        console.error("Error fetching buses:", error);
-        throw error;
-    }
+    return data;
+  } catch (error) {
+    // Handle errors
+    console.error("Error fetching buses:", error);
+    throw error;
+  }
 }
 
 export async function createBus(busData: Omit<Buses, "id">) {
@@ -77,4 +91,29 @@ export async function updateBuses(busId: number, busData: Omit<Buses, "id">): Pr
         // Optional: Customize the error message or rethrow it
         throw new Error("Failed to update the bus. Please try again.");
     }
+}
+
+//  TODO update
+export async function getBusReports(urlParams: any): Promise<any> {
+  try {
+    const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
+      params: urlParams
+    });
+    // console.log(response.data);
+    serverLogger.info({
+      expenseReportCount: String(response.data.items?.length),
+      lastExpenseReport: JSON.stringify(response.data.items[ response.data.items.length - 1]),
+      },
+      'Fetched all expense reports successfully'
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching expense reports:", error);
+    serverLogger.error({
+        err: error,
+      },
+      'Error fetching all expense reports'
+    );
+    throw error;
+  }
 }

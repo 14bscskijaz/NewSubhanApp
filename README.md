@@ -75,6 +75,12 @@ e.g.
 nohup dotnet run &
 ```
 
+#### Stopping the dotnet process
+```bash
+pkill -f "dotnet run"
+```
+
+
 #### Access Swagger docs
 The API documentation can be accessed at the URL:
 "<address on which the server is running>/swagger/index.html".

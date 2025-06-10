@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import { searchParams } from '@/lib/searchparams';
 import { formatNumber } from '@/lib/utils/accounting';
 import {
   DoubleArrowLeftIcon,
@@ -54,10 +55,7 @@ export function DataTableTotalCols<TData, TValue>({
     parseAsInteger.withOptions({ shallow: false }).withDefault(1)
   );
   const [pageSize, setPageSize] = useQueryState(
-    'limit',
-    parseAsInteger
-      .withOptions({ shallow: false, history: 'push' })
-      .withDefault(10)
+    'pageSize', searchParams.pageSize.withOptions({ shallow: false })
   );
 
   const paginationState = {

@@ -1,22 +1,11 @@
 'use server'
 import { getLogger, getServerLogger } from "@/lib/logger";
 import { Expense } from "@/lib/slices/expenses-slices";
+import { ActionResponse } from "@/types";
 import axios from "axios";
 import { get } from "http";
 import qs from "qs";
 
-type ActionResponse<T> = {
-  success: boolean;
-  message?: string;
-  data?: T | T[];
-  meta?: {
-    totalItems?: number;
-    columnTotals?: Record<string, null | number>;
-    page?: number;
-    limit?: number;
-  };
-  error?: any;
-}
 
 export type ExpenseReport = {
   id: number;
@@ -111,7 +100,7 @@ export async function deleteExpense(id: number): Promise<void> {
     }
 }
 
-export async function getExpenseReports(urlParams: any): Promise<any> {
+export async function getExpenseReports(urlParams: any): Promise<ActionResponse<ExpenseReport>> {
   try {
     const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
       params: urlParams

@@ -16,8 +16,9 @@ import { getAllBuses } from "@/app/actions/bus.action";
 import { useDispatch } from "react-redux";
 import { setBus } from "@/lib/slices/bus-slices";
 import { toast } from "sonner";
+import { QueryParams } from "@/types";
 
-const clientLogger = getLogger("expense-report");
+// const clientLogger = getLogger("expense-report");
 
 export default function ExpenseReportPage() {
   const dispatch = useDispatch();
@@ -28,26 +29,25 @@ export default function ExpenseReportPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [page, setPage] = useQueryState("page", searchParams.page.withOptions({ shallow: false }));
-  const [limit, setLimit] = useQueryState("limit", searchParams.limit.withOptions({ shallow: false }));
+  const [pageSize, setPageSize] = useQueryState("pageSize", searchParams.pageSize.withOptions({ shallow: false }));
   const [dateFilter, setDateFilter] = useQueryState('date', searchParams.date.withOptions({ shallow: false }));
-  const [busIdFilters, setBusIdFilters] = useQueryState("bus", parseAsString.withOptions({ shallow: false}));
+  const [busIdsFilter, setBusIdsFilter] = useQueryState("busId", parseAsString.withOptions({ shallow: false}));
 
   const { start, end } = parseDateRange(dateFilter);
 
-  const urlParams ={
-    page: page.toString(),
-    pageSize: limit.toString(),
-    startDate: start ? start.toISOString() : "",
-    endDate: end ? end.toISOString() : "",
-    busId: busIdFilters ? busIdFilters.split('.') : []
-  };
+  const queryParams: QueryParams = {
+    page: page,
+    pageSize: pageSize,
+    ...(start && {startDate: start}),
+    ...(end && {endDate: end}),
+    ...(busIdsFilter && {busId: busIdsFilter.split('.')})
+  }
 
-  // console.log("URL Params:", urlParams);
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const data = await getExpenseReports(urlParams);
-      console.log("Fetched Expense Reports:", data);
+      const data = await getExpenseReports(queryParams);
+      // console.log("Fetched Expense Reports:", data);
       setExpenseReports(data.items);
       setTotalItems(data.totalItems);
       setColumnTotals(data.columnTotals || {});
@@ -71,7 +71,7 @@ export default function ExpenseReportPage() {
 
     fetchData();
 
-  }, [page, limit, dateFilter, busIdFilters])
+  }, [page, pageSize, dateFilter, busIdsFilter])
 
   return(
     <PageContainer scrollable>

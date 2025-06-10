@@ -23,3 +23,8 @@ export function formatBytes(
     sizeType === 'accurate' ? accurateSizes[i] ?? 'Bytest' : sizes[i] ?? 'Bytes'
   }`;
 }
+
+// Format currency with PKR symbol
+export function formatCurrency(amount: number | null): string {
+  return amount !== null ? `Rs. ${amount.toLocaleString("en-PK")}` : "Rs. 0";
+}

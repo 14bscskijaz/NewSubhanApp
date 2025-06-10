@@ -1,6 +1,7 @@
 import {
   createSearchParamsCache,
   createSerializer,
+  parseAsArrayOf,
   parseAsInteger,
   parseAsIsoDateTime,
   parseAsString
@@ -21,6 +22,7 @@ export const searchParams = {
   dateRange: parseAsString,
   driver: parseAsString,
   busBrand: parseAsString,
+  busId: parseAsString.withDefault(''),
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

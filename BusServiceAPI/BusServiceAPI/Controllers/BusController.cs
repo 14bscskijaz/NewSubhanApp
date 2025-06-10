@@ -207,6 +207,7 @@ namespace BusServiceAPI.Controllers
                     PageSize = pageSize,
                     TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
                     Items = paginatedReports,
+                    // ColumnTotals = columnTotals
                 };
 
                 return Ok(response);

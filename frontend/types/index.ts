@@ -32,3 +32,25 @@ export interface FooterItem {
 export type MainNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;
+
+export type ActionResponse<T> = {
+  columnTotals: Record<string, any>,
+  totalItems: number,
+  pageNumber: number,
+  pageSize: number,
+  items: T[]
+  error?: any;
+}
+
+export interface QueryParams {
+  page: number;
+  pageSize: number;
+  startDate?: Date ;
+  endDate?: Date ;
+  q?: string;
+  busId?: string[];
+  aggregate?: string ;
+  filters?: Record<string, string>;
+  // This is important as Typescript doesn't deal well with a variable that can be a list or a string
+  filtersListValues?: Record<string, string[]>;
+}

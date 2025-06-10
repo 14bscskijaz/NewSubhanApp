@@ -37,7 +37,7 @@ export const columns: ColumnDef<Partial<ExpenseReport>>[] = [
 		header: "Bus #",
 		cell: ({ row }) => {
 			return row.original.busNumber ? (
-				<div>Bus # {row.original.busNumber}</div>
+				<div>{row.original.busNumber}</div>
 			) : (
 				<div className="text-gray-400">N/A</div>
 			);

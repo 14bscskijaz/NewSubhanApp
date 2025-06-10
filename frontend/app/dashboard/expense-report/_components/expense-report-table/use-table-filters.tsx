@@ -25,9 +25,9 @@ export function useTableFilters() {
 
   const [page, setPage] = useQueryState('page', searchParams.page );
   const [pageSize, setPageSize] = useQueryState('pageSize', searchParams.pageSize );
-  const [searchQuery, setSearchQuery] = useQueryState('q', searchParams.q.withOptions({ shallow: false, throttleMs: 2_000 }));
-  const [dateFilter, setDateFilter] = useQueryState('date', searchParams.date.withOptions({ shallow: false })); 
-  const [busIdFilters, setBusIdFilters] = useQueryState('bus', parseAsString.withDefault(''));
+  const [searchQuery, setSearchQuery] = useQueryState('q', searchParams.q.withOptions({ throttleMs: 2_000 }));
+  const [dateFilter, setDateFilter] = useQueryState('date', searchParams.date); 
+  const [busIdsFilter, setBusIdFilters] = useQueryState('busId', searchParams.busId);  // no need shallow false as data is fetch client side
 
   const resetFilters = useCallback(() => {
     setPage(1);
@@ -38,8 +38,8 @@ export function useTableFilters() {
   }, [setPage, setPageSize, setSearchQuery, setBusIdFilters, setDateFilter]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!page || !!pageSize || !!searchQuery || !!busIdFilters || !!dateFilter;
-  }, [page, pageSize, searchQuery, busIdFilters, dateFilter]);
+    return !!page || !!pageSize || !!searchQuery || !!busIdsFilter || !!dateFilter;
+  }, [page, pageSize, searchQuery, busIdsFilter, dateFilter]);
   
   return {
     isAnyFilterActive,
@@ -53,7 +53,7 @@ export function useTableFilters() {
     page,
     pageSize,
     searchQuery,
-    busIdFilters,
+    busIdsFilter,
     dateFilter
   };
 }

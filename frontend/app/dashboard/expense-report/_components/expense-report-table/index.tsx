@@ -52,10 +52,8 @@ export default function RouteTable({ data, totalItems, columnTotals, }: ExpenseT
       date: dateFilter,
       busId: busIdsFilter,
     };
-
-    console.log("Date Filter:", dateFilter);
     const queryString = serialize(params);
-    console.log("Query String for PDF:", queryString); 
+
     try {
       // Build PDF URL with our utility function
       // const pdfUrl = `/dashboard/finance/receivables/pdf?date=${dateFilter}&route=${routeFilter}&aggregate=${aggregateFilter}`;

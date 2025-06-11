@@ -1,7 +1,9 @@
 'use server'
+
 import { getLogger, getServerLogger } from "@/lib/logger";
 import { Buses } from '@/lib/slices/bus-slices';
 import axios from 'axios';
+import qs from "qs";
 
 export type BusReport = {
   id: number;
@@ -25,6 +27,7 @@ const axiosInstance = axios.create({
   httpsAgent: new (require('http').Agent)({
       rejectUnauthorized: false,
   }),
+  paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
 });
 
 export async function getAllBuses(): Promise<Buses[]> {
@@ -95,6 +98,7 @@ export async function updateBuses(busId: number, busData: Omit<Buses, "id">): Pr
 
 //  TODO update
 export async function getBusReports(urlParams: any): Promise<any> {
+
   try {
     const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
       params: urlParams

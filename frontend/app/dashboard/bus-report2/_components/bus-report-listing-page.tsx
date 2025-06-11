@@ -21,6 +21,7 @@ import { DateFilterBox } from "@/components/date/DateFilterBox";
 import { DataTableResetFilter } from "@/components/ui/table/data-table-reset-filter";
 import { ReceiptText } from "lucide-react";
 import { DataTableMultiFilterBox } from "@/components/ui/table/data-table-multi-filter-box";
+import { QueryParams } from "@/types";
 
 
 export default function BusReportPage() {
@@ -32,10 +33,9 @@ export default function BusReportPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [page, setPage] = useQueryState("page", searchParams.page.withOptions({ shallow: false }));
-  const [limit, setLimit] = useQueryState("limit", searchParams.limit.withOptions({ shallow: false }));
+  const [pageSize, setPageSize] = useQueryState("pageSize", searchParams.pageSize.withOptions({ shallow: false }));
   const [dateFilter, setDateFilter] = useQueryState('date', searchParams.date.withOptions({ shallow: false }));
-  const [busIdFilters, setBusIdFilters] = useQueryState("bus", parseAsString
-    .withOptions({ shallow: false}).withDefault("") );
+  const [busIdsFilter, setBusIdsFilter] = useQueryState("busId", searchParams.busId.withOptions({ shallow: false}) );
 
   const { start, end } = parseDateRange(dateFilter);
 
@@ -43,28 +43,28 @@ export default function BusReportPage() {
     // setSearchQuery(null);
     // setBusNumberFilter(null);
     // setbusownerfilter(null);
-    setBusIdFilters("");
+    setBusIdsFilter("");
     setDateFilter(null);
     setPage(1);
   }, [setDateFilter, setPage]);
 
 
   const isAnyFilterActive = useMemo(() => {
-    return !!dateFilter || !!busIdFilters;
-  }, [dateFilter, busIdFilters]);
+    return !!dateFilter || !!busIdsFilter;
+  }, [dateFilter, busIdsFilter]);
 
-  const urlParams ={
-    page: page.toString(),
-    pageSize: limit.toString(),
-    startDate: start ? start.toISOString() : "",
-    endDate: end ? end.toISOString() : "",
-    busId: busIdFilters ? busIdFilters.split('.') : []
-  };
+  const queryParams: QueryParams = {
+    page: page,
+    pageSize: pageSize,
+    ...(start && {startDate: start}),
+    ...(end && {endDate: end}),
+    ...(busIdsFilter && {busId: busIdsFilter.split('.')})
+  }
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const data = await getBusReports(urlParams);
+      const data = await getBusReports(queryParams);
       // console.log("Fetched Bus Reports:", data);
       setBusReports(data.items);
       setTotalItems(data.totalItems);
@@ -80,7 +80,7 @@ export default function BusReportPage() {
 
     fetchData();
 
-  }, [page, limit, dateFilter, busIdFilters])
+  }, [page, pageSize, dateFilter, busIdsFilter])
 
   useEffect(() => {
     const fetchBuses = async () => {
@@ -147,8 +147,8 @@ export default function BusReportPage() {
                       filterKey="busNumber"
                       title="Bus Number"
                       options={busesOptions}
-                      setFilterValue={setBusIdFilters}
-                      filterValue={busIdFilters}
+                      setFilterValue={setBusIdsFilter}
+                      filterValue={busIdsFilter}
                     />
                     {/*>
                     <DataTableFilterBoxView

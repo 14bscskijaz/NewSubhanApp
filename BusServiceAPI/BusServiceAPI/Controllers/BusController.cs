@@ -67,7 +67,9 @@ namespace BusServiceAPI.Controllers
         {
             try
             {
-                // Console.WriteLine($"-----------------------------------------------------------");
+                Console.WriteLine($"-----------------------------------------------------------");
+                // Console.WriteLine($"Bus Ids: {busIds?.ToList()}");
+                // Console.WriteLine($"Another way to print bus Ids: {(busIds != null ? string.Join(",", busIds) : "null")}");
                 // Initialize the list to store bus reports
                 var busReports = new List<BusReportDTO>();
 
@@ -143,23 +145,11 @@ namespace BusServiceAPI.Controllers
                     // Console.WriteLine($"Found {additionalExpenses.Count} additional expenses for bus {bus.BusNumber}");
 
                     // Calculate aggregated values
-                    var tripsCount = trips.Count;
+                    var tripsCount = vouchers.Count;  // Use vouchers count as trips count
                     var totalPassengers = trips.Sum(t => t.PassengerCount ?? 0);
                     var totalRevenue = vouchers.Sum(v => v.Revenue ?? 0);
-                    var voucherExpenses = vouchers.Sum(v => 
-                        (v.Commission ?? 0) + 
-                        (v.Diesel ?? 0) + 
-                        (v.COilTechnician ?? 0) + 
-                        (v.Toll ?? 0) + 
-                        (v.Cleaning ?? 0) + 
-                        (v.Alliedmor ?? 0) + 
-                        (v.CityParchi ?? 0) + 
-                        (v.Refreshment ?? 0) + 
-                        (v.Repair ?? 0) + 
-                        (v.Generator ?? 0) + 
-                        (v.MiscellaneousExpense ?? 0));
                     var additionalExpenseAmount = additionalExpenses.Sum(e => e.Amount ?? 0);
-                    var totalExpenses = voucherExpenses + additionalExpenseAmount;
+                    var totalExpenses = additionalExpenseAmount;
 
                     // Console.WriteLine($"Bus {bus.BusNumber} - Trips: {tripsCount}, Passengers: {totalPassengers}, Revenue: {totalRevenue}, Expenses: {totalExpenses}");
 

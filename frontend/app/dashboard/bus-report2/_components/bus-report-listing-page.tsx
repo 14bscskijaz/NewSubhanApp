@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import axios from "axios";
 import { getLogger } from "@/lib/logger";
-import { searchParams } from "@/lib/searchparams";
+import { searchParams, serialize } from "@/lib/searchparams";
 import { parseDateRange } from "@/lib/utils/date";
 import { type BusReport, getAllBuses, getBusReports } from "@/app/actions/bus.action";
 import { useDispatch } from "react-redux";
@@ -53,16 +53,16 @@ export default function BusReportPage() {
     return !!dateFilter || !!busIdsFilter;
   }, [dateFilter, busIdsFilter]);
 
-  const queryParams: QueryParams = {
-    page: page,
-    pageSize: pageSize,
-    ...(start && {startDate: start}),
-    ...(end && {endDate: end}),
-    ...(busIdsFilter && {busId: busIdsFilter.split('.')})
-  }
-
   const fetchData = async () => {
     setIsLoading(true);
+    const queryParams: QueryParams = {
+      page: page,
+      pageSize: pageSize,
+      ...(start && {startDate: start}),
+      ...(end && {endDate: end}),
+      ...(busIdsFilter && {busId: busIdsFilter.split('.')})
+    }
+
     try {
       const data = await getBusReports(queryParams);
       // console.log("Fetched Bus Reports:", data);
@@ -75,6 +75,35 @@ export default function BusReportPage() {
       setIsLoading(false);
     }
   }
+
+  /**
+   * Handles the PDF print/ download functionality.
+   */
+  const handleDownloadPdf = useCallback(() => {
+    const params = {
+      page: page,
+      pageSize: pageSize,
+      date: dateFilter,
+      busId: busIdsFilter,
+    };
+    const queryString = serialize(params);
+
+    try {
+      // Build PDF URL with our utility function
+      // const pdfUrl = `/dashboard/finance/receivables/pdf?date=${dateFilter}&route=${routeFilter}&aggregate=${aggregateFilter}`;
+      const pdfUrl = `/dashboard/bus-report2/pdf${queryString}`;
+      // console.log("pdfURL: ", pdfUrl);
+      // const pdfUrl = `/dashboard/finance/receivables/pdf`;
+      
+      // Open the PDF in a new tab - this will trigger the download
+      window.open(pdfUrl, '_blank');
+      
+      toast.success('PDF report is being generated');
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.error('Failed to download PDF report');
+    }
+  }, [page, pageSize, dateFilter, busIdsFilter]);
 
   useEffect(() => {
 
@@ -119,28 +148,7 @@ export default function BusReportPage() {
               />
             ) : (
               <div className="min-h-[80dvh] flex flex-1 flex-col space-y-4">
-                <div className="flex flex-col flex-wrap items-start gap-4">
-                  <div className=' w-full flex justify-between items-center gap-4'>
-                    {/* <SearchTable
-                      searchKey="name"
-                      searchQuery={searchQuery}
-                      setSearchQuery={setSearchQuery}
-                      setPage={setPage}
-                    />
-                    <Button
-                      className={`border p-1.5 rounded-sm bg-gradient-border hover:bg-gradient-2 active:opacity-50 group transition-all duration-500 ${
-                        totalItems ? 'cursor-not-allowed opacity-50' : ''
-                      }`}
-                      onClick={printExpenses}
-                      disabled={totalItems}
-                    >
-                      <ReceiptText
-                        className={`text-gradient ${
-                          totalItems ? 'opacity-50' : 'group-hover:text-gradient-2'
-                        }`}
-                      />
-                    </Button> */}
-                  </div>
+                <div className="flex flex-row justify-between flex-wrap items-start gap-4">
                   <div className='flex flex-wrap items-start gap-4'>
 
                     <DataTableMultiFilterBox
@@ -169,6 +177,21 @@ export default function BusReportPage() {
                       isFilterActive={isAnyFilterActive}
                       onReset={resetFilters}
                     />
+                  </div>
+                  <div className='flex items-center gap-4'>
+                    <Button
+                      className={`border p-1.5 rounded-sm bg-gradient-border hover:bg-gradient-2 active:opacity-50 group transition-all duration-500 ${
+                        (totalItems == 0) ? 'cursor-not-allowed opacity-50' : ''
+                      }`}
+                      onClick={handleDownloadPdf}
+                      disabled={totalItems == 0}
+                    >
+                      <ReceiptText
+                        className={`text-gradient ${
+                          (totalItems == 0) ? 'opacity-50' : 'group-hover:text-gradient-2'
+                        }`}
+                      />
+                    </Button>
                   </div>
                 </div>
                 <DataTableTotalCols

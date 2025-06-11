@@ -11,7 +11,7 @@ export type BusReport = {
   busNumber?: string;
   busOwner?: string;
   tripsCount: number;
-  passegers: number;
+  passengers: number;
   expenses?: number; // Make sure originalId is included
   revenue?: number;
 };

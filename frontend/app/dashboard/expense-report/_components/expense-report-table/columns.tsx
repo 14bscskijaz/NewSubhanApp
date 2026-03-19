@@ -5,6 +5,28 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber } from "@/lib/utils/accounting";
 import { type ExpenseReport } from "@/app/actions/expenses.action";
+import { allBusClosingVouchers, type BusClosingVoucher } from "@/lib/slices/bus-closing-voucher";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+
+function VoucherNumberCell({ row }: { row: Partial<ExpenseReport> }) {
+	const vouchers = useSelector<RootState, BusClosingVoucher[]>(allBusClosingVouchers);
+	const voucher = vouchers.find(v => v.id === row.busClosingVoucherId);
+
+	if (voucher?.voucherNumber !== undefined && voucher?.voucherNumber !== null) {
+		return <div>{voucher.voucherNumber}</div>;
+	}
+
+	if (row.voucherNumber !== undefined && row.voucherNumber !== null) {
+		return <div>{row.voucherNumber}</div>;
+	}
+
+	if (row.busClosingVoucherId !== undefined && row.busClosingVoucherId !== null) {
+		return <div>#{row.busClosingVoucherId}</div>;
+	}
+
+	return <div className="text-gray-400">N/A</div>;
+}
 
 export const columns: ColumnDef<Partial<ExpenseReport>>[] = [
 	{
@@ -38,6 +60,8 @@ export const columns: ColumnDef<Partial<ExpenseReport>>[] = [
 		cell: ({ row }) => {
 			return row.original.busNumber ? (
 				<div>{row.original.busNumber}</div>
+			) : row.original.busId !== undefined && row.original.busId !== null ? (
+				<div>#{row.original.busId}</div>
 			) : (
 				<div className="text-gray-400">N/A</div>
 			);
@@ -66,13 +90,9 @@ export const columns: ColumnDef<Partial<ExpenseReport>>[] = [
 	},
 	{
 		id: "voucherId",
-		header: "Voucher ID",
+		header: "Voucher Number",
 		cell: ({ row }) => {
-			return row.original.busClosingVoucherId ? (
-				<div>#{row.original.busClosingVoucherId}</div>
-			) : (
-				<div className="text-gray-400">N/A</div>
-			);
+			return <VoucherNumberCell row={row.original} />;
 		},
 	},
 	// {

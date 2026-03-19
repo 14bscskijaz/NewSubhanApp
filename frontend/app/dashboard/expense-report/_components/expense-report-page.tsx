@@ -13,8 +13,10 @@ import { parseAsString, useQueryState } from "nuqs";
 import { searchParams } from "@/lib/searchparams";
 import { parseDateRange } from "@/lib/utils/date";
 import { getAllBuses } from "@/app/actions/bus.action";
+import { getAllBusClosingVouchers } from "@/app/actions/BusClosingVoucher.action";
 import { useDispatch } from "react-redux";
 import { setBus } from "@/lib/slices/bus-slices";
+import { setBusClosingVoucher } from "@/lib/slices/bus-closing-voucher";
 import { toast } from "sonner";
 import { QueryParams } from "@/types";
 
@@ -59,12 +61,16 @@ export default function ExpenseReportPage() {
   }
 
   useEffect(() => {
-    const fetchBuses = async () => {
-      const allBus = await getAllBuses();
+    const fetchLookupData = async () => {
+      const [allBus, allVouchers] = await Promise.all([
+        getAllBuses(),
+        getAllBusClosingVouchers()
+      ]);
       dispatch(setBus(allBus));
+      dispatch(setBusClosingVoucher(allVouchers));
     }
 
-    fetchBuses();
+    fetchLookupData();
   }, [])
 
   useEffect(() => {

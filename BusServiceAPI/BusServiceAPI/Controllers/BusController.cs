@@ -150,8 +150,21 @@ namespace BusServiceAPI.Controllers
                     var tripsCount = vouchers.Count;  // Use vouchers count as trips count
                     var totalPassengers = trips.Sum(t => t.PassengerCount ?? 0);
                     var totalRevenue = vouchers.Sum(v => v.Revenue ?? 0);
-                    var additionalExpenseAmount = additionalExpenses.Sum(e => e.Amount ?? 0);
-                    var totalExpenses = additionalExpenseAmount;
+                    var voucherExpenseAmount = vouchers.Sum(v =>
+                        (decimal)(v.Commission ?? 0) +
+                        (decimal)(v.Diesel ?? 0) +
+                        (decimal)(v.COilTechnician ?? 0) +
+                        (decimal)(v.Toll ?? 0) +
+                        (decimal)(v.Cleaning ?? 0) +
+                        (decimal)(v.Alliedmor ?? 0) +
+                        (decimal)(v.CityParchi ?? 0) +
+                        (decimal)(v.Refreshment ?? 0) +
+                        (decimal)(v.Repair ?? 0) +
+                        (decimal)(v.Generator ?? 0) +
+                        (decimal)(v.MiscellaneousExpense ?? 0)
+                    );
+                    var additionalExpenseAmount = additionalExpenses.Sum(e => (decimal)(e.Amount ?? 0));
+                    var totalExpenses = voucherExpenseAmount + additionalExpenseAmount;
 
                     // Console.WriteLine($"Bus {bus.BusNumber} - Trips: {tripsCount}, Passengers: {totalPassengers}, Revenue: {totalRevenue}, Expenses: {totalExpenses}");
 

@@ -200,6 +200,9 @@ const GeneratePdf = ({
               <View style={[styles.tableCol, styles.column10]}>
                 <Text style={styles.headerCell}>Bus #</Text>
               </View>
+              <View style={[styles.tableCol, styles.column10]}>
+                <Text style={styles.headerCell}>Voucher Number</Text>
+              </View>
               <View style={[styles.tableCol, styles.column55]}>
                 <Text style={styles.headerCell}>Description</Text>
               </View>
@@ -223,7 +226,16 @@ const GeneratePdf = ({
                   <Text style={styles.tableCell}>{row.type}</Text>
                 </View>
                 <View style={[styles.tableCol, styles.column10]}>
-                  <Text style={styles.tableCell}>{row.busNumber}</Text>
+                  <Text style={styles.tableCell}>{row.busNumber || (row.busId !== undefined && row.busId !== null ? `#${row.busId}` : 'N/A')}</Text>
+                </View>
+                <View style={[styles.tableCol, styles.column10]}>
+                  <Text style={styles.tableCell}>
+                    {row.voucherNumber !== undefined && row.voucherNumber !== null
+                      ? `${row.voucherNumber}`
+                      : row.busClosingVoucherId !== undefined && row.busClosingVoucherId !== null
+                        ? `#${row.busClosingVoucherId}`
+                        : 'N/A'}
+                  </Text>
                 </View>
                 <View style={[styles.tableCol, styles.column55]}>
                   <Text style={styles.tableCell}>{row.description}</Text>
@@ -247,12 +259,15 @@ const GeneratePdf = ({
               <View style={[styles.tableCol, styles.column10]}>
                 <Text style={styles.footerCell}></Text>
               </View>
+              <View style={[styles.tableCol, styles.column10]}>
+                <Text style={styles.footerCell}></Text>
+              </View>
               <View style={[styles.tableCol, styles.column55]}>
                 <Text style={styles.footerCell}></Text>
               </View>
               <View style={[styles.tableCol, styles.amountCell]}>
                 <Text style={styles.footerCell}>
-                  {columnTotals.parcelCost !== undefined ? formatCurrency(columnTotals.parcelCost) : ''}
+                  {columnTotals.amount !== undefined ? formatCurrency(columnTotals.amount) : ''}
                 </Text>
               </View>
             </View>

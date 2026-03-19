@@ -108,8 +108,11 @@ namespace BusServiceAPI.Controllers
                 query = query.Where(e => e.BusId.HasValue && busIds.Contains(e.BusId.Value));
             }
 
-            // Filter entries with 0 amount
-            query = query.Where(e => e.Amount > 0);
+            // Keep bus-linked rows even when amount is 0 so Bus/Voucher IDs remain visible in the report.
+            query = query.Where(e =>
+                e.Type == ExpenseType.bus ||
+                (e.Amount ?? 0) > 0
+            );
 
             // Calculate total for pagination metadata
             var totalItems = query.Count();
@@ -130,6 +133,7 @@ namespace BusServiceAPI.Controllers
                     BusId = e.Bus != null ? e.Bus.Id : e.BusId,
                     BusNumber = e.Bus != null ? e.Bus.BusNumber : string.Empty,
                     BusClosingVoucherId = e.BusClosingVoucherId,
+                    VoucherNumber = e.BusClosingVoucher != null ? e.BusClosingVoucher.VoucherNumber : null,
                     Amount = e.Amount,
                     Description = e.Description
                 })

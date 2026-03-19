@@ -13,6 +13,7 @@ export type ExpenseReport = {
   date: string;
   type: 'bus' | 'general';
   busClosingVoucherId?: number | null;
+  voucherNumber?: number | null;
   busId?: number;
   busNumber?: string;
   routeId?: number;

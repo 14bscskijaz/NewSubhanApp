@@ -84,14 +84,14 @@ export default function BusReportPage() {
       page: page,
       pageSize: pageSize,
       date: dateFilter,
-      busId: busIdsFilter,
+      bus: busIdsFilter,
     };
     const queryString = serialize(params);
 
     try {
       // Build PDF URL with our utility function
       // const pdfUrl = `/dashboard/finance/receivables/pdf?date=${dateFilter}&route=${routeFilter}&aggregate=${aggregateFilter}`;
-      const pdfUrl = `/dashboard/bus-report2/pdf${queryString}`;
+      const pdfUrl = `/dashboard/bus-report/pdf${queryString}`;
       // console.log("pdfURL: ", pdfUrl);
       // const pdfUrl = `/dashboard/finance/receivables/pdf`;
       

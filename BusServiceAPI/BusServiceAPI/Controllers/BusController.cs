@@ -21,11 +21,13 @@ namespace BusServiceAPI.Controllers
         public IActionResult GetAllBuses()
         {
             var buses = _context.Buses
+                .AsNoTracking()
+                .ToList()
                 .Select(b => new BusDTO
                 {
                     Id = b.Id,
                     BusNumber = b.BusNumber,
-                    BusType = b.BusType.ToString() ,
+                    BusType = b.BusType?.ToString(),
                     BusOwner = b.BusOwner,
                     Description = b.Description,
                     BusStatus = b.BusStatus,
@@ -39,20 +41,20 @@ namespace BusServiceAPI.Controllers
         public IActionResult GetBus(int id)
         {
             var bus = _context.Buses
-                .Select(b => new BusDTO
-                {
-                    Id = b.Id,
-                    BusNumber = b.BusNumber,
-                    BusType = b.BusType.ToString() ,
-                    BusOwner = b.BusOwner,
-                    Description = b.Description,
-                    BusBrand = b.BusBrand,
-                    BusStatus = b.BusStatus
-                })
+                .AsNoTracking()
                 .FirstOrDefault(b => b.Id == id);
 
             if (bus == null) return NotFound();
-            return Ok(bus);
+            return Ok(new BusDTO
+            {
+                Id = bus.Id,
+                BusNumber = bus.BusNumber,
+                BusType = bus.BusType?.ToString(),
+                BusOwner = bus.BusOwner,
+                Description = bus.Description,
+                BusBrand = bus.BusBrand,
+                BusStatus = bus.BusStatus
+            });
         }
 
         // TODO: Khizar bhai check this method's implementation
@@ -179,6 +181,13 @@ namespace BusServiceAPI.Controllers
                 // Console.WriteLine($"sortedReports: {System.Text.Json.JsonSerializer.Serialize(sortedReports, new System.Text.Json.JsonSerializerOptions { WriteIndented = true })}");
                 
                 var totalCount = sortedReports.Count;
+                var columnTotals = new
+                {
+                    tripsCount = sortedReports.Sum(r => r.TripsCount),
+                    passengers = sortedReports.Sum(r => r.Passengers),
+                    expenses = sortedReports.Sum(r => r.Expenses),
+                    revenue = sortedReports.Sum(r => r.Revenue)
+                };
                 // Console.WriteLine($"Pagination parameters - page: {page}, pageSize: {pageSize}, skip: {(page - 1) * pageSize}, totalCount: {totalCount}");
                 
                 var paginatedReports = sortedReports
@@ -197,7 +206,7 @@ namespace BusServiceAPI.Controllers
                     PageSize = pageSize,
                     TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
                     Items = paginatedReports,
-                    // ColumnTotals = columnTotals
+                    ColumnTotals = columnTotals
                 };
 
                 return Ok(response);

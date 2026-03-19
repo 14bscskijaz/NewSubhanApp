@@ -23,8 +23,10 @@ namespace BusServiceAPI.Controllers
         public IActionResult GetAllExpenses()
         {
             var expenses = _context.Expenses
+                .AsNoTracking()
                 .Include(e => e.Bus)  // Include Bus information if necessary
                 .Include(e => e.BusClosingVoucher)
+                .ToList()
                 .Select(e => new ExpenseDTO
                 {
                     Id = e.Id,
@@ -44,22 +46,22 @@ namespace BusServiceAPI.Controllers
         public IActionResult GetExpense(int id)
         {
             var expense = _context.Expenses
+                .AsNoTracking()
                 .Include(e => e.Bus)  // Include Bus information if needed
                 .Include(e => e.BusClosingVoucher) // Include BusClosingVoucher to prevent null reference
-                .Select(e => new ExpenseDTO
-                {
-                    Id = e.Id,
-                    Date = e.Date,
-                    Type = e.Type.ToString(),
-                    BusId = e.Bus.Id,
-                    BusClosingVoucherId = e.BusClosingVoucher.Id,
-                    Amount = e.Amount,
-                    Description = e.Description
-                })
                 .FirstOrDefault(e => e.Id == id);
 
             if (expense == null) return NotFound();
-            return Ok(expense);
+            return Ok(new ExpenseDTO
+            {
+                Id = expense.Id,
+                Date = expense.Date,
+                Type = expense.Type.ToString(),
+                BusId = expense.Bus?.Id ?? expense.BusId,
+                BusClosingVoucherId = expense.BusClosingVoucher?.Id ?? expense.BusClosingVoucherId,
+                Amount = expense.Amount,
+                Description = expense.Description
+            });
         }
 
         // GET: api/Expense/Report
@@ -118,6 +120,8 @@ namespace BusServiceAPI.Controllers
                 .OrderByDescending(e => e.Date)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .AsNoTracking()
+                .ToList()
                 .Select(e => new ExpenseReportDTO
                 {
                     Id = e.Id,

@@ -22,7 +22,9 @@ namespace BusServiceAPI.Controllers
         public IActionResult GetAllFixedTripExpenses()
         {
             var expenses = _context.FixedTripExpenses
+                .AsNoTracking()
                 .Include(e => e.Route) // Include Route if needed
+                .ToList()
                 .Select(e => new FixedTripExpenseDTO
                 {
                     Id = e.Id,
@@ -44,25 +46,25 @@ namespace BusServiceAPI.Controllers
         public IActionResult GetFixedTripExpense(int id)
         {
             var expense = _context.FixedTripExpenses
+                .AsNoTracking()
                 .Include(e => e.Route) // Include Route if needed
-                .Select(e => new FixedTripExpenseDTO
-                {
-                    Id = e.Id,
-                    RouteId = e.RouteId,
-                    RouteCommission = e.RouteCommission,
-                    RewardCommission = e.RewardCommission,
-                    Steward = e.Steward,
-                    Counter = e.Counter,
-                    DcParchi = e.DcParchi,
-                    Refreshment = e.Refreshment,
-                    CommissionType = e.RouteCommissionType.ToString()
-                })
                 .FirstOrDefault(e => e.Id == id);
 
             if (expense == null)
                 return NotFound();
 
-            return Ok(expense);
+            return Ok(new FixedTripExpenseDTO
+            {
+                Id = expense.Id,
+                RouteId = expense.RouteId,
+                RouteCommission = expense.RouteCommission,
+                RewardCommission = expense.RewardCommission,
+                Steward = expense.Steward,
+                Counter = expense.Counter,
+                DcParchi = expense.DcParchi,
+                Refreshment = expense.Refreshment,
+                CommissionType = expense.RouteCommissionType.ToString()
+            });
         }
 
         // POST: api/FixedTripExpense

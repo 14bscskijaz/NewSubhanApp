@@ -12,6 +12,30 @@ const axiosInstance = axios.create({
     }),
 });
 
+function getErrorMessage(error: any, fallbackMessage: string) {
+    if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+
+        if (typeof responseData === "string" && responseData.trim()) {
+            return responseData;
+        }
+
+        if (typeof responseData?.message === "string" && responseData.message.trim()) {
+            return responseData.message;
+        }
+
+        if (typeof responseData?.title === "string" && responseData.title.trim()) {
+            return responseData.title;
+        }
+    }
+
+    if (error instanceof Error && error.message.trim()) {
+        return error.message;
+    }
+
+    return fallbackMessage;
+}
+
 export async function getAllEmployees() {
     try {
         const response = await axiosInstance.get(`${API_BASE_URL}/Employees`);
@@ -27,8 +51,9 @@ export async function createEmployee(employeeData: Omit<Employee, "id">) {
         const response = await axiosInstance.post(`${API_BASE_URL}/Employees`, employeeData);
         return response.data;
     } catch (error:any) {
-        console.error('Error creating employee:', error.message);
-        throw error;
+        const message = getErrorMessage(error, "Failed to create employee.");
+        console.error('Error creating employee:', message);
+        throw new Error(message);
     }
 }
 

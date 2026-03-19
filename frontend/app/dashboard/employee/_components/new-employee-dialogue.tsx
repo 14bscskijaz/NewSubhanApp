@@ -140,9 +140,18 @@ export default function NewEmployeeDialog() {
       setOpen(false);
       resetForm();
     } catch (error: any) {
+      const message = error?.message || "Failed to create employee.";
+
+      if (message.toLowerCase().includes("cnic")) {
+        setValidationErrors((prev: any) => ({
+          ...prev,
+          cnic: message,
+        }));
+      }
+
       toast({
         title: "Error",
-        description: error.message,
+        description: message,
         variant: "destructive",
         duration: 2000,
       });

@@ -3,6 +3,7 @@ using BusServiceAPI.Common;
 using BusServiceAPI.Models;
 using System.Linq;
 using BusServiceAPI.Models.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusServiceAPI.Controllers
 {
@@ -21,6 +22,8 @@ namespace BusServiceAPI.Controllers
         public IActionResult GetAllTicketPricings()
         {
             var ticketPricings = _context.TicketPricings
+                .AsNoTracking()
+                .ToList()
                 .Select(tp => new TicketPricingDTO
                 {
                     Id = tp.Id,
@@ -36,17 +39,17 @@ namespace BusServiceAPI.Controllers
         public IActionResult GetTicketPricing(int id)
         {
             var ticketPricing = _context.TicketPricings
-                .Select(tp => new TicketPricingDTO
-                {
-                    Id = tp.Id,
-                    RouteId = tp.RouteId,
-                    TicketPrice = tp.TicketPrice,
-                    BusType = tp.BusType.ToString()
-                })
+                .AsNoTracking()
                 .FirstOrDefault(tp => tp.Id == id);
 
             if (ticketPricing == null) return NotFound();
-            return Ok(ticketPricing);
+            return Ok(new TicketPricingDTO
+            {
+                Id = ticketPricing.Id,
+                RouteId = ticketPricing.RouteId,
+                TicketPrice = ticketPricing.TicketPrice,
+                BusType = ticketPricing.BusType.ToString()
+            });
         }
 
         [HttpPost]

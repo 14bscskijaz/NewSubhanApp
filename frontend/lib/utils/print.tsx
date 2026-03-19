@@ -2,12 +2,8 @@
 import { RouteMetric, SearchFilters } from '@/types/trip';
 import { Route } from '@/lib/slices/route-slices';
 import { toast } from '@/hooks/use-toast';
-import { RouteDetails, VoucherPrintData } from '@/types/trip';
+import { VoucherPrintData } from '@/types/trip';
 import { formatNumber } from './accounting';
-
-const isRouteDetails = (route: RouteDetails | 0): route is RouteDetails => {
-  return route !== 0 && 'sourceCity' in route && 'destinationCity' in route;
-};
 
 // Function to format date to DD_MM_YYYY
 const formatDate = (date: string) => {
@@ -23,22 +19,13 @@ const formatDate = (date: string) => {
 
 
 export const printExpenses = (filteredVouchers: RouteMetric[], routes: Route[], isCity: boolean, filters: SearchFilters) => {
-  // Create a Map with proper typing
-  const RouteMap = new Map<number | string, RouteDetails>(
-    routes.map(({ id, sourceAdda, destinationAdda, destinationCity, sourceCity }) => [
-      id,
-      { id, sourceAdda, sourceCity, destinationAdda, destinationCity },
-    ])
-  );
-
   const voucherData: VoucherPrintData[] = filteredVouchers.map((voucher) => {
-    const routeId = voucher?.routeIds[0];
-    const route = RouteMap.get(typeof routeId === 'number' ? routeId : 0) ?? 0;
-
     return {
       ...voucher,
-      route: isRouteDetails(route)
-        ? `${isCity ? `${route.sourceCity} - ${route.destinationCity}` : `${route.sourceCity} (${route.sourceAdda}) - ${route.destinationCity} (${route.destinationAdda})`}`
+      route: voucher.sourceCity && voucher.destinationCity
+        ? `${isCity
+            ? `${voucher.sourceCity} - ${voucher.destinationCity}`
+            : `${voucher.sourceCity} (${voucher.sourceAdda}) - ${voucher.destinationCity} (${voucher.destinationAdda})`}`
         : 'N/A'
     };
   });

@@ -10,8 +10,23 @@ dotnet build
 ```
 
 2. run the server.
+For production purposes:
+```bash
+nohup dotnet run & echo $! > dotnet.pid
+```
+For development purposes:
 ```bash
 dotnet run
+```
+
+`appsettings.json` connection string for local development:
+```bash
+"DefaultConnection": "Host=72.62.90.174;Database=accounts_test_db;Username=subhan_user;Password=verystrongSQLpass0"
+```
+
+### Instruction to Run Frontend React App
+```bash
+pm2 start npm --name "nextapp" -- run start -- -p 3000
 ```
 
 ### Observability Setup: Docker
@@ -45,10 +60,14 @@ dotnet ef database update
 ```
 
 To create and add migrations:
+```bash
 dotnet ef migrations add InitialMigration
+```
 
 **Note:** Risky command, drops the database.
+```bash
 dotnet ef database drop -f
+```
 
 ## Deployement Instructions
 
@@ -70,7 +89,7 @@ ps aux | grep dotnet
 4. build the updated dotnet service.
 
 5. deploy using `nohup`.
-e.g. 
+e.g.
 ```bash
 nohup dotnet run &
 ```
@@ -100,7 +119,7 @@ pytest --headed --slowmo=2000
 
 ### Run tests in Debug Mode
 ```bash
-PWDEBUG=1 pytest -s 
+PWDEBUG=1 pytest -s
 ```
 
 ### Start Test Recording
@@ -119,7 +138,7 @@ pip install pytest-playwright playwright -U
 1. Create `pg_dump` of the production database.
 ```bash
 pg_dump -U subhandb_owner -d subhandb -h localhost | gzip > subhandb_dump.sql.gz
-or 
+or
 pg_dump -h localhost -U subhandb_owner -d subhandb -F custom -f 2025-04-23_subhandb.dump
 ```
 

@@ -288,7 +288,7 @@ export async function GET(request: NextRequest) {
   const page = request.nextUrl.searchParams.get('page') || '1';
   const pageSize = request.nextUrl.searchParams.get('pageSize') || "10";
   const dateFilter = request.nextUrl.searchParams.get('date') || null;
-  const busIdsFilter = request.nextUrl.searchParams.get('bus') || '';
+  const busIdsFilter = request.nextUrl.searchParams.get('busId') || '';
   // const aggregate = request.nextUrl.searchParams.get('aggregate') || '';
   // const route = request.nextUrl.searchParams.get('route');
   

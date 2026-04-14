@@ -5,7 +5,8 @@ import PageContainer from "@/components/layout/page-container";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { DataTableTotalCols } from "@/components/ui/table/data-table-total-row";
-import { columns } from "./columns";
+import { createColumns } from "./columns";
+import BusReportDetailModal from "./bus-report-detail-modal";
 import { parseAsString, useQueryState } from "nuqs";
 import { toast } from "sonner";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
@@ -31,6 +32,7 @@ export default function BusReportPage() {
   const [totalItems, setTotalItems] = useState(0);
   const [columnTotals, setColumnTotals] = useState<{ [key: string]: number }>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedBus, setSelectedBus] = useState<{ busId: number; busNumber: string } | null>(null);
 
   const [page, setPage] = useQueryState("page", searchParams.page.withOptions({ shallow: false }));
   const [pageSize, setPageSize] = useQueryState("pageSize", searchParams.pageSize.withOptions({ shallow: false }));
@@ -84,7 +86,7 @@ export default function BusReportPage() {
       page: page,
       pageSize: pageSize,
       date: dateFilter,
-      bus: busIdsFilter,
+      busId: busIdsFilter,
     };
     const queryString = serialize(params);
 
@@ -195,9 +197,22 @@ export default function BusReportPage() {
                   </div>
                 </div>
                 <DataTableTotalCols
-                  columns={columns}
+                  columns={createColumns((row) =>
+                    setSelectedBus({ busId: row.busId, busNumber: row.busNumber })
+                  )}
                   data={busReports}
                   totalItems={totalItems}
+                  onRowClick={(row: any) =>
+                    setSelectedBus({ busId: row.busId, busNumber: row.busNumber })
+                  }
+                />
+                <BusReportDetailModal
+                  isOpen={!!selectedBus}
+                  onClose={() => setSelectedBus(null)}
+                  busId={selectedBus?.busId ?? null}
+                  busNumber={selectedBus?.busNumber}
+                  startDate={start?.toISOString()}
+                  endDate={end?.toISOString()}
                 />
               </div>
             )}

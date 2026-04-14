@@ -4,7 +4,7 @@ namespace BusServiceAPI.Models.DTOs
 {
     public class BusReportDTO
     {
-        // public int? BusId { get; set; } // Serial
+        public int? BusId { get; set; }
         public string? BusNumber { get; set; }
         public string? BusOwner { get; set; }
         public int TripsCount { get; set; }

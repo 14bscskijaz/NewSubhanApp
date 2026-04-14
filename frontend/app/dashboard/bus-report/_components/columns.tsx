@@ -4,7 +4,7 @@ import { BusReport } from '@/lib/slices/Report/bus-report-slice';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatNumber } from 'accounting';
 
-export const columns: ColumnDef<any>[] = [
+export const createColumns = (onViewDetail: (row: any) => void): ColumnDef<any>[] => [
   {
     id: 'serial_no',
     header: 'S.No',
@@ -24,14 +24,17 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     header: 'Passengers',
-    cell:({row})=>`${formatNumber(row.original.passengers)}`
+    cell: ({ row }) => `${formatNumber(row.original.passengers)}`
   },
   {
     header: 'Expenses',
-    cell:({row})=>`${formatNumber(row.original.expenses)}`
+    cell: ({ row }) => `${formatNumber(row.original.expenses)}`
   },
   {
     header: 'Revenue',
-    cell:({row})=>`${formatNumber(row.original.revenue)}`
+    cell: ({ row }) => `${formatNumber(row.original.revenue)}`
   },
 ];
+
+// Keep backward-compat default export (no-op view handler)
+export const columns: ColumnDef<any>[] = createColumns(() => {});

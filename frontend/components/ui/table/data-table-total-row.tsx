@@ -41,6 +41,7 @@ interface DataTableProps<TData, TValue> {
   columnTotals?: Record<string, null | number>;
   totalItems: number;
   pageSizeOptions?: number[];
+  onRowClick?: (row: TData) => void;
 }
 
 export function DataTableTotalCols<TData, TValue>({
@@ -48,7 +49,8 @@ export function DataTableTotalCols<TData, TValue>({
   data,
   columnTotals,
   totalItems,
-  pageSizeOptions = [10, 20, 30, 40, 50]
+  pageSizeOptions = [10, 20, 30, 40, 50],
+  onRowClick
 }: DataTableProps<TData, TValue>) {
   const [currentPage, setCurrentPage] = useQueryState(
     'page',
@@ -121,6 +123,8 @@ export function DataTableTotalCols<TData, TValue>({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && 'selected'}
+                      onClick={() => onRowClick?.(row.original)}
+                      className={onRowClick ? 'cursor-pointer hover:bg-muted/60' : ''}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>

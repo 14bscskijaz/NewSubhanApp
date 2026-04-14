@@ -1,6 +1,6 @@
 'use server'
 
-import { getLogger, getServerLogger } from "@/lib/logger";
+import { getServerLogger } from "@/lib/logger";
 import { Buses } from '@/lib/slices/bus-slices';
 import axios from 'axios';
 import qs from "qs";
@@ -12,8 +12,31 @@ export type BusReport = {
   busOwner?: string;
   tripsCount: number;
   passengers: number;
-  expenses?: number; // Make sure originalId is included
+  expenses?: number;
   revenue?: number;
+};
+
+export type BusReportDetail = {
+  busId: number;
+  busNumber: string;
+  busOwner: string;
+  tripsCount: number;
+  passengers: number;
+  revenue: number;
+  totalExpenses: number;
+  commission: number;
+  diesel: number;
+  cOilTechnician: number;
+  toll: number;
+  cleaning: number;
+  alliedmor: number;
+  cityParchi: number;
+  refreshment: number;
+  repair: number;
+  generator: number;
+  miscellaneousExpense: number;
+  additionalExpenses: number;
+  additionalExpenseItems: { id: number; date?: string; description?: string; amount?: number }[];
 };
 
 // const API_BASE_URL = "https://localhost:7169/api/Bus";
@@ -33,7 +56,7 @@ const axiosInstance = axios.create({
 export async function getAllBuses(): Promise<Buses[]> {
   try {
     // Make the request with axios
-    const response = await axiosInstance.get(API_BASE_URL);
+    const response = await axiosInstance.get('');
 
     // Extract the data from the response
     const data = await response.data;
@@ -94,6 +117,26 @@ export async function updateBuses(busId: number, busData: Omit<Buses, "id">): Pr
         // Optional: Customize the error message or rethrow it
         throw new Error("Failed to update the bus. Please try again.");
     }
+}
+
+export async function getBusReportDetail(
+  busId: number,
+  startDate?: string,
+  endDate?: string
+): Promise<BusReportDetail> {
+  try {
+    const response = await axiosInstance.get(`/Report/Detail`, {
+      params: {
+        busId,
+        ...(startDate && { startDate }),
+        ...(endDate && { endDate }),
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching bus report detail:", error);
+    throw error;
+  }
 }
 
 //  TODO update

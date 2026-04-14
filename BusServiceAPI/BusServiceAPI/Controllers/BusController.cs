@@ -174,6 +174,7 @@ namespace BusServiceAPI.Controllers
                         // Console.WriteLine($"Adding bus {bus.BusNumber} to report");
                         busReports.Add(new BusReportDTO
                         {
+                            BusId = bus.Id,
                             BusNumber = bus.BusNumber,
                             BusOwner = bus.BusOwner,
                             TripsCount = tripsCount,
@@ -229,6 +230,110 @@ namespace BusServiceAPI.Controllers
                 Console.WriteLine($"Error in GetBusReport: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 return StatusCode(500, "An error occurred while generating the bus report.");
+            }
+        }
+
+        // GET: api/Bus/Report/Detail?busId=1&startDate=...&endDate=...
+        [HttpGet("Report/Detail")]
+        public IActionResult GetBusReportDetail(
+            [FromQuery] int busId,
+            [FromQuery] DateTime? startDate = null,
+            [FromQuery] DateTime? endDate = null)
+        {
+            try
+            {
+                var bus = _context.Buses
+                    .AsNoTracking()
+                    .FirstOrDefault(b => b.Id == busId);
+
+                if (bus == null) return NotFound();
+
+                // Get vouchers for this bus within date range
+                var voucherQuery = _context.BusClosingVouchers
+                    .Where(v => v.BusId == busId);
+
+                if (startDate.HasValue)
+                    voucherQuery = voucherQuery.Where(v => v.Date >= startDate);
+                if (endDate.HasValue)
+                    voucherQuery = voucherQuery.Where(v => v.Date <= endDate);
+
+                var vouchers = voucherQuery
+                    .Select(v => new {
+                        v.Id,
+                        v.Revenue,
+                        v.Commission,
+                        v.Diesel,
+                        v.COilTechnician,
+                        v.Toll,
+                        v.Cleaning,
+                        v.Alliedmor,
+                        v.CityParchi,
+                        v.Refreshment,
+                        v.Repair,
+                        v.Generator,
+                        v.MiscellaneousExpense
+                    })
+                    .ToList();
+
+                var voucherIds = vouchers.Select(v => v.Id).ToList();
+
+                var totalPassengers = _context.Trips
+                    .Where(t => voucherIds.Contains(t.RouteClosingVoucherId ?? 0))
+                    .Sum(t => (int?)(t.PassengerCount ?? 0)) ?? 0;
+
+                // Get additional expenses
+                var expenseQuery = _context.Expenses
+                    .Where(e => e.BusId == busId);
+
+                if (startDate.HasValue)
+                    expenseQuery = expenseQuery.Where(e => e.Date >= startDate);
+                if (endDate.HasValue)
+                    expenseQuery = expenseQuery.Where(e => e.Date <= endDate);
+
+                var additionalExpenseItems = expenseQuery
+                    .Select(e => new AdditionalExpenseItemDTO
+                    {
+                        Id = e.Id,
+                        Date = e.Date,
+                        Description = e.Description,
+                        Amount = e.Amount
+                    })
+                    .ToList();
+
+                var detail = new BusReportDetailDTO
+                {
+                    BusId = bus.Id,
+                    BusNumber = bus.BusNumber,
+                    BusOwner = bus.BusOwner,
+                    TripsCount = vouchers.Count,
+                    Passengers = totalPassengers,
+                    Revenue = vouchers.Sum(v => v.Revenue ?? 0),
+                    Commission = vouchers.Sum(v => (decimal)(v.Commission ?? 0)),
+                    Diesel = vouchers.Sum(v => (decimal)(v.Diesel ?? 0)),
+                    COilTechnician = vouchers.Sum(v => (decimal)(v.COilTechnician ?? 0)),
+                    Toll = vouchers.Sum(v => (decimal)(v.Toll ?? 0)),
+                    Cleaning = vouchers.Sum(v => (decimal)(v.Cleaning ?? 0)),
+                    Alliedmor = vouchers.Sum(v => (decimal)(v.Alliedmor ?? 0)),
+                    CityParchi = vouchers.Sum(v => (decimal)(v.CityParchi ?? 0)),
+                    Refreshment = vouchers.Sum(v => (decimal)(v.Refreshment ?? 0)),
+                    Repair = vouchers.Sum(v => (decimal)(v.Repair ?? 0)),
+                    Generator = vouchers.Sum(v => (decimal)(v.Generator ?? 0)),
+                    MiscellaneousExpense = vouchers.Sum(v => (decimal)(v.MiscellaneousExpense ?? 0)),
+                    AdditionalExpenses = additionalExpenseItems.Sum(e => (decimal)(e.Amount ?? 0)),
+                    AdditionalExpenseItems = additionalExpenseItems
+                };
+
+                detail.TotalExpenses = detail.Commission + detail.Diesel + detail.COilTechnician
+                    + detail.Toll + detail.Cleaning + detail.Alliedmor + detail.CityParchi
+                    + detail.Refreshment + detail.Repair + detail.Generator
+                    + detail.MiscellaneousExpense + detail.AdditionalExpenses;
+
+                return Ok(detail);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetBusReportDetail: {ex.Message}");
+                return StatusCode(500, "An error occurred while generating bus report detail.");
             }
         }
 

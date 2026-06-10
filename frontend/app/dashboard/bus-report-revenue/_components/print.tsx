@@ -130,8 +130,9 @@ export const printExpenses = (
           <tr>
             <th>Date</th>
             <th>Voucher Number</th>
-            <th>Revnue</th>
+            <th>Revenue</th>
             <th>Expenses</th>
+            <th>Expense Description</th>
             <th>Net Revenue</th>
           </tr>
         </thead>
@@ -143,6 +144,7 @@ export const printExpenses = (
                 <td>${bus.firstVoucherNumber}</td>
                 <td>${formatNumber(bus.totalRevenue) || 0}</td>
                 <td>${formatNumber(bus.totalBusExpense) || 0}</td>
+                <td>${bus.expenseDescription || '-'}</td>
                 <td>${formatNumber(bus.netBusRevenue) || 0}</td>
               </tr>
             `)

@@ -27,6 +27,10 @@ export const columns: ColumnDef<any>[] = [
     header: 'Expenses'
   },
   {
+    accessorKey: 'expenseDescription',
+    header: 'Expense Description'
+  },
+  {
     accessorKey: 'netBusRevenue',
     header: 'Net Revenue',
     cell:({row})=>`${formatNumber(row.original.netBusRevenue)}`

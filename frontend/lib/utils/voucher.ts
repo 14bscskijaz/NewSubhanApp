@@ -13,6 +13,7 @@ interface GroupedVoucher {
   firstVoucherNumber: string | number;
   totalBusExpense: number;
   netBusRevenue: number;
+  expenseDescription: string;
 }
 
 export function groupVouchersByDate(
@@ -46,6 +47,7 @@ export function groupVouchersByDate(
           firstVoucherNumber: voucher.voucherNumber || "",
           totalBusExpense: 0,
           netBusRevenue: 0,
+          expenseDescription: "",
         });
       }
     });
@@ -58,6 +60,11 @@ export function groupVouchersByDate(
       if (entry) {
         entry.totalBusExpense += expense.amount || 0;
         entry.netBusRevenue = entry.totalRevenue - entry.totalBusExpense;
+        if (expense.description) {
+          entry.expenseDescription = entry.expenseDescription
+            ? `${entry.expenseDescription}, ${expense.description}`
+            : expense.description;
+        }
       }
     });
 

@@ -19,10 +19,16 @@ RUN dotnet publish BusServiceAPI/BusServiceAPI.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
+# ====== Debug =========
+RUN apt-get update && apt-get install -y curl
+
+
+# =============== End of debug ================
+
 COPY --from=build /app/publish .
 
 # Listen on HTTP only; TLS termination is handled by the reverse proxy
-ENV ASPNETCORE_URLS=http://+:7169
-EXPOSE 7169
+# ENV ASPNETCORE_URLS=http://+:7169
+# EXPOSE 7169
 
 ENTRYPOINT ["dotnet", "BusServiceAPI.dll"]

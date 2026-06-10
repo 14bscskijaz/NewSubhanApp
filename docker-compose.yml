@@ -6,49 +6,56 @@
 services:
 
   # ── Database ────────────────────────────────────────────────────────────────
-  postgres:
+  postgres-rdbms:
     image: postgres:17-alpine
-    container_name: subhan-postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-subhan_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lolpass}
-      POSTGRES_DB: ${POSTGRES_DB:-accounts_prod_db}
+    container_name: accounts_${DEPLOYMENT_ENV}_postgres
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: "${DB_NAME:-postgres}"
+      POSTGRES_USER: "${DB_USER:-postgres}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-changeme}"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-subhan_user} -d ${POSTGRES_DB:-accounts_prod_db}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      - accounts_data:/var/lib/postgresql/data
+      # Optional: Init scripts
+      # - ./postgres/init-scripts:/docker-entrypoint-initdb.d
     networks:
-      - app-network
+      - accounts_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
 
   # ── Backend (.NET 6) ────────────────────────────────────────────────────────
   backend:
     build:
       context: ./BusServiceAPI
       dockerfile: Dockerfile
-    image: subhan-backend:latest
-    container_name: subhan-backend
+    image: accounts-backend:latest
+    container_name: accounts_${DEPLOYMENT_ENV}_backend
     ports:
-      - "7169:7169"
+      - "${BACKEND_PORT:-5072}:5072"
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      # Override the appsettings.json Kestrel config so the server binds to
-      # all interfaces (not just loopback) inside the container.
-      Kestrel__EndPoints__Http__Url: "http://+:7169"
-      ConnectionStrings__DefaultConnection: >-
-        Host=postgres;
-        Database=${POSTGRES_DB:-accounts_prod_db};
-        Username=${POSTGRES_USER:-subhan_user};
-        Password=${POSTGRES_PASSWORD:-lolpass}
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://0.0.0.0:${BACKEND_PORT:-5072}"
+      ConnectionStrings__DefaultConnection: "Host=postgres-rdbms;Port=5432;Database=${DB_NAME:-postgres};Username=${DB_USER:-subhan_user};Password=${DB_PASSWORD:-lolpass123}"
+      # Optional: override the CORS origins baked into appsettings without rebuilding the image.
+      # Uses ASP.NET Core's double-underscore convention for array elements.
+      # Cors__AllowedOrigins__0: "${CORS_ORIGIN_0}"
+      # Cors__AllowedOrigins__1: "${CORS_ORIGIN_1}"
     depends_on:
-      postgres:
+      postgres-rdbms:
         condition: service_healthy
     networks:
-      - app-network
+      - accounts_network
+    restart: unless-stopped
 
   # ── Frontend (Next.js) ──────────────────────────────────────────────────────
   frontend:
@@ -57,20 +64,22 @@ services:
       dockerfile: Dockerfile
       args:
         # NEXT_PUBLIC_* vars are baked into the JS bundle at build time.
-        # For local dev the backend is reachable at http://backend:7169
+        # For local dev the backend is reachable at http://backend:5072
         # (the browser connects directly, not through Docker networking).
-        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://backend:7169/api}
-        NEXT_PUBLIC_HARDCODED_EMAIL: ${NEXT_PUBLIC_HARDCODED_EMAIL:-}
-        NEXT_PUBLIC_HARDCODED_PASSWORD: ${NEXT_PUBLIC_HARDCODED_PASSWORD:-}
-    image: subhan-frontend:latest
-    container_name: subhan-frontend
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://backend:5072/api}
+        NEXT_PUBLIC_HARDCODED_EMAIL: ${NEXT_PUBLIC_HARDCODED_EMAIL:-newsubhan@gmail.com}
+        NEXT_PUBLIC_HARDCODED_PASSWORD: ${NEXT_PUBLIC_HARDCODED_PASSWORD:-Subh@nPass#144}
+    container_name: accounts_${DEPLOYMENT_ENV}_frontend
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT:-3000}:3000"
+    # File accessible to the container at runtime (e.g. for server-side env vars like AUTH_SECRET)
+    env_file:
+      - .env                         # written by the CI workflow from GitHub Secrets
     environment:
       # Runtime vars — safe to inject at container start.
       AUTH_TRUST_HOST: "true"
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      AUTH_URL: ${AUTH_URL:-http://localhost:3000}
+      AUTH_SECRET: ${AUTH_SECRET}
       GITHUB_ID: ${GITHUB_ID:-}
       GITHUB_SECRET: ${GITHUB_SECRET:-}
       NEXT_PUBLIC_HARDCODED_EMAIL: ${NEXT_PUBLIC_HARDCODED_EMAIL:-}
@@ -79,15 +88,18 @@ services:
       # so it must reach the backend via the Docker service name, not localhost.
       # This runtime value overrides process.env for server-side code only;
       # client-side JS still uses the value baked in at build time (localhost:7169).
-      NEXT_PUBLIC_BACKEND_URL: "http://backend:7169/api"
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://backend:5072/api}
     depends_on:
       - backend
     networks:
-      - app-network
+      - accounts_network
 
 networks:
-  app-network:
+  accounts_network:
     driver: bridge
+    name: accounts_${DEPLOYMENT_ENV}_network
 
 volumes:
-  postgres_data:
+  accounts_data:
+    driver: local
+    name: accounts_${DEPLOYMENT_ENV}_data

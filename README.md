@@ -3,13 +3,21 @@
 ## Run the application
 ### Instructions To Run Backend API Server
 
-1. build the API.
+1. first ensure that database is synced with the models.
+Use database update command to do that.
+```bash
+dotnet ef database update
+```
+
+2. Kill the old dotnet service using `kill -15 <pid>`.
+
+3. build the API.
 In the "BusServiceAPI/BusServiceAPI" directory, run the following command:
 ```bash
 dotnet build
 ```
 
-2. run the server.
+4. run the server.
 For production purposes:
 ```bash
 nohup dotnet run & echo $! > dotnet.pid
@@ -26,7 +34,7 @@ dotnet run
 
 ### Instruction to Run Frontend React App
 ```bash
-pm2 start npm --name "nextapp" -- run start -- -p 3000
+pm2 start npm --name "accounts_app" -- run start -- -p 3000
 ```
 
 ### Observability Setup: Docker
@@ -72,7 +80,7 @@ dotnet ef database drop -f
 ## Deployement Instructions
 
 ### Backend
-
+**Deprecated**
 1. first ensure that database is synced with the models.
 Use database update command to do that.
 ```bash
@@ -95,6 +103,11 @@ nohup dotnet run &
 ```
 
 #### Stopping the dotnet process
+```bash
+kill -15 $(cat dotnet.pid)
+```
+
+Deprecated as there are now multiple dotnet processes running.
 ```bash
 pkill -f "dotnet run"
 ```

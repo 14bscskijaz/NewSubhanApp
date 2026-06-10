@@ -1,0 +1,85 @@
+# Production compose — pulls pre-built images; no build step.
+#
+# Workflow:
+#   On dev machine:
+#     NEXT_PUBLIC_BACKEND_URL=https://api.yourprod.com \
+#       docker compose -f docker-compose.yml build
+#     docker compose -f docker-compose.yml push   # if using a registry
+#     # or: docker save subhan-backend:latest subhan-frontend:latest | gzip > images.tar.gz
+#
+#   On production server:
+#     # Pull from registry:
+#     docker compose -f docker-compose.prod.yml pull
+#     # or load from archive:
+#     # docker load < images.tar.gz
+#     docker compose -f docker-compose.prod.yml up -d
+
+services:
+
+  # ── Database ────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    container_name: subhan-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # ── Backend (.NET 6) ────────────────────────────────────────────────────────
+  backend:
+    image: subhan-backend:latest
+    container_name: subhan-backend
+    ports:
+      - "7169:7169"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Kestrel__EndPoints__Http__Url: "http://+:7169"
+      ConnectionStrings__DefaultConnection: >-
+        Host=postgres;
+        Database=${POSTGRES_DB};
+        Username=${POSTGRES_USER};
+        Password=${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # ── Frontend (Next.js) ──────────────────────────────────────────────────────
+  frontend:
+    image: subhan-frontend:latest
+    container_name: subhan-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      AUTH_TRUST_HOST: "true"
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      GITHUB_ID: ${GITHUB_ID:-}
+      GITHUB_SECRET: ${GITHUB_SECRET:-}
+      NEXT_PUBLIC_HARDCODED_EMAIL: ${NEXT_PUBLIC_HARDCODED_EMAIL:-}
+      NEXT_PUBLIC_HARDCODED_PASSWORD: ${NEXT_PUBLIC_HARDCODED_PASSWORD:-}
+      NEXT_PUBLIC_BACKEND_URL: "http://backend:7169/api"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

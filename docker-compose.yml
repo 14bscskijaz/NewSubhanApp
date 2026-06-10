@@ -1,0 +1,93 @@
+# Local development compose — builds images from source.
+# Usage:
+#   1. Copy .env.example to .env and fill in values.
+#   2. docker compose up --build
+
+services:
+
+  # ── Database ────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    container_name: subhan-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-subhan_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lolpass}
+      POSTGRES_DB: ${POSTGRES_DB:-accounts_prod_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-subhan_user} -d ${POSTGRES_DB:-accounts_prod_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - app-network
+
+  # ── Backend (.NET 6) ────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./BusServiceAPI
+      dockerfile: Dockerfile
+    image: subhan-backend:latest
+    container_name: subhan-backend
+    ports:
+      - "7169:7169"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # Override the appsettings.json Kestrel config so the server binds to
+      # all interfaces (not just loopback) inside the container.
+      Kestrel__EndPoints__Http__Url: "http://+:7169"
+      ConnectionStrings__DefaultConnection: >-
+        Host=postgres;
+        Database=${POSTGRES_DB:-accounts_prod_db};
+        Username=${POSTGRES_USER:-subhan_user};
+        Password=${POSTGRES_PASSWORD:-lolpass}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # ── Frontend (Next.js) ──────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* vars are baked into the JS bundle at build time.
+        # For local dev the backend is reachable at http://backend:7169
+        # (the browser connects directly, not through Docker networking).
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://backend:7169/api}
+        NEXT_PUBLIC_HARDCODED_EMAIL: ${NEXT_PUBLIC_HARDCODED_EMAIL:-}
+        NEXT_PUBLIC_HARDCODED_PASSWORD: ${NEXT_PUBLIC_HARDCODED_PASSWORD:-}
+    image: subhan-frontend:latest
+    container_name: subhan-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Runtime vars — safe to inject at container start.
+      AUTH_TRUST_HOST: "true"
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      GITHUB_ID: ${GITHUB_ID:-}
+      GITHUB_SECRET: ${GITHUB_SECRET:-}
+      NEXT_PUBLIC_HARDCODED_EMAIL: ${NEXT_PUBLIC_HARDCODED_EMAIL:-}
+      NEXT_PUBLIC_HARDCODED_PASSWORD: ${NEXT_PUBLIC_HARDCODED_PASSWORD:-}
+      # Server-side Next.js (SSR/server actions) runs inside this container,
+      # so it must reach the backend via the Docker service name, not localhost.
+      # This runtime value overrides process.env for server-side code only;
+      # client-side JS still uses the value baked in at build time (localhost:7169).
+      NEXT_PUBLIC_BACKEND_URL: "http://backend:7169/api"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

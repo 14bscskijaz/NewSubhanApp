@@ -39,7 +39,10 @@ app.UseCors("AllowAllOrigins");
 
 app.MapGet("/", () => "Hello World!");
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthorization();
 app.MapControllers();
 

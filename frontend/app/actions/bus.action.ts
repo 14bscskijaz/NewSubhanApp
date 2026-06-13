@@ -47,7 +47,7 @@ const serverLogger = getServerLogger();
 // Create an Axios instance with custom SSL settings
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  httpsAgent: new (require('http').Agent)({
+  httpsAgent: new (require('https').Agent)({
       rejectUnauthorized: false,
   }),
   paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
@@ -72,7 +72,7 @@ export async function getAllBuses(): Promise<Buses[]> {
 export async function createBus(busData: Omit<Buses, "id">) {
     try {
         // Make the POST request to the API endpoint with the bus data
-        const response = await axiosInstance.post(API_BASE_URL, busData);
+        const response = await axiosInstance.post('', busData);
 
         return response.data;
     } catch (error: any) {
@@ -86,7 +86,7 @@ export async function createBus(busData: Omit<Buses, "id">) {
 export async function deleteBus(busId: number): Promise<void> {
     try {
         // Make the DELETE request to the API endpoint
-        await axiosInstance.delete(`${API_BASE_URL}/${busId}`);
+        await axiosInstance.delete(`/${busId}`);
 
         // No need to return anything, as the response is usually empty for DELETE
         console.log(`Bus with ID ${busId} deleted successfully.`);
@@ -103,7 +103,7 @@ export async function deleteBus(busId: number): Promise<void> {
 export async function updateBuses(busId: number, busData: Omit<Buses, "id">): Promise<Buses> {
     try {
         // Make the PUT request to the API endpoint with the updated bus data
-        const response = await axiosInstance.put(`${API_BASE_URL}/${busId}`, busData, {
+        const response = await axiosInstance.put(`/${busId}`, busData, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -143,7 +143,7 @@ export async function getBusReportDetail(
 export async function getBusReports(urlParams: any): Promise<any> {
 
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
+    const response = await axiosInstance.get(`/Report`, {
       params: urlParams
     });
     // console.log(response.data);

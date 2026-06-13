@@ -27,7 +27,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/Expense";
 
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
-    httpsAgent: new (require('http').Agent)({
+    httpsAgent: new (require('https').Agent)({
         rejectUnauthorized: false,
     }),
     paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
@@ -38,7 +38,7 @@ const serverLogger = getServerLogger();
 // Get all expenses
 export async function getAllExpenses(): Promise<Expense[]> {
     try {
-        const response = await axiosInstance.get(API_BASE_URL);
+        const response = await axiosInstance.get('');
 
         serverLogger.info({
             expenseCount: String(response.data.length),
@@ -62,7 +62,7 @@ export async function getAllExpenses(): Promise<Expense[]> {
 // Get a single expense by ID
 export async function getExpenseById(id: number): Promise<Expense> {
     try {
-        const response = await axiosInstance.get(`${API_BASE_URL}/${id}`);
+        const response = await axiosInstance.get(`/${id}`);
         return response.data;
     } catch (error) {
         console.error(`Error fetching expense with id ${id}:`, error);
@@ -73,7 +73,7 @@ export async function getExpenseById(id: number): Promise<Expense> {
 // Create a new expense
 export async function createExpense(expense: Expense): Promise<Expense> {
     try {
-        const response = await axiosInstance.post(API_BASE_URL, expense);
+        const response = await axiosInstance.post('', expense);
         return response.data;
     } catch (error) {
         console.error("Error creating expense:", error);
@@ -84,7 +84,7 @@ export async function createExpense(expense: Expense): Promise<Expense> {
 // Update an existing expense
 export async function updateExpense(id: number, updatedExpense: Partial<Expense>): Promise<Expense> {
     try {
-        const response = await axiosInstance.put(`${API_BASE_URL}/${id}`, updatedExpense);
+        const response = await axiosInstance.put(`/${id}`, updatedExpense);
         return response.data;
     } catch (error) {
         console.error(`Error updating expense with id ${id}:`, error);
@@ -95,7 +95,7 @@ export async function updateExpense(id: number, updatedExpense: Partial<Expense>
 // Delete an expense by ID
 export async function deleteExpense(id: number): Promise<void> {
     try {
-        await axios.delete(`${API_BASE_URL}/${id}`);
+        await axiosInstance.delete(`/${id}`);
     } catch (error) {
         console.error(`Error deleting expense with id ${id}:`, error);
         throw error;
@@ -104,7 +104,7 @@ export async function deleteExpense(id: number): Promise<void> {
 
 export async function getExpenseReports(urlParams: any): Promise<ActionResponse<ExpenseReport>> {
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
+    const response = await axiosInstance.get(`/Report`, {
       params: urlParams
     });
     // console.log(response.data);
@@ -129,7 +129,7 @@ export async function getExpenseReports(urlParams: any): Promise<ActionResponse<
 // export async function getExpenseReportById(id: number): Promise<ExpenseReport> {
 
 //     try {
-//       const response = await axiosInstance.get(`${API_BASE_URL}/Report`, {
+//       const response = await axiosInstance.get(`/Report`, {
 //         params: urlParams
 //       });
 //       // console.log(response.data);

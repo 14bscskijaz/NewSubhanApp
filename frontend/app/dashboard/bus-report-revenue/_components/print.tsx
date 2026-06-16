@@ -47,10 +47,24 @@ export const printExpenses = (
   <div style="margin-bottom: 20px;">
     <ul style="list-style: none; padding: 0;">
       ${formattedDateRange ? `<li><strong>Date Range:</strong> ${formattedDateRange}</li>` : ''}
-      ${busNumber ? `<li><strong>Bus Number:</strong> ${busNumber}</li>` : ''}
+      ${busNumber ? `<li style="font-weight: bold;">Bus Number: ${busNumber}</li>` : ''}
     </ul>
   </div>
 `;
+
+  // Totals across all buses/dates
+  const totalRevenue = busData.reduce(
+    (sum: number, bus: any) => sum + (Number(bus.totalRevenue) || 0),
+    0
+  );
+  const totalExpenses = busData.reduce(
+    (sum: number, bus: any) => sum + (Number(bus.totalBusExpense) || 0),
+    0
+  );
+  const totalNetRevenue = busData.reduce(
+    (sum: number, bus: any) => sum + (Number(bus.netBusRevenue) || 0),
+    0
+  );
 
 
 
@@ -150,6 +164,16 @@ export const printExpenses = (
             `)
       .join('')}
         </tbody>
+        <tfoot>
+          <tr>
+            <td style="font-weight: bold;">Total</td>
+            <td></td>
+            <td style="font-weight: bold;">${formatNumber(totalRevenue) || 0}</td>
+            <td style="font-weight: bold;">${formatNumber(totalExpenses) || 0}</td>
+            <td></td>
+            <td style="font-weight: bold;">${formatNumber(totalNetRevenue) || 0}</td>
+          </tr>
+        </tfoot>
       </table>
     </body>
   </html>

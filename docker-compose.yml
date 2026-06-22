@@ -10,7 +10,7 @@ services:
     image: postgres:17-alpine
     container_name: accounts_${DEPLOYMENT_ENV}_postgres
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "${DB_EXPOSE_HOST:-127.0.0.1}:${DB_PORT:-5432}:5432"
     environment:
       POSTGRES_DB: "${DB_NAME:-postgres}"
       POSTGRES_USER: "${DB_USER:-postgres}"

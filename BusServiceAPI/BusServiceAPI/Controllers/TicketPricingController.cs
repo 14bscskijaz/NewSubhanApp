@@ -23,6 +23,7 @@ namespace BusServiceAPI.Controllers
         {
             var ticketPricings = _context.TicketPricings
                 .AsNoTracking()
+                .OrderBy(tp => tp.Id)
                 .ToList()
                 .Select(tp => new TicketPricingDTO
                 {

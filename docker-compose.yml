@@ -41,7 +41,7 @@ services:
     image: accounts-backend:latest
     container_name: accounts_${DEPLOYMENT_ENV}_backend
     ports:
-      - "${BACKEND_PORT:-5072}:5072"
+      - "${BACKEND_PORT:-15072}:5072"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ASPNETCORE_URLS: "http://0.0.0.0:${BACKEND_PORT:-5072}"

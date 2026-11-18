@@ -182,7 +182,7 @@ export function BarGraph() {
               tickMargin={8} 
               minTickGap={32}
               angle={20} 
-              textAnchor="center"
+              textAnchor="middle"
             />
             <Bar 
               dataKey="passengerCount" 

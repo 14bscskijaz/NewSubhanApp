@@ -397,7 +397,7 @@ export function LineGraph() {
                                 axisLine={true}
                                 tickMargin={8}
                                 angle={20}
-                                textAnchor="center"
+                                textAnchor="middle"
                                 height={60}
                             />
                             <Line

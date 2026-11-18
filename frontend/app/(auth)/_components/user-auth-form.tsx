@@ -57,9 +57,10 @@ export default function UserAuthForm() {
         signIn('credentials', {
           email: data.email,
           password: data.password,
+          redirect: false,
           callbackUrl: callbackUrl ?? '/dashboard/overview'
         }).then((response) => {
-          if (response?.error) {
+          if (!response || response.error) {
             toast({
               variant: "destructive",
               title: "Invalid email or password. Please try again."
@@ -70,6 +71,8 @@ export default function UserAuthForm() {
               variant: "default",
               title: "Signed In Successfully!"
             });
+            window.location.href =
+              response.url ?? callbackUrl ?? '/dashboard/overview';
           }
         });
       });

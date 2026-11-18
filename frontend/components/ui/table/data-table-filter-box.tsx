@@ -30,7 +30,7 @@ interface FilterBoxProps {
   options: FilterOption[];
   setFilterValue: (
     value: string | ((old: string) => string | null) | null,
-    options?: Options<any> | undefined
+    options?: Options | undefined
   ) => Promise<URLSearchParams>;
   filterValue: string;
 }

@@ -4,8 +4,10 @@ import { StoreProviders } from '@/lib/store-provider';
 import type { Metadata } from 'next';
 import { Lato } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { Toaster as SonnerToaster } from '@/components/ui/sonner';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor } from '@/lib/store';
 
@@ -32,13 +34,16 @@ export default async function RootLayout({
       className={`${lato.className}`}
       suppressHydrationWarning={true}
     >
-      <body className='overflow-x-hidden md:overflow-y-auto '>
+      <body className="overflow-x-hidden md:overflow-y-auto ">
         <NextTopLoader showSpinner={false} />
         <Providers session={session}>
-          <StoreProviders>           
+          <NuqsAdapter>
+            <StoreProviders>
               <Toaster />
+              <SonnerToaster />
               {children}
-          </StoreProviders>
+            </StoreProviders>
+          </NuqsAdapter>
         </Providers>
       </body>
     </html>

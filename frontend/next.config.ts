@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
   output: 'standalone',
   images: {
     remotePatterns: [
@@ -15,10 +17,7 @@ const nextConfig = {
       }
     ]
   },
-  transpilePackages: ['geist'],
-  experimental: {
-    instrumentationHook: true
-  }
+  transpilePackages: ['geist']
 };
 
-module.exports = nextConfig;
+export default nextConfig;

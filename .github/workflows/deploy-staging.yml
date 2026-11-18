@@ -1,0 +1,109 @@
+name: Deploy Staging
+
+# ─── Trigger ──────────────────────────────────────────────────────────────────
+# Runs on every push to `main`.
+on:
+  push:
+    branches:
+      - staging
+
+# Cancel any previous in-flight deployment for the same branch so pushes don't
+# queue up and race each other.
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: true
+
+# ─── Jobs ─────────────────────────────────────────────────────────────────────
+jobs:
+  deploy:
+    name: Build & Deploy Staging
+    # GitHub-hosted runner. All actual work is done over SSH on the staging
+    # server — the runner just acts as the orchestrator.
+    runs-on: ubuntu-latest
+    environment: staging  # (optional) GitHub Environments for approvals
+    steps:
+      # SSH into the staging server and run the full deployment there.
+      #
+      # Required secrets and variables (Settings → Secrets and variables → Actions):
+      #   SSH_HOST               – IP address or hostname of the staging server
+      #   SSH_USER               – SSH login username  (e.g. ubuntu, deploy)
+      #   SSH_KEY                – Private SSH key (PEM format, entire file contents)
+      #   STAGING_REPO_PATH      – Absolute path to the repo on the server
+      #                           (e.g. /home/ubuntu/new-subhan-accounts)
+      #   STAGING_APP_URL        – e.g. https://accounts.staging.newsubhan.pk
+      #   STAGING_AUTH_SECRET    – value for AUTH_SECRET
+      #   STAGING_DB_USER        – PostgreSQL username
+      #   STAGING_DB_PASSWORD    – PostgreSQL password
+      #   STAGING_DB_PORT        – Port on the staging server to bind PostgreSQL to (default: 5432)
+      #   STAGING_DB_NAME        – PostgreSQL database name (e.g. accounts_staging_db)
+      #   STAGING_FRONTEND_PORT  – Port on the staging server to bind the frontend to (default: 3000)
+      #   STAGING_DB_EXPOSE_HOST – Host IP to expose PostgreSQL on (default: 127.0.0.1)
+      - name: Deploy to staging server
+        uses: appleboy/ssh-action@v1
+        env:
+          APP_URL: ${{ vars.STAGING_APP_URL }}
+          AUTH_SECRET: ${{ secrets.STAGING_AUTH_SECRET }}
+          DB_USER: ${{ secrets.STAGING_DB_USER }}
+          DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+          DB_PORT: ${{ secrets.STAGING_DB_PORT }}
+          DB_NAME: ${{ secrets.STAGING_DB_NAME }}
+          NODE_ENV: production
+          DEPLOYMENT_ENV: staging
+          FRONTEND_PORT: ${{ vars.STAGING_FRONTEND_PORT }}
+          DB_EXPOSE_HOST: ${{ secrets.STAGING_DB_EXPOSE_HOST }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          # Forward the env secrets above into the remote shell session
+          envs: APP_URL,AUTH_SECRET,NODE_ENV,DB_USER,DB_PASSWORD,DB_PORT,DB_NAME,DEPLOYMENT_ENV,FRONTEND_PORT,DB_EXPOSE_HOST
+          script: |
+            set -e
+            cd ${{ vars.STAGING_REPO_PATH }}
+
+            echo "in the staging server, path: $(pwd)"
+
+            # 1. Pull latest code
+            git fetch origin staging
+            git checkout staging
+            git pull origin staging
+
+            # 2. Write runtime .env (server-side / Node.js process vars)
+            # Good for debugging.
+            {
+              echo "APP_URL=${APP_URL}"
+              echo "AUTH_SECRET=${AUTH_SECRET}"
+              echo "NODE_ENV=${NODE_ENV}"
+              echo "DB_USER=${DB_USER}"
+              echo "DB_PASSWORD=${DB_PASSWORD}"
+              echo "DB_PORT=${DB_PORT}"
+              echo "DB_NAME=${DB_NAME}"
+              echo "DEPLOYMENT_ENV=${DEPLOYMENT_ENV}"
+              echo "FRONTEND_PORT=${FRONTEND_PORT}"
+              echo "DB_EXPOSE_HOST=${DB_EXPOSE_HOST}"
+            } > .env
+
+            # 3. Export env vars for docker compose. Redundant after the above .env file write,
+            # but I prefer this way step 3. over step 2.
+            export APP_URL="${APP_URL}"
+            export AUTH_SECRET="${AUTH_SECRET}"
+            export NODE_ENV="${NODE_ENV}"
+            export DB_USER="${DB_USER}"
+            export DB_PASSWORD="${DB_PASSWORD}"
+            export DB_PORT="${DB_PORT}"
+            export DB_NAME="${DB_NAME}"
+            export DEPLOYMENT_ENV="${DEPLOYMENT_ENV}"
+            export FRONTEND_PORT="${FRONTEND_PORT}"
+            export DB_EXPOSE_HOST="${DB_EXPOSE_HOST}"
+
+            # 4. Build the image and (re)start the staging stack
+            docker compose -p accounts_${DEPLOYMENT_ENV} -f docker-compose.yml up -d --build --remove-orphans
+
+            # 5. Prune dangling images to reclaim disk space
+            docker image prune -f
+
+            # 6. Verify
+            echo "=== Staging containers ==="
+            docker ps --filter "name=accounts_${DEPLOYMENT_ENV}_frontend" \
+                      --filter "name=accounts_${DEPLOYMENT_ENV}_postgres" \
+                      --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
